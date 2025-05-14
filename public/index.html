@@ -14,13 +14,25 @@
 </head>
 
 <body>
-    <h1>
+    <header>
         Garbage Collection
-    </h1>
+    </header>
 
     <main>
         <div id="map" class="round-edge"></div>
-        <div id="report-info" class="round-edge"></div>
+        <div id="report-info" class="round-edge">
+            <div id="report-content">
+                <p id="report-title">Report Garbage</p>
+                <p id="report-longitude">Longitude:</p>
+                <p id="report-latitude">Latitude:</p>
+                <p id="report-severity">Severity:</p>
+                <input type="range" id="severity-slider" name="severity" min="1" max="10" value="5">
+                <label id="report-description" for="report-description">Details:</label>
+                <textarea id="report-text" class="round-edge" rows="4" cols="50"
+                    placeholder="Describe the situation..."></textarea>
+            </div>
+            <button id="submit-report" class="round-edge">Submit</button>
+        </div>
     </main>
 
 
