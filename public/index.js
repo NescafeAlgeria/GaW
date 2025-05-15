@@ -13,7 +13,8 @@ const longitudeText = document.getElementById('report-longitude');
 const latitudeText = document.getElementById('report-latitude');
 const severityText = document.getElementById('report-severity');
 const severitySlider = document.getElementById('severity-slider');
-
+const descriptionText = document.getElementById('report-text');
+const submitButton = document.getElementById('submit-report');
 
 severitySlider.oninput = () => {
     severityText.innerText = 'Severity: ' + severitySlider.value;
@@ -36,4 +37,26 @@ function onMapClick(e) {
     mapDiv.style.width = '70%';
 }
 
+
 map.on('click', onMapClick);
+
+submitButton.addEventListener('click', async (event) => {
+    event.preventDefault();
+    const severity = severitySlider.value;
+    const lat = marker.getLatLng().lat;
+    const lng = marker.getLatLng().lng;
+    const description = descriptionText.value;
+    const response = await fetch('/addReport', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            severity: severity,
+            lat: lat,
+            lng: lng,
+            description: description
+        })
+    });
+    console.log("Response: ", response);
+});

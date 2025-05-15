@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import helloRoute from './routes/helloRoute.js';
 import mainRoute from './routes/mainRoute.js';
+import addReportRoute from './routes/addReportRoute.js';
 
 const MIME_TYPES = {
     default: 'application/octet-stream',
@@ -20,6 +21,7 @@ const MIME_TYPES = {
 const routes = {
     '/': mainRoute,
     '/hello': helloRoute,
+    '/addReport': addReportRoute,
 };
 
 const STATIC_PATH = path.join(process.cwd(), './public');
@@ -41,6 +43,8 @@ const prepareFile = async (requestPath) => {
 };
 
 export const routeRequest = async (req, res) => {
+    console.log('Request received:', req.method, req.url);
+
     const parsedUrl = url.parse(req.url, true);
     const pathname = parsedUrl.pathname;
 
