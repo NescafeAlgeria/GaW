@@ -15,6 +15,7 @@ const severityText = document.getElementById('report-severity');
 const severitySlider = document.getElementById('severity-slider');
 const descriptionText = document.getElementById('report-text');
 const submitButton = document.getElementById('submit-report');
+const resultText = document.getElementById('report-result');
 
 severitySlider.oninput = () => {
     severityText.innerText = 'Severity: ' + severitySlider.value;
@@ -41,6 +42,10 @@ function onMapClick(e) {
 map.on('click', onMapClick);
 
 submitButton.addEventListener('click', async (event) => {
+    submitButton.innerText = 'Submitting...';
+    submitButton.disabled = true;
+    resultText.innerText = '';
+
     event.preventDefault();
     const severity = severitySlider.value;
     const lat = marker.getLatLng().lat;
@@ -58,5 +63,15 @@ submitButton.addEventListener('click', async (event) => {
             description: description
         })
     });
-    console.log("Response: ", response);
+    const result = await response.json();
+
+    submitButton.innerText = 'Submit';
+    submitButton.disabled = false;
+    if (response.ok) {
+        resultText.innerText = 'Report submitted successfully!';
+        resultText.style.color = 'green';
+    } else {
+        resultText.innerText = 'Error: ' + result.error;
+        resultText.style.color = 'red';
+    }
 });

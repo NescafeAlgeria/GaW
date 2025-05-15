@@ -50,6 +50,16 @@ header {
     color: #FFFFFF;
 
     font-size: 1rem;
+    transition: all 0.3 easi-in-out;
+}
+
+#report-info button:hover {
+    background-color: #45A049;
+}
+
+#report-info button:active {
+    background-color: #3E8E41;
+    transform: scale(0.98);
 }
 
 #report-info textarea {
