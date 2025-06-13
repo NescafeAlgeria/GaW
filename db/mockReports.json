@@ -1,7 +1,7 @@
 [
   {
     "collection": "reports",
-    "severity": "low",
+    "severity": 2,
     "lat": 45.483695,
     "lng": 26.400047,
     "description": "Minor landslide",
@@ -12,7 +12,7 @@
   },
   {
     "collection": "reports",
-    "severity": "medium",
+    "severity": 5,
     "lat": 46.215641,
     "lng": 28.066971,
     "description": "Obstacle on road",
@@ -23,7 +23,7 @@
   },
   {
     "collection": "reports",
-    "severity": "high",
+    "severity": 9,
     "lat": 44.319287,
     "lng": 23.748918,
     "description": "Flooded area",
@@ -34,7 +34,7 @@
   },
   {
     "collection": "reports",
-    "severity": "low",
+    "severity": 2,
     "lat": 42.842912,
     "lng": 28.78058,
     "description": "Obstacle on road",
@@ -45,7 +45,7 @@
   },
   {
     "collection": "reports",
-    "severity": "medium",
+    "severity": 5,
     "lat": 40.804575,
     "lng": 27.532037,
     "description": "Minor landslide",
@@ -56,7 +56,7 @@
   },
   {
     "collection": "reports",
-    "severity": "low",
+    "severity": 2,
     "lat": 43.509714,
     "lng": 25.812186,
     "description": "Obstacle on road",
@@ -67,7 +67,7 @@
   },
   {
     "collection": "reports",
-    "severity": "high",
+    "severity": 9,
     "lat": 42.122566,
     "lng": 20.028367,
     "description": "Public safety concern",
@@ -78,7 +78,7 @@
   },
   {
     "collection": "reports",
-    "severity": "medium",
+    "severity": 5,
     "lat": 42.513591,
     "lng": 22.727911,
     "description": "Obstacle on road",
@@ -89,7 +89,7 @@
   },
   {
     "collection": "reports",
-    "severity": "high",
+    "severity": 9,
     "lat": 43.95321,
     "lng": 25.545482,
     "description": "Public safety concern",
@@ -100,7 +100,7 @@
   },
   {
     "collection": "reports",
-    "severity": "low",
+    "severity": 2,
     "lat": 44.939291,
     "lng": 27.488914,
     "description": "Severe weather",
@@ -111,7 +111,7 @@
   },
   {
     "collection": "reports",
-    "severity": "medium",
+    "severity": 5,
     "lat": 40.315688,
     "lng": 21.80466,
     "description": "Minor landslide",
@@ -122,7 +122,7 @@
   },
   {
     "collection": "reports",
-    "severity": "medium",
+    "severity": 5,
     "lat": 48.991489,
     "lng": 25.440579,
     "description": "Public safety concern",
@@ -133,7 +133,7 @@
   },
   {
     "collection": "reports",
-    "severity": "medium",
+    "severity": 5,
     "lat": 44.162586,
     "lng": 24.659665,
     "description": "Severe weather",
@@ -144,7 +144,7 @@
   },
   {
     "collection": "reports",
-    "severity": "medium",
+    "severity": 5,
     "lat": 40.379506,
     "lng": 23.158116,
     "description": "Obstacle on road",
@@ -155,7 +155,7 @@
   },
   {
     "collection": "reports",
-    "severity": "low",
+    "severity": 2,
     "lat": 43.501742,
     "lng": 26.075448,
     "description": "Minor landslide",
@@ -166,7 +166,7 @@
   },
   {
     "collection": "reports",
-    "severity": "medium",
+    "severity": 5,
     "lat": 46.169815,
     "lng": 20.019376,
     "description": "Public safety concern",
@@ -177,7 +177,7 @@
   },
   {
     "collection": "reports",
-    "severity": "high",
+    "severity": 9,
     "lat": 40.579892,
     "lng": 29.979881,
     "description": "Public safety concern",
@@ -188,7 +188,7 @@
   },
   {
     "collection": "reports",
-    "severity": "medium",
+    "severity": 5,
     "lat": 48.696825,
     "lng": 25.137935,
     "description": "Obstacle on road",
@@ -199,7 +199,7 @@
   },
   {
     "collection": "reports",
-    "severity": "low",
+    "severity": 2,
     "lat": 44.32181,
     "lng": 20.649965,
     "description": "Flooded area",
@@ -210,7 +210,7 @@
   },
   {
     "collection": "reports",
-    "severity": "medium",
+    "severity": 5,
     "lat": 48.829724,
     "lng": 28.911973,
     "description": "Severe weather",
@@ -221,7 +221,7 @@
   },
   {
     "collection": "reports",
-    "severity": "low",
+    "severity": 2,
     "lat": 42.536327,
     "lng": 29.066919,
     "description": "Public safety concern",
@@ -232,7 +232,7 @@
   },
   {
     "collection": "reports",
-    "severity": "low",
+    "severity": 2,
     "lat": 44.065917,
     "lng": 27.983475,
     "description": "Severe weather",
@@ -243,7 +243,7 @@
   },
   {
     "collection": "reports",
-    "severity": "low",
+    "severity": 2,
     "lat": 44.912398,
     "lng": 21.830574,
     "description": "Obstacle on road",
@@ -254,7 +254,7 @@
   },
   {
     "collection": "reports",
-    "severity": "low",
+    "severity": 2,
     "lat": 43.986678,
     "lng": 20.664175,
     "description": "Flooded area",
@@ -265,7 +265,7 @@
   },
   {
     "collection": "reports",
-    "severity": "low",
+    "severity": 2,
     "lat": 47.219422,
     "lng": 28.448593,
     "description": "Severe weather",
@@ -276,7 +276,7 @@
   },
   {
     "collection": "reports",
-    "severity": "low",
+    "severity": 2,
     "lat": 42.972117,
     "lng": 27.835521,
     "description": "Public safety concern",
@@ -287,7 +287,7 @@
   },
   {
     "collection": "reports",
-    "severity": "medium",
+    "severity": 5,
     "lat": 47.934501,
     "lng": 29.464066,
     "description": "Public safety concern",
@@ -298,7 +298,7 @@
   },
   {
     "collection": "reports",
-    "severity": "low",
+    "severity": 2,
     "lat": 44.270293,
     "lng": 29.258739,
     "description": "Public safety concern",
@@ -309,7 +309,7 @@
   },
   {
     "collection": "reports",
-    "severity": "low",
+    "severity": 2,
     "lat": 47.0943,
     "lng": 27.479481,
     "description": "Minor landslide",
@@ -320,7 +320,7 @@
   },
   {
     "collection": "reports",
-    "severity": "medium",
+    "severity": 5,
     "lat": 49.274263,
     "lng": 26.373457,
     "description": "Flooded area",
@@ -331,7 +331,7 @@
   },
   {
     "collection": "reports",
-    "severity": "high",
+    "severity": 9,
     "lat": 42.715638,
     "lng": 29.858958,
     "description": "Severe weather",
@@ -342,7 +342,7 @@
   },
   {
     "collection": "reports",
-    "severity": "high",
+    "severity": 9,
     "lat": 44.476924,
     "lng": 21.491652,
     "description": "Obstacle on road",
@@ -353,7 +353,7 @@
   },
   {
     "collection": "reports",
-    "severity": "low",
+    "severity": 2,
     "lat": 49.326874,
     "lng": 22.162869,
     "description": "Flooded area",
@@ -364,7 +364,7 @@
   },
   {
     "collection": "reports",
-    "severity": "high",
+    "severity": 9,
     "lat": 49.961349,
     "lng": 20.975432,
     "description": "Obstacle on road",
@@ -375,7 +375,7 @@
   },
   {
     "collection": "reports",
-    "severity": "low",
+    "severity": 2,
     "lat": 40.080896,
     "lng": 29.683574,
     "description": "Severe weather",
@@ -386,7 +386,7 @@
   },
   {
     "collection": "reports",
-    "severity": "medium",
+    "severity": 5,
     "lat": 41.266517,
     "lng": 26.967449,
     "description": "Severe weather",
@@ -397,7 +397,7 @@
   },
   {
     "collection": "reports",
-    "severity": "high",
+    "severity": 9,
     "lat": 43.743697,
     "lng": 20.173577,
     "description": "Public safety concern",
@@ -408,7 +408,7 @@
   },
   {
     "collection": "reports",
-    "severity": "high",
+    "severity": 9,
     "lat": 45.766496,
     "lng": 23.575753,
     "description": "Minor landslide",
@@ -419,7 +419,7 @@
   },
   {
     "collection": "reports",
-    "severity": "medium",
+    "severity": 5,
     "lat": 42.472822,
     "lng": 20.981099,
     "description": "Minor landslide",
@@ -430,7 +430,7 @@
   },
   {
     "collection": "reports",
-    "severity": "high",
+    "severity": 9,
     "lat": 49.180891,
     "lng": 27.652615,
     "description": "Minor landslide",
@@ -441,7 +441,7 @@
   },
   {
     "collection": "reports",
-    "severity": "medium",
+    "severity": 5,
     "lat": 48.269083,
     "lng": 27.4932,
     "description": "Severe weather",
@@ -452,7 +452,7 @@
   },
   {
     "collection": "reports",
-    "severity": "medium",
+    "severity": 5,
     "lat": 48.175377,
     "lng": 25.379205,
     "description": "Public safety concern",
@@ -463,7 +463,7 @@
   },
   {
     "collection": "reports",
-    "severity": "high",
+    "severity": 9,
     "lat": 43.768207,
     "lng": 27.319931,
     "description": "Minor landslide",
@@ -474,7 +474,7 @@
   },
   {
     "collection": "reports",
-    "severity": "low",
+    "severity": 2,
     "lat": 43.594909,
     "lng": 25.269576,
     "description": "Severe weather",
@@ -485,7 +485,7 @@
   },
   {
     "collection": "reports",
-    "severity": "low",
+    "severity": 2,
     "lat": 41.091138,
     "lng": 25.097105,
     "description": "Minor landslide",
@@ -496,7 +496,7 @@
   },
   {
     "collection": "reports",
-    "severity": "medium",
+    "severity": 5,
     "lat": 44.993894,
     "lng": 22.21048,
     "description": "Public safety concern",
@@ -507,7 +507,7 @@
   },
   {
     "collection": "reports",
-    "severity": "high",
+    "severity": 9,
     "lat": 43.957229,
     "lng": 28.532704,
     "description": "Obstacle on road",
@@ -518,7 +518,7 @@
   },
   {
     "collection": "reports",
-    "severity": "low",
+    "severity": 2,
     "lat": 42.820979,
     "lng": 27.782376,
     "description": "Flooded area",
@@ -529,7 +529,7 @@
   },
   {
     "collection": "reports",
-    "severity": "medium",
+    "severity": 5,
     "lat": 45.575902,
     "lng": 26.8255,
     "description": "Flooded area",
@@ -540,7 +540,7 @@
   },
   {
     "collection": "reports",
-    "severity": "high",
+    "severity": 9,
     "lat": 42.262465,
     "lng": 29.235217,
     "description": "Obstacle on road",
@@ -551,7 +551,7 @@
   },
   {
     "collection": "reports",
-    "severity": "high",
+    "severity": 9,
     "lat": 46.066758,
     "lng": 27.701152,
     "description": "Flooded area",
@@ -562,7 +562,7 @@
   },
   {
     "collection": "reports",
-    "severity": "medium",
+    "severity": 5,
     "lat": 49.426085,
     "lng": 27.184793,
     "description": "Flooded area",
@@ -573,7 +573,7 @@
   },
   {
     "collection": "reports",
-    "severity": "high",
+    "severity": 9,
     "lat": 43.341551,
     "lng": 27.614055,
     "description": "Public safety concern",
@@ -584,7 +584,7 @@
   },
   {
     "collection": "reports",
-    "severity": "medium",
+    "severity": 5,
     "lat": 44.419721,
     "lng": 25.569104,
     "description": "Severe weather",
@@ -595,7 +595,7 @@
   },
   {
     "collection": "reports",
-    "severity": "high",
+    "severity": 9,
     "lat": 46.802903,
     "lng": 29.078874,
     "description": "Minor landslide",
@@ -606,7 +606,7 @@
   },
   {
     "collection": "reports",
-    "severity": "high",
+    "severity": 9,
     "lat": 40.443481,
     "lng": 29.470607,
     "description": "Minor landslide",
@@ -617,7 +617,7 @@
   },
   {
     "collection": "reports",
-    "severity": "medium",
+    "severity": 5,
     "lat": 49.720371,
     "lng": 20.359974,
     "description": "Public safety concern",
@@ -628,7 +628,7 @@
   },
   {
     "collection": "reports",
-    "severity": "high",
+    "severity": 9,
     "lat": 41.58683,
     "lng": 21.127592,
     "description": "Severe weather",
@@ -639,7 +639,7 @@
   },
   {
     "collection": "reports",
-    "severity": "high",
+    "severity": 9,
     "lat": 40.77152,
     "lng": 20.59009,
     "description": "Public safety concern",
@@ -650,7 +650,7 @@
   },
   {
     "collection": "reports",
-    "severity": "high",
+    "severity": 9,
     "lat": 48.365972,
     "lng": 22.879455,
     "description": "Severe weather",
@@ -661,7 +661,7 @@
   },
   {
     "collection": "reports",
-    "severity": "medium",
+    "severity": 5,
     "lat": 45.880863,
     "lng": 28.063378,
     "description": "Severe weather",
@@ -672,7 +672,7 @@
   },
   {
     "collection": "reports",
-    "severity": "high",
+    "severity": 9,
     "lat": 40.922439,
     "lng": 26.84136,
     "description": "Obstacle on road",
@@ -683,7 +683,7 @@
   },
   {
     "collection": "reports",
-    "severity": "medium",
+    "severity": 5,
     "lat": 42.404624,
     "lng": 28.146769,
     "description": "Public safety concern",
@@ -694,7 +694,7 @@
   },
   {
     "collection": "reports",
-    "severity": "high",
+    "severity": 9,
     "lat": 44.413781,
     "lng": 22.246648,
     "description": "Flooded area",
@@ -705,7 +705,7 @@
   },
   {
     "collection": "reports",
-    "severity": "high",
+    "severity": 9,
     "lat": 42.617038,
     "lng": 24.627487,
     "description": "Public safety concern",
@@ -716,7 +716,7 @@
   },
   {
     "collection": "reports",
-    "severity": "medium",
+    "severity": 5,
     "lat": 43.921569,
     "lng": 29.95994,
     "description": "Obstacle on road",
@@ -727,7 +727,7 @@
   },
   {
     "collection": "reports",
-    "severity": "medium",
+    "severity": 5,
     "lat": 43.85111,
     "lng": 26.036948,
     "description": "Public safety concern",
@@ -738,7 +738,7 @@
   },
   {
     "collection": "reports",
-    "severity": "medium",
+    "severity": 5,
     "lat": 40.762518,
     "lng": 25.119273,
     "description": "Public safety concern",
@@ -749,7 +749,7 @@
   },
   {
     "collection": "reports",
-    "severity": "medium",
+    "severity": 5,
     "lat": 41.967248,
     "lng": 26.082617,
     "description": "Flooded area",
@@ -760,7 +760,7 @@
   },
   {
     "collection": "reports",
-    "severity": "medium",
+    "severity": 5,
     "lat": 48.0927,
     "lng": 29.261729,
     "description": "Minor landslide",
@@ -771,7 +771,7 @@
   },
   {
     "collection": "reports",
-    "severity": "high",
+    "severity": 9,
     "lat": 42.097976,
     "lng": 25.258573,
     "description": "Severe weather",
@@ -782,7 +782,7 @@
   },
   {
     "collection": "reports",
-    "severity": "medium",
+    "severity": 5,
     "lat": 41.158549,
     "lng": 23.584776,
     "description": "Minor landslide",
@@ -793,7 +793,7 @@
   },
   {
     "collection": "reports",
-    "severity": "high",
+    "severity": 9,
     "lat": 42.607547,
     "lng": 25.744825,
     "description": "Minor landslide",
@@ -804,7 +804,7 @@
   },
   {
     "collection": "reports",
-    "severity": "high",
+    "severity": 9,
     "lat": 43.967663,
     "lng": 21.829371,
     "description": "Public safety concern",
@@ -815,7 +815,7 @@
   },
   {
     "collection": "reports",
-    "severity": "medium",
+    "severity": 5,
     "lat": 46.453469,
     "lng": 21.550005,
     "description": "Obstacle on road",
@@ -826,7 +826,7 @@
   },
   {
     "collection": "reports",
-    "severity": "high",
+    "severity": 9,
     "lat": 48.98945,
     "lng": 23.984751,
     "description": "Severe weather",
@@ -837,7 +837,7 @@
   },
   {
     "collection": "reports",
-    "severity": "high",
+    "severity": 9,
     "lat": 41.730031,
     "lng": 27.729377,
     "description": "Obstacle on road",
@@ -848,7 +848,7 @@
   },
   {
     "collection": "reports",
-    "severity": "medium",
+    "severity": 5,
     "lat": 46.768847,
     "lng": 24.90549,
     "description": "Severe weather",
@@ -859,7 +859,7 @@
   },
   {
     "collection": "reports",
-    "severity": "medium",
+    "severity": 5,
     "lat": 48.146334,
     "lng": 29.259931,
     "description": "Obstacle on road",
@@ -870,7 +870,7 @@
   },
   {
     "collection": "reports",
-    "severity": "high",
+    "severity": 9,
     "lat": 49.689562,
     "lng": 26.133115,
     "description": "Minor landslide",
@@ -881,7 +881,7 @@
   },
   {
     "collection": "reports",
-    "severity": "high",
+    "severity": 9,
     "lat": 48.426995,
     "lng": 29.890526,
     "description": "Minor landslide",
@@ -892,7 +892,7 @@
   },
   {
     "collection": "reports",
-    "severity": "high",
+    "severity": 9,
     "lat": 49.067428,
     "lng": 28.872768,
     "description": "Severe weather",
@@ -903,7 +903,7 @@
   },
   {
     "collection": "reports",
-    "severity": "medium",
+    "severity": 5,
     "lat": 42.42706,
     "lng": 24.821114,
     "description": "Severe weather",
@@ -914,7 +914,7 @@
   },
   {
     "collection": "reports",
-    "severity": "low",
+    "severity": 2,
     "lat": 42.599259,
     "lng": 25.884448,
     "description": "Obstacle on road",
@@ -925,7 +925,7 @@
   },
   {
     "collection": "reports",
-    "severity": "low",
+    "severity": 2,
     "lat": 45.969867,
     "lng": 27.614439,
     "description": "Severe weather",
@@ -936,7 +936,7 @@
   },
   {
     "collection": "reports",
-    "severity": "high",
+    "severity": 9,
     "lat": 44.383455,
     "lng": 22.202986,
     "description": "Severe weather",
@@ -947,7 +947,7 @@
   },
   {
     "collection": "reports",
-    "severity": "low",
+    "severity": 2,
     "lat": 45.409671,
     "lng": 21.746589,
     "description": "Minor landslide",
@@ -958,7 +958,7 @@
   },
   {
     "collection": "reports",
-    "severity": "medium",
+    "severity": 5,
     "lat": 42.153739,
     "lng": 28.957858,
     "description": "Public safety concern",
@@ -969,7 +969,7 @@
   },
   {
     "collection": "reports",
-    "severity": "medium",
+    "severity": 5,
     "lat": 47.185625,
     "lng": 21.519378,
     "description": "Obstacle on road",
@@ -980,7 +980,7 @@
   },
   {
     "collection": "reports",
-    "severity": "high",
+    "severity": 9,
     "lat": 40.714641,
     "lng": 24.570477,
     "description": "Public safety concern",
@@ -991,7 +991,7 @@
   },
   {
     "collection": "reports",
-    "severity": "low",
+    "severity": 2,
     "lat": 41.364576,
     "lng": 21.466574,
     "description": "Flooded area",
@@ -1002,7 +1002,7 @@
   },
   {
     "collection": "reports",
-    "severity": "medium",
+    "severity": 5,
     "lat": 44.724748,
     "lng": 20.303065,
     "description": "Obstacle on road",
@@ -1013,7 +1013,7 @@
   },
   {
     "collection": "reports",
-    "severity": "low",
+    "severity": 2,
     "lat": 47.694333,
     "lng": 20.16826,
     "description": "Severe weather",
@@ -1024,7 +1024,7 @@
   },
   {
     "collection": "reports",
-    "severity": "high",
+    "severity": 9,
     "lat": 44.233934,
     "lng": 28.489563,
     "description": "Severe weather",
@@ -1035,7 +1035,7 @@
   },
   {
     "collection": "reports",
-    "severity": "high",
+    "severity": 9,
     "lat": 40.267746,
     "lng": 21.95099,
     "description": "Minor landslide",
@@ -1046,7 +1046,7 @@
   },
   {
     "collection": "reports",
-    "severity": "high",
+    "severity": 9,
     "lat": 43.697282,
     "lng": 25.036722,
     "description": "Minor landslide",
@@ -1057,7 +1057,7 @@
   },
   {
     "collection": "reports",
-    "severity": "medium",
+    "severity": 5,
     "lat": 47.924954,
     "lng": 28.35362,
     "description": "Obstacle on road",
@@ -1068,7 +1068,7 @@
   },
   {
     "collection": "reports",
-    "severity": "low",
+    "severity": 2,
     "lat": 44.065321,
     "lng": 25.340595,
     "description": "Minor landslide",
@@ -1079,7 +1079,7 @@
   },
   {
     "collection": "reports",
-    "severity": "low",
+    "severity": 2,
     "lat": 48.59528,
     "lng": 28.315284,
     "description": "Severe weather",
@@ -1090,7 +1090,7 @@
   },
   {
     "collection": "reports",
-    "severity": "medium",
+    "severity": 5,
     "lat": 47.26701,
     "lng": 27.719216,
     "description": "Obstacle on road",

@@ -5,6 +5,10 @@ const generatePdfBuffer = (data) => {
         const doc = new PDFDocument()
         const buffers = []
 
+        const garbageStatusPerZone = {};
+
+        data.forEach((report)=> garbageStatusPerZone[])
+
         doc.on('data', chunk => buffers.push(chunk))
         doc.on('end', () => resolve(Buffer.concat(buffers)))
         doc.on('error', reject)
