@@ -5,6 +5,8 @@ import helloRoute from './routes/helloRoute.js';
 import mainRoute from './routes/mainRoute.js';
 import addReportRoute from './routes/addReportRoute.js';
 import homePageRoute from './routes/homeRoute.js';
+import signupRoute from './routes/signupRoute.js';
+import loginRoute from './routes/loginRoute.js';
 
 const MIME_TYPES = {
     default: 'application/octet-stream',
@@ -24,6 +26,8 @@ const routes = {
     '/hello': helloRoute,
     '/addReport': addReportRoute,
     '/home': homePageRoute,
+    '/signup': signupRoute,
+    '/login': loginRoute,
 };
 
 const STATIC_PATH = path.join(process.cwd(), './public');

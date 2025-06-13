@@ -20,8 +20,8 @@ const homePageRoute = (req, res) => {
       <p>Help keep our community clean</p>
     </div>
     <div class="auth-buttons">
-      <a href="/login" class="btn-auth btn-login">Login</a>
-      <a href="/signup" class="btn-auth btn-signup">Sign Up</a>
+      <a href="/login.html" class="btn-auth btn-login">Login</a>
+      <a href="/signup.html" class="btn-auth btn-signup">Sign Up</a>
     </div>
   </header>
   

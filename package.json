@@ -16,5 +16,10 @@
   "bugs": {
     "url": "https://github.com/NescafeAlgeria/GaW/issues"
   },
-  "homepage": "https://github.com/NescafeAlgeria/GaW#readme"
+  "homepage": "https://github.com/NescafeAlgeria/GaW#readme",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "dotenv": "^16.5.0",
+    "mongodb": "^6.17.0"
+  }
 }
