@@ -50,7 +50,7 @@ header {
     color: #FFFFFF;
 
     font-size: 1rem;
-    transition: all 0.3 easi-in-out;
+    transition: all 0.3 ease;
 }
 
 #report-info button:hover {

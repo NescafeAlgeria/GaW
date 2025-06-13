@@ -9,7 +9,7 @@
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <script src="index.js" defer></script>
+    <script src="report.js" defer></script>
 </head>
 <body>
 <header>
@@ -44,6 +44,15 @@
                     <label for="severity-slider" style="font-weight: bold; color: var(--primary-color);">Severity:</label>
                     <input type="range" id="severity-slider" name="severity" min="1" max="10" value="5" style="width: 100%;">
                     <span id="severity-value" style="margin-left: 0.5rem; color: var(--primary-dark); font-weight: bold;">5</span>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label for="report-category" style="font-weight: bold; color: var(--primary-color);">Category:</label>
+                    <select id="report-category" name="category" class="round-edge" style="width: 100%; margin-top: 0.5rem; padding: 0.5rem; font-size: 1rem; border: 2px solid var(--primary-color); background: var(--light-gray); color: var(--dark-gray);">
+                        <option value="household waste">Household Waste</option>
+                        <option value="paper">Paper</option>
+                        <option value="plastic">Plastic</option>
+                        <option value="glass">Glass</option>
+                    </select>
                 </div>
                 <div style="margin-bottom: 1rem;">
                     <label id="report-description" for="report-text" style="font-weight: bold; color: var(--primary-color);">Details:</label>

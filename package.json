@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/NescafeAlgeria/GaW/issues"
   },
-  "homepage": "https://github.com/NescafeAlgeria/GaW#readme"
+  "homepage": "https://github.com/NescafeAlgeria/GaW#readme",
+  "dependencies": {
+    "pdfkit": "^0.17.1"
+  }
 }

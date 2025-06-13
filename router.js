@@ -3,8 +3,11 @@ import fs from 'fs';
 import path from 'path';
 
 import addReportRoute from './routes/api/addReportRoute.js';
+import exportReportRoute from './routes/api/exportReportRoute.js';
 import homePageRoute from './routes/pages/homeRoute.js';
 import reportPageRoute from './routes/pages/reportRoute.js';
+import dashboardRoute from "./routes/pages/dashboardRoute.js";
+import getAllReportedCitiesRoute from "./routes/api/getAllReportedCitiesRoute.js";
 
 const MIME_TYPES = {
     default: 'application/octet-stream',
@@ -22,10 +25,13 @@ const MIME_TYPES = {
 const pageRoutes = {
     '/': homePageRoute,
     '/report': reportPageRoute,
+    '/dashboard': dashboardRoute,
 };
 
 const apiRoutes = {
     '/api/addReport': addReportRoute,
+    '/api/exportReport': exportReportRoute,
+    '/api/getAllReportedCities': getAllReportedCitiesRoute
 };
 
 const STATIC_PATH = path.join(process.cwd(), './public');
