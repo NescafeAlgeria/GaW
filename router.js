@@ -1,10 +1,10 @@
 import url from 'url';
 import fs from 'fs';
 import path from 'path';
-import helloRoute from './routes/helloRoute.js';
-import mainRoute from './routes/mainRoute.js';
-import addReportRoute from './routes/addReportRoute.js';
-import homePageRoute from './routes/homeRoute.js';
+
+import addReportRoute from './routes/api/addReportRoute.js';
+import homePageRoute from './routes/pages/homeRoute.js';
+import reportPageRoute from './routes/pages/reportRoute.js';
 
 const MIME_TYPES = {
     default: 'application/octet-stream',
@@ -19,19 +19,18 @@ const MIME_TYPES = {
     svg: 'image/svg+xml',
 };
 
-const routes = {
-    '/': mainRoute,
-    '/hello': helloRoute,
-    '/addReport': addReportRoute,
-    '/home': homePageRoute,
+const pageRoutes = {
+    '/': homePageRoute,
+    '/report': reportPageRoute,
+};
+
+const apiRoutes = {
+    '/api/addReport': addReportRoute,
 };
 
 const STATIC_PATH = path.join(process.cwd(), './public');
 
-const toBool = [
-    () => true,
-    () => false,
-];
+const toBool = [() => true, () => false];
 
 const prepareFile = async (requestPath) => {
     const filePath = path.join(STATIC_PATH, decodeURIComponent(requestPath));
@@ -45,15 +44,16 @@ const prepareFile = async (requestPath) => {
 };
 
 export const routeRequest = async (req, res) => {
-    console.log('Request received:', req.method, req.url);
-
     const parsedUrl = url.parse(req.url, true);
     const pathname = parsedUrl.pathname;
 
+    if (apiRoutes[pathname]) {
+        apiRoutes[pathname](req, res);
+        return;
+    }
 
-    const routeHandler = routes[pathname];
-    if (routeHandler) {
-        routeHandler(req, res);
+    if (pageRoutes[pathname]) {
+        pageRoutes[pathname](req, res);
         return;
     }
 
