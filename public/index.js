@@ -51,7 +51,7 @@ submitButton.addEventListener('click', async (event) => {
     const lat = marker.getLatLng().lat;
     const lng = marker.getLatLng().lng;
     const description = descriptionText.value;
-    const response = await fetch('/addReport', {
+    const response = await fetch('/api/addReport', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
