@@ -1,6 +1,6 @@
 import PDFDocument from 'pdfkit'
 
-const generatePdfBuffer = (data) => {
+const generatePdfBuffer = (data, startDate = null, endDate = null) => {
     return new Promise((resolve, reject) => {
         const doc = new PDFDocument()
         const buffers = []
@@ -21,17 +21,26 @@ const generatePdfBuffer = (data) => {
 
         const garbageStatusSorted = Object.values(garbageStatusPerZone).sort((a, b) => (b.reportsCount + b.totalSeverity) - (a.reportsCount + a.totalSeverity));
 
-        console.log(garbageStatusSorted);
-
         doc.on('data', chunk => buffers.push(chunk))
         doc.on('end', () => resolve(Buffer.concat(buffers)))
         doc.on('error', reject)
 
         doc.fontSize(18).text(`Garbage Situation for ${data[0].county}`, {align: 'center'})
+        
+        let timeIntervalText = '';
+        if (startDate && endDate) {
+            timeIntervalText = `Time Period: ${startDate} to ${endDate}`;
+        } else if (startDate) {
+            timeIntervalText = `Time Period: From ${startDate}`;
+        } else if (endDate) {
+            timeIntervalText = `Time Period: Until ${endDate}`;
+        }
+        
+        if (timeIntervalText) {
+            doc.fontSize(12).text(timeIntervalText, {align: 'center'})
+        }
+        
         doc.moveDown()
-
-        doc.fontSize(14).text('Garbage Status by Locality', {underline: true})
-        doc.moveDown(0.5)
 
         doc.fillColor('#000000');
 
@@ -80,17 +89,42 @@ const generatePdfBuffer = (data) => {
         doc.fillColor('#871d1d');
         doc.fontSize(14).text('Dirtiest locality: ' + garbageStatusSorted[0].locality);
         doc.fillColor('#21871d');
-        doc.fontSize(14).text('Cleanest locality: ' + garbageStatusSorted[garbageStatusSorted.length - 1].locality);
-        doc.fillColor('black');
+        doc.fontSize(14).text('Cleanest locality: ' + garbageStatusSorted[garbageStatusSorted.length - 1].locality);        doc.fillColor('black');
         doc.moveDown();
 
         doc.fontSize(16).text('Detailed Reports');
+        doc.moveDown(0.5);
+
+        let detailStartY = doc.y;
+        doc.fillColor('#e8e8e8');
+        doc.rect(x, detailStartY, width, 22).fill();
+        doc.fillColor('#000000');
+        doc.fontSize(10);
+        doc.text("#", x + 5, detailStartY + 5, {width: width * 0.05});
+        doc.text("Category", x + width * 0.05, detailStartY + 5, {width: width * 0.25});
+        doc.text("Severity", x + width * 0.3, detailStartY + 5, {width: width * 0.1, align: 'center'});
+        doc.text("Locality", x + width * 0.4, detailStartY + 5, {width: width * 0.25});
+        doc.text("County", x + width * 0.65, detailStartY + 5, {width: width * 0.35});
+
+        detailStartY += 22;
 
         data.forEach((item, index) => {
-            doc.fontSize(12).text(
-                `${index + 1}. ${item.category} | Severity: ${item.severity} | ${item.locality}, ${item.county}`
-            )
-        })
+            const yPos = detailStartY + index * 25;
+            
+            if (index % 2 === 0) {
+                doc.fillColor('#f8f8f8');
+                doc.rect(x, yPos, width, 25).fill();
+            }
+            
+            doc.fillColor('#000000');
+            doc.fontSize(9);
+            
+            doc.text((index + 1).toString(), x + 5, yPos + 5, {width: width * 0.05});
+            doc.text(item.category || 'N/A', x + width * 0.05, yPos + 5, {width: width * 0.25 - 5});
+            doc.text(item.severity.toString(), x + width * 0.3, yPos + 5, {width: width * 0.1, align: 'center'});
+            doc.text(item.locality || 'Unknown', x + width * 0.4, yPos + 5, {width: width * 0.25 - 5});
+            doc.text(item.county || 'Unknown', x + width * 0.65, yPos + 5, {width: width * 0.35 - 5});
+        });
 
         doc.end()
     })

@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 
 export const servePage = (pageName) => {
-    const filePath = path.join(process.cwd(), 'public', pageName);
+    const filePath = path.join(process.cwd(), 'public', 'views', pageName);
 
     return (req, res) => {
         fs.readFile(filePath, (err, content) => {

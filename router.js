@@ -2,12 +2,9 @@ import url from 'url';
 import fs from 'fs';
 import path from 'path';
 
-import addReportRoute from './routes/api/addReportRoute.js';
-import exportReportRoute from './routes/api/exportReportRoute.js';
-import homePageRoute from './routes/pages/homeRoute.js';
-import reportPageRoute from './routes/pages/reportRoute.js';
-import dashboardRoute from "./routes/pages/dashboardRoute.js";
-import getAllReportedCitiesRoute from "./routes/api/getAllReportedCitiesRoute.js";
+import { ReportController } from './controllers/ReportController.js';
+import { ExportController } from './controllers/ExportController.js';
+import { PageController } from './controllers/PageController.js';
 
 const MIME_TYPES = {
     default: 'application/octet-stream',
@@ -23,15 +20,15 @@ const MIME_TYPES = {
 };
 
 const pageRoutes = {
-    '/': homePageRoute,
-    '/report': reportPageRoute,
-    '/dashboard': dashboardRoute,
+    '/': PageController.home,
+    '/report': PageController.report,
+    '/dashboard': PageController.dashboard,
 };
 
 const apiRoutes = {
-    '/api/addReport': addReportRoute,
-    '/api/exportReport': exportReportRoute,
-    '/api/getAllReportedCities': getAllReportedCitiesRoute
+    '/api/addReport': ReportController.create,
+    '/api/exportReport': ExportController.exportReport,
+    '/api/getAllReportedCities': ReportController.getAllCounties
 };
 
 const STATIC_PATH = path.join(process.cwd(), './public');
@@ -43,7 +40,7 @@ const prepareFile = async (requestPath) => {
     const pathTraversal = !filePath.startsWith(STATIC_PATH);
     const exists = await fs.promises.access(filePath).then(...toBool);
     const found = !pathTraversal && exists;
-    const finalPath = found ? filePath : path.join(STATIC_PATH, '404.html');
+    const finalPath = found ? filePath : path.join(STATIC_PATH, 'views', '404.html');
     const ext = path.extname(finalPath).substring(1).toLowerCase();
     const stream = fs.createReadStream(finalPath);
     return { found, ext, stream };

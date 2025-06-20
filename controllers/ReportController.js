@@ -1,5 +1,5 @@
 import https from 'https'
-import { createReport } from '../../services/reportService.js'
+import { Report } from '../models/Report.js'
 
 function reverseGeocode(lat, lon) {
     return new Promise((resolve, reject) => {
@@ -33,8 +33,14 @@ function getLocalityAndCounty(address) {
     return { locality, county }
 }
 
-const addReportRoute = (req, res) => {
-    if (req.method === 'POST') {
+export class ReportController {
+    static async create(req, res) {
+        if (req.method !== 'POST') {
+            res.writeHead(405, { 'Content-Type': 'text/plain' })
+            res.end('Method Not Allowed')
+            return
+        }
+
         let body = ''
         req.on('data', chunk => body += chunk.toString())
         req.on('end', async () => {
@@ -46,7 +52,7 @@ const addReportRoute = (req, res) => {
                 reportData.county = county
                 reportData.locality = locality
                 console.log("Received report data:", reportData);
-                const result = await createReport(reportData)
+                const result = await Report.create(reportData)
                 if (!result) {
                     res.writeHead(500, { 'Content-Type': 'application/json' })
                     res.end(JSON.stringify({ error: 'Failed to save report.' }))
@@ -59,10 +65,16 @@ const addReportRoute = (req, res) => {
                 res.end(JSON.stringify({ error: 'Invalid JSON or failed to save report.' }))
             }
         })
-    } else {
-        res.writeHead(405, { 'Content-Type': 'text/plain' })
-        res.end('Method Not Allowed')
+    }
+
+    static async getAllCounties(req, res) {
+        try {
+            const counties = await Report.getAllCounties();
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ counties }));
+        } catch (err) {
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Failed to fetch counties' }));
+        }
     }
 }
-
-export default addReportRoute
