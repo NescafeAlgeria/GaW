@@ -6,15 +6,85 @@ const generatePdfBuffer = (data) => {
         const buffers = []
 
         const garbageStatusPerZone = {};
+        data.forEach(report => {
+            const zone = report.locality || 'Unknown';
+            if (!garbageStatusPerZone[zone]) {
+                garbageStatusPerZone[zone] = {
+                    locality: zone,
+                    reportsCount: 0,
+                    totalSeverity: 0,
+                };
+            }
+            garbageStatusPerZone[zone].reportsCount += 1;
+            garbageStatusPerZone[zone].totalSeverity += report.severity || 0;
+        });
 
-        data.forEach((report)=> garbageStatusPerZone[])
+        const garbageStatusSorted = Object.values(garbageStatusPerZone).sort((a, b) => (b.reportsCount + b.totalSeverity) - (a.reportsCount + a.totalSeverity));
+
+        console.log(garbageStatusSorted);
 
         doc.on('data', chunk => buffers.push(chunk))
         doc.on('end', () => resolve(Buffer.concat(buffers)))
         doc.on('error', reject)
 
-        doc.fontSize(18).text('Garbage Report', { align: 'center' })
+        doc.fontSize(18).text(`Garbage Situation for ${data[0].county}`, {align: 'center'})
         doc.moveDown()
+
+        doc.fontSize(14).text('Garbage Status by Locality', {underline: true})
+        doc.moveDown(0.5)
+
+        doc.fillColor('#000000');
+
+        const minScore = garbageStatusSorted.reduce((min, zone) => Math.min(min, zone.totalSeverity + zone.reportsCount), Infinity);
+        const maxScore = garbageStatusSorted.reduce((max, zone) => Math.max(max, zone.totalSeverity + zone.reportsCount), -Infinity);
+        const scoreRange = maxScore - minScore;
+        const scoreToColor = (score) => {
+            const normalizedScore = (score - minScore) / scoreRange;
+            const base = 210;
+            const red = Math.min(255, base + Math.floor(35 * normalizedScore));
+            const green = Math.min(255, base + Math.floor(35 * (1 - normalizedScore)));
+            return [red, green, 190];
+        };
+
+        const pageWidth = doc.page.width;
+        const margin = 50;
+
+        const x = margin;
+        const width = pageWidth - margin * 2;
+
+
+        let startY = 110;
+        doc.fillColor('#e8e8e8');
+        doc.rect(x, startY, width, 22).fill();
+        doc.fillColor('#000000');
+        doc.text("Locality", x + 10, startY + 5);
+        doc.text("Severity Score", x + width / 2 - 100, startY + 5, {align: 'center', width: 200});
+        doc.text("Nr of Reports", x + width - 200, startY + 5, {align: 'right', width: 200});
+
+        startY += 5;
+
+        garbageStatusSorted.forEach((zone, index) => {
+            const yPos = startY + (index + 1) * 25;
+            doc.fillColor(scoreToColor(zone.reportsCount + zone.totalSeverity));
+            doc.rect(x, yPos - 5, width, 25).fill();
+            doc.fillColor('#000000');
+            doc.text(zone.locality, x + 10, yPos);
+            doc.text(zone.totalSeverity, x + width / 2 - 100, yPos, {align: 'center', width: 200});
+            doc.text(zone.reportsCount, x + width - 10, yPos, {align: 'right'});
+        });
+
+        const newY = 110 + (garbageStatusSorted.length + 1) * 25 + 25;
+        doc.y = newY;
+        doc.x = margin;
+
+        doc.fillColor('#871d1d');
+        doc.fontSize(14).text('Dirtiest locality: ' + garbageStatusSorted[0].locality);
+        doc.fillColor('#21871d');
+        doc.fontSize(14).text('Cleanest locality: ' + garbageStatusSorted[garbageStatusSorted.length - 1].locality);
+        doc.fillColor('black');
+        doc.moveDown();
+
+        doc.fontSize(16).text('Detailed Reports');
 
         data.forEach((item, index) => {
             doc.fontSize(12).text(

@@ -3,14 +3,8 @@ document.getElementById('exportReportBtn').addEventListener('click', function ()
     fetch(`/api/exportReport?county=${encodeURIComponent(county)}`)
         .then(res => res.blob())
         .then(blob => {
-            const url = URL.createObjectURL(blob)
-            const a = document.createElement('a')
-            a.href = url
-            a.download = 'report.pdf'
-            document.body.appendChild(a)
-            a.click()
-            a.remove()
-            URL.revokeObjectURL(url)
+            const url = URL.createObjectURL(blob);
+            window.open(url, '_blank');
         })
         .catch(err => {
             console.error('Error:', err)
@@ -33,4 +27,6 @@ fetch('/api/getAllReportedCities')
     .catch(err => {
         console.error('Failed to load counties:', err);
     });
+
+
 
