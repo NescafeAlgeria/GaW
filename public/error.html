@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Error</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+<div class="wrapper">
+  <header>
+    <div class="logo-container">
+      <h1>Oops!</h1>
+      <p>Something went wrong</p>
+    </div>
+    <div class="auth-buttons">
+      <a href="/login.html" class="btn-auth">Login</a>
+      <a href="/signup.html" class="btn-auth btn-signup">Sign Up</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h2>Error</h2>
+      <p id="error-message">An unknown error occurred.</p>
+      <div class="hero-buttons">
+        <a href="/" class="btn-secondary">Go to Homepage</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Your Site</p>
+  </footer>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+
+    const messages = {
+      login: 'Login failed: Invalid email or password.',
+      signup: 'Signup failed: User already exists or database error.',
+      db: 'A database connection error occurred.',
+      unknown: 'An unknown error occurred.'
+    };
+
+    document.getElementById('error-message').textContent = messages[code] || messages.unknown;
+  </script>
+</div>
+</body>
+</html>

@@ -7,7 +7,7 @@ const dbName = 'GaW';
 
 let client;
 
-async function connect() {
+export async function connect() {
   if (!client) {
     client = new MongoClient(uri);
     await client.connect();
