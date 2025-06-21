@@ -5,6 +5,9 @@ import path from 'path';
 import { ReportController } from './controllers/ReportController.js';
 import { ExportController } from './controllers/ExportController.js';
 import { PageController } from './controllers/PageController.js';
+import signupRoute from './routes/signupRoute.js';
+import loginRoute from './routes/loginRoute.js';
+
 
 const MIME_TYPES = {
     default: 'application/octet-stream',
@@ -23,6 +26,8 @@ const pageRoutes = {
     '/': PageController.home,
     '/report': PageController.report,
     '/dashboard': PageController.dashboard,
+    '/signup': signupRoute,
+    '/login': loginRoute,
 };
 
 const apiRoutes = {
