@@ -6,7 +6,6 @@ import generatePdfBuffer from '../utils/generatePdfBuffer.js';
 import generateCsvBuffer from '../utils/generateCsvBuffer.js';
 
 const STATIC_PATH = path.join(process.cwd(), './public');
-const SAMPLE_PDF_PATH = path.join(STATIC_PATH, 'sample.pdf');
 
 export class ExportController {
     static async exportReport(req, res) {
@@ -37,12 +36,14 @@ export class ExportController {
 
             const allReports = await Report.findByCounty(county, startDate, endDate);
 
+            const sanitizedCounty = county ? county.replace(/[^a-zA-Z0-9-_]/g, '_') : 'report';
+            
             if (format.toLowerCase() === 'csv') {
                 const csvBuffer = generateCsvBuffer(allReports, startDate, endDate);
                 
                 res.writeHead(200, {
                     'Content-Type': 'text/csv',
-                    'Content-Disposition': `attachment; filename="${county}_report.csv"`
+                    'Content-Disposition': `attachment; filename="${sanitizedCounty}_report.csv"`
                 });
                 res.end(csvBuffer);
             } else {
@@ -50,7 +51,7 @@ export class ExportController {
                 
                 res.writeHead(200, {
                     'Content-Type': 'application/pdf',
-                    'Content-Disposition': `inline; filename="${county}_report.pdf"`
+                    'Content-Disposition': `inline; filename="${sanitizedCounty}_report.pdf"`
                 });
                 res.end(pdfBuffer);
             }

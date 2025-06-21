@@ -1,9 +1,18 @@
 import PDFDocument from 'pdfkit'
+import path from 'path'
 
-const generatePdfBuffer = (data, startDate = null, endDate = null) => {
+const generatePdfBuffer = (data) => {
     return new Promise((resolve, reject) => {
-        const doc = new PDFDocument()
+        const doc = new PDFDocument();
         const buffers = []
+
+        try {
+            const fontPath = path.join(process.cwd(), 'node_modules', 'dejavu-fonts-ttf', 'ttf', 'DejaVuSans.ttf')
+            doc.registerFont('DejaVu', fontPath)
+            doc.font('DejaVu')
+        } catch (err) {
+            console.warn('Could not load DejaVu font, using default font')
+        }
 
         const garbageStatusPerZone = {};
         data.forEach(report => {
@@ -17,41 +26,41 @@ const generatePdfBuffer = (data, startDate = null, endDate = null) => {
             }
             garbageStatusPerZone[zone].reportsCount += 1;
             garbageStatusPerZone[zone].totalSeverity += report.severity || 0;
-        });
-
+        });        
+        
         const garbageStatusSorted = Object.values(garbageStatusPerZone).sort((a, b) => (b.reportsCount + b.totalSeverity) - (a.reportsCount + a.totalSeverity));
+
+        if (data.length === 0) {
+            doc.fontSize(16).text('No reports available for the selected criteria', {align: 'center'});
+            doc.end();
+            return;
+        }
+
+        console.log(data);
 
         doc.on('data', chunk => buffers.push(chunk))
         doc.on('end', () => resolve(Buffer.concat(buffers)))
         doc.on('error', reject)
 
         doc.fontSize(18).text(`Garbage Situation for ${data[0].county}`, {align: 'center'})
-        
-        let timeIntervalText = '';
-        if (startDate && endDate) {
-            timeIntervalText = `Time Period: ${startDate} to ${endDate}`;
-        } else if (startDate) {
-            timeIntervalText = `Time Period: From ${startDate}`;
-        } else if (endDate) {
-            timeIntervalText = `Time Period: Until ${endDate}`;
-        }
-        
-        if (timeIntervalText) {
-            doc.fontSize(12).text(timeIntervalText, {align: 'center'})
-        }
-        
         doc.moveDown()
 
-        doc.fillColor('#000000');
+        doc.fontSize(14).text('Garbage Status by Locality', {underline: true})
+        doc.moveDown(0.5)
 
-        const minScore = garbageStatusSorted.reduce((min, zone) => Math.min(min, zone.totalSeverity + zone.reportsCount), Infinity);
+        doc.fillColor('#000000');        const minScore = garbageStatusSorted.reduce((min, zone) => Math.min(min, zone.totalSeverity + zone.reportsCount), Infinity);
         const maxScore = garbageStatusSorted.reduce((max, zone) => Math.max(max, zone.totalSeverity + zone.reportsCount), -Infinity);
         const scoreRange = maxScore - minScore;
         const scoreToColor = (score) => {
-            const normalizedScore = (score - minScore) / scoreRange;
+            let normalizedScore;
+            if (scoreRange === 0 || garbageStatusSorted.length === 1) {
+                normalizedScore = 0.5;
+            } else {
+                normalizedScore = (score - minScore) / scoreRange;
+            }
             const base = 210;
-            const red = Math.min(255, base + Math.floor(35 * normalizedScore));
-            const green = Math.min(255, base + Math.floor(35 * (1 - normalizedScore)));
+            const red = Math.min(255, Math.max(0, base + Math.floor(35 * normalizedScore)));
+            const green = Math.min(255, Math.max(0, base + Math.floor(35 * (1 - normalizedScore))));
             return [red, green, 190];
         };
 
@@ -75,6 +84,8 @@ const generatePdfBuffer = (data, startDate = null, endDate = null) => {
         garbageStatusSorted.forEach((zone, index) => {
             const yPos = startY + (index + 1) * 25;
             doc.fillColor(scoreToColor(zone.reportsCount + zone.totalSeverity));
+            console.log("Fill colour: ", scoreToColor(zone.reportsCount + zone.totalSeverity));
+            console.log("Zone: ", zone.locality, "Score: ", zone.reportsCount + zone.totalSeverity);
             doc.rect(x, yPos - 5, width, 25).fill();
             doc.fillColor('#000000');
             doc.text(zone.locality, x + 10, yPos);

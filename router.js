@@ -5,8 +5,7 @@ import path from 'path';
 import { ReportController } from './controllers/ReportController.js';
 import { ExportController } from './controllers/ExportController.js';
 import { PageController } from './controllers/PageController.js';
-import signupRoute from './routes/signupRoute.js';
-import loginRoute from './routes/loginRoute.js';
+import { AuthController } from './controllers/AuthController.js';
 
 
 const MIME_TYPES = {
@@ -26,8 +25,8 @@ const pageRoutes = {
     '/': PageController.home,
     '/report': PageController.report,
     '/dashboard': PageController.dashboard,
-    '/signup': signupRoute,
-    '/login': loginRoute,
+    '/signup': AuthController.signup,
+    '/login': AuthController.login,
 };
 
 const apiRoutes = {

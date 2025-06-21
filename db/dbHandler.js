@@ -1,4 +1,4 @@
-const useMock = true;
+const useMock = false;
 
 export const db = useMock
     ? await import('./mockDbHandler.js')

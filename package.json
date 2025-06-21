@@ -17,12 +17,13 @@
   "bugs": {
     "url": "https://github.com/NescafeAlgeria/GaW/issues"
   },
-  "homepage": "https://github.com/NescafeAlgeria/GaW#readme",
   "dependencies": {
+    "@fontsource/roboto": "^5.2.6",
     "bcrypt": "^6.0.0",
+    "dejavu-fonts-ttf": "^2.37.3",
     "dotenv": "^16.5.0",
     "mongodb": "^6.17.0",
-    "pdfkit": "^0.17.1",
+    "pdfkit": "^0.17.1"
   },
-  "homepage": "https://github.com/NescafeAlgeria/GaW#readme",
+  "homepage": "https://github.com/NescafeAlgeria/GaW#readme"
 }
