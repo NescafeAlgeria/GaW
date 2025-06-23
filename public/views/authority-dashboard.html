@@ -1,67 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>Authority Dashboard | Garbage Reporting Platform</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authority Dashboard | Garbage Reporting Platform</title>
     <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="/dashboard-inline.css">
     <script src="dashboard.js" defer></script>
 </head>
+
 <body>
-<header>
-    <div class="logo-container">
-        <h1>Garbage Reporting Platform</h1>
-        <p>Authority Dashboard</p>
-    </div>
-    <div class="auth-buttons">
-        <a href="/" class="btn-auth btn-login">Home</a>
-        <a href="/api/logout" class="btn-auth btn-signup">Logout</a>
-    </div>
-</header>
-
-<main>
-    <section class="hero">
-        <h2>Export Reports</h2>
-        <p>Generate and download reports by county in your preferred format.</p>
-    </section>    <section class="dashboard-section export-section">        
-        <div class="dashboard-form">
-            <div>
-                <label for="countyDropdown">Select County:</label>
-                <select id="countyDropdown" class="round-edge">
-                    <option value="">Choose a county...</option>
-                </select>
-            </div>
-
-            <div class="date-row">
-                <div>
-                    <label for="startDate">From Date:</label>
-                    <input type="date" id="startDate" class="round-edge">
-                </div>
-                <div>
-                    <label for="endDate">To Date:</label>
-                    <input type="date" id="endDate" class="round-edge">
-                </div>
-            </div>
-
-            <div>
-                <label for="formatDropdown">Export Format:</label>
-                <select id="formatDropdown" class="round-edge">
-                    <option value="pdf">PDF Report</option>
-                    <option value="csv">CSV Data</option>
-                </select>
-            </div>
-
-            <button id="exportReportBtn" class="btn-primary export-btn" disabled>
-                Export Report
-            </button>
+    <header>
+        <div class="logo-container">
+            <h1>Garbage Reporting Platform</h1>
+            <p>Authority Dashboard</p>
         </div>
-    </section>
-</main>
+        <div class="auth-buttons">
+            <a href="/" class="btn-auth btn-login">Home</a>
+            <a href="/api/logout" class="btn-auth btn-signup">Logout</a>
+        </div>
+    </header>
 
-<footer>
-    <p>&copy; 2025 Garbage Reporting Platform</p>
-    <p>Working together for cleaner neighborhoods</p>
-</footer>
+    <main>
+        <section class="hero">
+            <h2>Export Reports</h2>
+            <p>Generate and download reports by county in your preferred format.</p>
+        </section>
+        <section class="dashboard-section export-section">
+            <h3>Export Controls</h3>
+            <div class="dashboard-form">
+                <div>
+                    <label for="countyDropdown">Select County:</label>
+                    <select id="countyDropdown" class="round-edge">
+                        <option value="">Choose a county...</option>
+                    </select>
+                </div>
+
+                <div class="date-row">
+                    <div>
+                        <label for="startDate">From Date:</label>
+                        <input type="date" id="startDate" class="round-edge">
+                    </div>
+                    <div>
+                        <label for="endDate">To Date:</label>
+                        <input type="date" id="endDate" class="round-edge">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="formatDropdown">Export Format:</label>
+                    <select id="formatDropdown" class="round-edge">
+                        <option value="pdf">PDF Report</option>
+                        <option value="csv">CSV Data</option>
+                    </select>
+                </div>
+
+                <button id="exportReportBtn" class="btn-primary export-btn" disabled>
+                    Export Report
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Garbage Reporting Platform</p>
+        <p>Working together for cleaner neighborhoods</p>
+    </footer>
 </body>
-</html>
 
+</html>
