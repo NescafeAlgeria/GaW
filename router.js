@@ -6,6 +6,7 @@ import { ReportController } from './controllers/ReportController.js';
 import { ExportController } from './controllers/ExportController.js';
 import { PageController } from './controllers/PageController.js';
 import { AuthController } from './controllers/AuthController.js';
+import { authMiddleware } from './middleware.js';
 
 const MIME_TYPES = {
     default: 'application/octet-stream',
@@ -57,9 +58,45 @@ const prepareFile = async (requestPath) => {
     return { found, ext, stream };
 };
 
+async function runMiddlewares(req, res, middlewares) {
+  for (const mw of middlewares) {
+    let finished = false;
+
+    await new Promise(resolve => {
+      mw(req, res, () => {
+        finished = true;
+        resolve();
+      });
+    });
+
+    if (!finished) {
+      return false;
+    }
+  }
+  return true;
+}
+
+const protectedRoutes = [
+    '/report',
+    '/dashboard',
+    '/api/addReport',
+    '/api/exportReport',
+    '/api/getAllReportedCities'
+];
+
 export const routeRequest = async (req, res) => {
     const parsedUrl = url.parse(req.url, true);
     const pathname = parsedUrl.pathname;
+
+
+    if (protectedRoutes.includes(pathname)) {
+        const isAuthenticated = await runMiddlewares(req, res, [authMiddleware]);
+        if (!isAuthenticated) {
+            res.writeHead(302, { Location: '/login' });
+            res.end();
+            return;
+        }
+    }
 
     if (apiRoutes[pathname]) {
         apiRoutes[pathname](req, res);
