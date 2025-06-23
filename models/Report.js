@@ -74,4 +74,8 @@ export class Report {
         }
         return Array.from(countiesSet);
     }
+
+    static async delete(reportId) {
+        return await db.remove('reports', { _id: reportId });
+    }
 }

@@ -120,4 +120,43 @@ export class AuthController {
             res.end('Method Not Allowed');
         }
     };
+
+    static getCurrentUser = async (req, res) => {
+        try {
+            const cookies = req.headers.cookie;
+            if (!cookies) {
+                res.writeHead(401, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Not authenticated' }));
+                return;
+            }
+
+            const sessionId = cookies.split(';').find(c => c.trim().startsWith('sessionId='))?.split('=')[1];
+            if (!sessionId) {
+                res.writeHead(401, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Not authenticated' }));
+                return;
+            }
+
+            const session = await Session.findBySessionId(sessionId);
+            if (!session) {
+                res.writeHead(401, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Invalid session' }));
+                return;
+            }
+
+            const user = await User.findByUsername(session.username);
+            if (!user) {
+                res.writeHead(404, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'User not found' }));
+                return;
+            }
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ username: user.username, role: user.role }));
+        } catch (error) {
+            console.error('getCurrentUser error:', error);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Internal server error' }));
+        }
+    };
 }

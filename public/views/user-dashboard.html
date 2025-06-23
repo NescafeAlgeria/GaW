@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard | Garbage Reporting Platform</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header>
+    <div class="logo-container">
+        <h1>Garbage Reporting Platform</h1>
+        <p>User Dashboard</p>
+    </div>
+    <div class="auth-buttons">
+        <a href="/" class="btn-auth btn-login">Home</a>
+        <a href="/api/logout" class="btn-auth btn-signup">Logout</a>
+    </div>
+</header>
+
+<main>
+    <div class="container">
+        <h2 id="welcome-message">Hi, User!</h2>
+        <div class="user-actions">
+            <a href="/report" class="btn btn-primary">Report a Problem</a>
+        </div>
+    </div>
+</main>
+
+<style>
+.container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    text-align: center;
+}
+
+#welcome-message {
+    color: #2c3e50;
+    margin-bottom: 2rem;
+}
+
+.user-actions {
+    margin-top: 2rem;
+}
+
+.btn {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background-color: #3498db;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    transition: background-color 0.3s;
+}
+
+.btn:hover {
+    background-color: #2980b9;
+}
+
+.btn-primary {
+    background-color: #27ae60;
+}
+
+.btn-primary:hover {
+    background-color: #229954;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', async function() {
+    try {
+        const response = await fetch('/api/currentUser');
+        if (response.ok) {
+            const user = await response.json();
+            document.getElementById('welcome-message').textContent = `Hi, ${user.username}!`;
+        }
+    } catch (error) {
+        console.error('Error fetching user info:', error);
+    }
+});
+</script>
+</body>
+</html>

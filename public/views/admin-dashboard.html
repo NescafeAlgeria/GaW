@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Garbage Reporting Platform</title>
+    <link rel="stylesheet" href="/style.css">
+    <script src="dashboard.js" defer></script>
+    <script src="admin-dashboard.js" defer></script>
+</head>
+<body>
+<header>
+    <div class="logo-container">
+        <h1>Garbage Reporting Platform</h1>
+        <p>Admin Dashboard</p>
+    </div>
+    <div class="auth-buttons">
+        <a href="/" class="btn-auth btn-login">Home</a>
+        <a href="/api/logout" class="btn-auth btn-signup">Logout</a>
+    </div>
+</header>
+
+<main>
+    <section class="hero">
+        <h2>Admin Dashboard</h2>
+        <p>Manage reports, users, and export data.</p>
+    </section>
+
+    <section style="background-color: var(--light-gray); padding: 2rem; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); max-width: 600px; margin: 0 auto 2rem;">        
+        <h3 style="color: var(--primary-color); margin-bottom: 1rem;">Data Export</h3>
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div>
+                <label for="countyDropdown" style="display: block; font-weight: bold; color: var(--primary-color); margin-bottom: 0.5rem;">Select County:</label>
+                <select id="countyDropdown" class="round-edge" style="width: 100%; padding: 0.75rem; font-size: 1rem; border: 2px solid var(--primary-color); background: var(--white); color: var(--dark-gray); border-radius: 4px;">
+                    <option value="">Choose a county...</option>
+                </select>
+            </div>
+
+            <div style="display: flex; gap: 1rem;">
+                <div style="flex: 1;">
+                    <label for="startDate" style="display: block; font-weight: bold; color: var(--primary-color); margin-bottom: 0.5rem;">From Date:</label>
+                    <input type="date" id="startDate" class="round-edge" style="width: 100%; padding: 0.75rem; font-size: 1rem; border: 2px solid var(--primary-color); background: var(--white); color: var(--dark-gray); border-radius: 4px;">
+                </div>
+                <div style="flex: 1;">
+                    <label for="endDate" style="display: block; font-weight: bold; color: var(--primary-color); margin-bottom: 0.5rem;">To Date:</label>
+                    <input type="date" id="endDate" class="round-edge" style="width: 100%; padding: 0.75rem; font-size: 1rem; border: 2px solid var(--primary-color); background: var(--white); color: var(--dark-gray); border-radius: 4px;">
+                </div>
+            </div>
+
+            <div>
+                <label for="formatDropdown" style="display: block; font-weight: bold; color: var(--primary-color); margin-bottom: 0.5rem;">Export Format:</label>
+                <select id="formatDropdown" class="round-edge" style="width: 100%; padding: 0.75rem; font-size: 1rem; border: 2px solid var(--primary-color); background: var(--white); color: var(--dark-gray); border-radius: 4px;">
+                    <option value="pdf">PDF Report</option>
+                    <option value="csv">CSV Data</option>
+                </select>
+            </div>
+
+            <button id="exportReportBtn" class="btn-primary" style="width: 100%; padding: 1rem; font-size: 1.1rem; margin-top: 1rem;" disabled>
+                Export Report
+            </button>
+        </div>
+    </section>
+
+    <section style="background-color: var(--light-gray); padding: 2rem; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+        <h3 style="color: var(--primary-color); margin-bottom: 1rem;">Reports Management</h3>
+        <div style="overflow-x: auto;">
+            <table id="reports-table" style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+                <thead>
+                    <tr style="background-color: var(--primary-color); color: var(--white);">
+                        <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd;">County</th>
+                        <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd;">Locality</th>
+                        <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd;">Category</th>
+                        <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd;">Severity</th>
+                        <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd;">Date</th>
+                        <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="reports-tbody">
+                    <tr><td colspan="6" style="padding: 1rem; text-align: center;">Loading reports...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section style="background-color: var(--light-gray); padding: 2rem; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+        <h3 style="color: var(--primary-color); margin-bottom: 1rem;">Users Management</h3>
+        <div style="overflow-x: auto;">
+            <table id="users-table" style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+                <thead>
+                    <tr style="background-color: var(--primary-color); color: var(--white);">
+                        <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd;">Username</th>
+                        <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd;">Email</th>
+                        <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd;">Role</th>
+                        <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="users-tbody">
+                    <tr><td colspan="4" style="padding: 1rem; text-align: center;">Loading users...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <p>&copy; 2025 Garbage Reporting Platform</p>
+    <p>Working together for cleaner neighborhoods</p>
+</footer>
+</body>
+</html>

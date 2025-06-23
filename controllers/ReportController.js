@@ -1,5 +1,6 @@
 import https from 'https'
 import { Report } from '../models/Report.js'
+import { User } from '../models/User.js'
 
 function reverseGeocode(lat, lon) {
     return new Promise((resolve, reject) => {
@@ -75,6 +76,64 @@ export class ReportController {
         } catch (err) {
             res.writeHead(500, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ error: 'Failed to fetch counties' }));
+        }
+    }
+
+    static async getAllReports(req, res) {
+        try {
+            const reports = await Report.findAll();
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(reports));
+        } catch (err) {
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Failed to fetch reports' }));
+        }
+    }
+
+    static async getAllUsers(req, res) {
+        try {
+            const users = await User.findAll();
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(users));
+        } catch (err) {
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Failed to fetch users' }));
+        }
+    }
+
+    static async deleteReport(req, res) {
+        if (req.method !== 'DELETE') {
+            res.writeHead(405, { 'Content-Type': 'text/plain' });
+            res.end('Method Not Allowed');
+            return;
+        }
+
+        try {
+            const reportId = req.url.split('/').pop();
+            await Report.delete(reportId);
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: true }));
+        } catch (err) {
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Failed to delete report' }));
+        }
+    }
+
+    static async deleteUser(req, res) {
+        if (req.method !== 'DELETE') {
+            res.writeHead(405, { 'Content-Type': 'text/plain' });
+            res.end('Method Not Allowed');
+            return;
+        }
+
+        try {
+            const userId = req.url.split('/').pop();
+            await User.delete(userId);
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: true }));
+        } catch (err) {
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Failed to delete user' }));
         }
     }
 }

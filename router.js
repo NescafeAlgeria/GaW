@@ -34,7 +34,12 @@ const apiRoutes = {
     '/api/logout': AuthController.logout,
     '/api/addReport': ReportController.create,
     '/api/exportReport': ExportController.exportReport,
-    '/api/getAllReportedCities': ReportController.getAllCounties
+    '/api/getAllReportedCities': ReportController.getAllCounties,
+    '/api/currentUser': AuthController.getCurrentUser,
+    '/api/getAllReports': ReportController.getAllReports,
+    '/api/getAllUsers': ReportController.getAllUsers,
+    '/api/deleteReport': ReportController.deleteReport,
+    '/api/deleteUser': ReportController.deleteUser
 };
 
 const STATIC_PATH = path.join(process.cwd(), './public');
@@ -46,7 +51,7 @@ const prepareFile = async (requestPath) => {
     const pathTraversal = !filePath.startsWith(STATIC_PATH);
     const exists = await fs.promises.access(filePath).then(...toBool);
     const found = !pathTraversal && exists;
-    const finalPath = found ? filePath : path.join(STATIC_PATH, '404.html');
+    const finalPath = found ? filePath : path.join(STATIC_PATH, 'views', '404.html');
     const ext = path.extname(finalPath).substring(1).toLowerCase();
     const stream = fs.createReadStream(finalPath);
     return { found, ext, stream };

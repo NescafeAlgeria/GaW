@@ -20,13 +20,8 @@ export class Session {
   }
 
   static async findBySessionId(sessionId) {
-    const session = await db.findOne('sessions', { sessionId });
-
-    if (!session || new Date(session.expiresAt) < new Date()) {
-      return null;
-    }
-
-    return session;
+    const sessions = await db.find('sessions', { sessionId });
+    return sessions.length > 0 ? sessions[0] : null;
   }
 
   static async getUsername(sessionId) {
