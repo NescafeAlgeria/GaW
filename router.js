@@ -25,11 +25,14 @@ const pageRoutes = {
     '/': PageController.home,
     '/report': PageController.report,
     '/dashboard': PageController.dashboard,
-    '/signup': AuthController.signup,
-    '/login': AuthController.login,
+    '/login': PageController.login,
+    '/signup': PageController.signup,
 };
 
 const apiRoutes = {
+    '/api/signup': AuthController.signup,
+    '/api/login': AuthController.login,
+    '/api/logout': AuthController.logout,
     '/api/addReport': ReportController.create,
     '/api/exportReport': ExportController.exportReport,
     '/api/getAllReportedCities': ReportController.getAllCounties

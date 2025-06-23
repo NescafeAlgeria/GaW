@@ -47,6 +47,10 @@
       gap: 1rem;
     }
 
+    .logout-button {
+      display: none;
+    }
+
     .btn-auth {
       background-color: var(--white);
       color: var(--primary-color);
