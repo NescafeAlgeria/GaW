@@ -157,6 +157,9 @@ export class AuthController {
                 res.end(JSON.stringify({ error: 'User not found' }));
                 return;
             } res.writeHead(200, { 'Content-Type': 'application/json' });
+            if (!user.role) {
+                user.role = 'user';
+            }
             res.end(JSON.stringify({ username: escapeHtml(user.username), role: escapeHtml(user.role) }));
         } catch (error) {
             console.error('getCurrentUser error:', error);
