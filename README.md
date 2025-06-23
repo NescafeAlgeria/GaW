@@ -32,8 +32,8 @@
 </p>
    
 <h4>
-    <a href="https://github.com/NescafeAlgeria/GaW/">View Demo</a>
-  <span> · </span>
+    <!-- <a href="https://github.com/NescafeAlgeria/GaW/">View Demo</a>
+  <span> · </span> -->
     <a href="https://github.com/NescafeAlgeria/GaW">Documentation</a>
   <span> · </span>
     <a href="https://github.com/NescafeAlgeria/GaW/issues/">Report Bug</a>
@@ -98,7 +98,6 @@ Our mission is to create cleaner, healthier communities by empowering citizens t
 <summary>Database</summary>
   <ul>
     <li><a href="https://www.mongodb.com/">MongoDB</a></li>
-    <li><a href="https://mongoosejs.com/">Mongoose</a></li>
   </ul>
 </details>
 
@@ -241,7 +240,7 @@ fetch('/api/addReport', {
 
 * [x] Basic reporting functionality
 * [x] User authentication system
-* [x] Responsive web design
+* [ ] Responsive web design
 * [ ] Mobile app development
 * [ ] Integration with city waste management APIs
 * [ ] Real-time notifications via WebSocket
@@ -273,8 +272,8 @@ Distributed under the MIT License. See LICENSE.txt for more information.
 ## Contact
 <!-- 
 Project Maintainer - [@your_twitter](https://twitter.com/your_twitter) - your.email@example.com
-
-Project Link: [https://github.com/NescafeAlgeria/GaW](https://github.com/NescafeAlgeria/GaW) -->
+-->
+Project Link: [https://github.com/NescafeAlgeria/GaW](https://github.com/NescafeAlgeria/GaW) 
 
 <!-- Acknowledgments -->
 ## Acknowledgements
