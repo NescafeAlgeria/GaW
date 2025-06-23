@@ -4,4 +4,6 @@ export class PageController {
     static home = servePage("home.html");
     static report = servePage("report.html");
     static dashboard = servePage("dashboard.html");
+    static login = servePage("login.html");
+    static signup = servePage("signup.html");
 }

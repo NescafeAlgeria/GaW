@@ -7,7 +7,7 @@ const signupRoute = (req, res) => {
         let body = '';
         req.on('data', chunk => body += chunk);
         req.on('end', async () => {
-            const data = parse(body);
+            const data = JSON.parse(body);
             const { username, email, password } = data;
 
             try {

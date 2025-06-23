@@ -2,12 +2,10 @@ import url from 'url';
 import fs from 'fs';
 import path from 'path';
 
-import addReportRoute from './routes/api/addReportRoute.js';
-import exportReportRoute from './routes/api/exportReportRoute.js';
-import homePageRoute from './routes/pages/homeRoute.js';
-import reportPageRoute from './routes/pages/reportRoute.js';
-import dashboardRoute from "./routes/pages/dashboardRoute.js";
-import getAllReportedCitiesRoute from "./routes/api/getAllReportedCitiesRoute.js";
+import { ReportController } from './controllers/ReportController.js';
+import { ExportController } from './controllers/ExportController.js';
+import { PageController } from './controllers/PageController.js';
+import { AuthController } from './controllers/AuthController.js';
 
 const MIME_TYPES = {
     default: 'application/octet-stream',
@@ -23,15 +21,20 @@ const MIME_TYPES = {
 };
 
 const pageRoutes = {
-    '/': homePageRoute,
-    '/report': reportPageRoute,
-    '/dashboard': dashboardRoute,
+    '/': PageController.home,
+    '/report': PageController.report,
+    '/dashboard': PageController.dashboard,
+    '/login': PageController.login,
+    '/signup': PageController.signup,
 };
 
 const apiRoutes = {
-    '/api/addReport': addReportRoute,
-    '/api/exportReport': exportReportRoute,
-    '/api/getAllReportedCities': getAllReportedCitiesRoute
+    '/api/signup': AuthController.signup,
+    '/api/login': AuthController.login,
+    '/api/logout': AuthController.logout,
+    '/api/addReport': ReportController.create,
+    '/api/exportReport': ExportController.exportReport,
+    '/api/getAllReportedCities': ReportController.getAllCounties
 };
 
 const STATIC_PATH = path.join(process.cwd(), './public');

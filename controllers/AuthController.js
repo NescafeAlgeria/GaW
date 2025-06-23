@@ -1,6 +1,7 @@
 import { parse } from 'querystring';
 import bcrypt from 'bcrypt';
 import { User } from '../models/User.js';
+import { Session } from '../models/Session.js';
 
 export class AuthController {
     static signup = (req, res) => {
@@ -33,7 +34,11 @@ export class AuthController {
                     };
 
                     await User.create(user);
-                    res.writeHead(302, { Location: '/' });
+                    const sessionId = await Session.create(username);
+                    res.writeHead(302, { 
+                        'Set-Cookie': `sessionId=${sessionId}; Path=/; Max-Age=3600`,
+                        'Location' : '/' 
+                    });
                     res.end();
 
                 } catch (err) {
@@ -74,7 +79,12 @@ export class AuthController {
                         return;
                     }
 
-                    res.writeHead(302, { Location: '/home' });
+                    const sessionId = await Session.create(user.username);
+                    
+                    res.writeHead(302, { 
+                        'Set-Cookie': `sessionId=${sessionId};  Path=/; Max-Age=3600`, // 1 hour
+                        'Location' : '/' 
+                    });
                     res.end();
 
                 } catch (err) {
@@ -83,6 +93,28 @@ export class AuthController {
                     console.error(err);
                 }
             });
+        } else {
+            res.writeHead(405, { 'Content-Type': 'text/plain' });
+            res.end('Method Not Allowed');
+        }
+    };
+
+    static logout = (req, res) => {
+        if (req.method === 'GET') {
+            // console.log(req.headers);
+            Session.destroy(req.headers.cookie?.sessionId)
+                .then(() => {
+                    res.writeHead(302, { 
+                        'Set-Cookie': 'sessionId=; Path=/; Max-Age=0',
+                        'Location': '/' 
+                    });
+                    res.end();
+                })
+                .catch(err => {
+                    console.error('Logout error:', err);
+                    res.writeHead(500, { 'Content-Type': 'text/plain' });
+                    res.end('Internal server error');
+                });
         } else {
             res.writeHead(405, { 'Content-Type': 'text/plain' });
             res.end('Method Not Allowed');

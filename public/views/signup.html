@@ -305,8 +305,8 @@
             <p>Join us today</p>
         </div>
         <div class="auth-buttons">
-            <a href="/index.html" class="btn-auth">Home</a>
-            <a href="/login.html" class="btn-auth btn-signin">Sign In</a>
+            <a href="/" class="btn-auth">Home</a>
+            <a href="/login" class="btn-auth btn-signin">Sign In</a>
         </div>
     </header>
 
@@ -317,7 +317,7 @@
                 <p>Join thousands of users and get started today</p>
             </div>
 
-            <form method="post" action="/signup">
+            <form method="post" action="/api/signup">
                 <div class="form-group">
                     <label for="username">Username</label>
                     <input type="text" id="username" name="username" required>
@@ -336,19 +336,19 @@
                     </div> -->
                 </div>
 
-                <div class="terms-agreement">
+                <!-- <div class="terms-agreement">
                     <label>
                         <input type="checkbox" name="terms" required>
                         <span>I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></span>
                     </label>
-                </div>
+                </div> -->
 
-                <div class="terms-agreement">
+                <!-- <div class="terms-agreement">
                     <label>
                         <input type="checkbox" name="newsletter">
                         <span>I'd like to receive updates and promotions via email</span>
                     </label>
-                </div>
+                </div> -->
 
                 <button type="submit" class="btn-primary">Create Account</button>
             </form>
@@ -358,7 +358,7 @@
             </div>
 
             <div class="signin-link">
-                <p>Already have an account? <a href="#">Sign in here</a></p>
+                <p>Already have an account? <a href="/login">Sign in here</a></p>
             </div>
         </div>
     </main>
