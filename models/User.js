@@ -1,4 +1,5 @@
 import { db } from '../db/dbHandler.js';
+import { ObjectId } from 'mongodb';
 
 export class User {
   constructor(data) {
@@ -34,9 +35,16 @@ export class User {
 
   static async findAll() {
     return await db.find('users', {});
-  }
-
-  static async delete(userId) {
-    return await db.remove('users', { _id: userId });
+  }  static async delete(userId) {
+    try {
+      if (!ObjectId.isValid(userId)) {
+        throw new Error('Invalid ObjectId format');
+      }
+      const objectId = ObjectId.createFromHexString(userId);
+      return await db.remove('users', { _id: objectId });
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      throw error;
+    }
   }
 }

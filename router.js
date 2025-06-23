@@ -38,9 +38,7 @@ const apiRoutes = {
     '/api/getAllReportedCities': ReportController.getAllCounties,
     '/api/currentUser': AuthController.getCurrentUser,
     '/api/getAllReports': ReportController.getAllReports,
-    '/api/getAllUsers': ReportController.getAllUsers,
-    '/api/deleteReport': ReportController.deleteReport,
-    '/api/deleteUser': ReportController.deleteUser
+    '/api/getAllUsers': ReportController.getAllUsers
 };
 
 const STATIC_PATH = path.join(process.cwd(), './public');
@@ -88,7 +86,6 @@ export const routeRequest = async (req, res) => {
     const parsedUrl = url.parse(req.url, true);
     const pathname = parsedUrl.pathname;
 
-
     if (protectedRoutes.includes(pathname)) {
         const isAuthenticated = await runMiddlewares(req, res, [authMiddleware]);
         if (!isAuthenticated) {
@@ -96,6 +93,16 @@ export const routeRequest = async (req, res) => {
             res.end();
             return;
         }
+    }
+
+    if (pathname.startsWith('/api/deleteReport/')) {
+        ReportController.deleteReport(req, res);
+        return;
+    }
+
+    if (pathname.startsWith('/api/deleteUser/')) {
+        ReportController.deleteUser(req, res);
+        return;
     }
 
     if (apiRoutes[pathname]) {

@@ -49,6 +49,7 @@
 
     .logout-button {
       display: none;
+      gap: 1rem;
     }
 
     .btn-auth {

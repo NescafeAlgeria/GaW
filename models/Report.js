@@ -1,4 +1,5 @@
 import { db } from '../db/dbHandler.js';
+import { ObjectId } from 'mongodb';
 
 export class Report {
     static async create(data) {
@@ -76,6 +77,15 @@ export class Report {
     }
 
     static async delete(reportId) {
-        return await db.remove('reports', { _id: reportId });
+        try {
+            if (!ObjectId.isValid(reportId)) {
+                throw new Error('Invalid ObjectId format');
+            }
+            const objectId = ObjectId.createFromHexString(reportId);
+            return await db.remove('reports', { _id: objectId });
+        } catch (error) {
+            console.error('Error deleting report:', error);
+            throw error;
+        }
     }
 }
