@@ -98,7 +98,6 @@ Our mission is to create cleaner, healthier communities by empowering citizens t
 <summary>Database</summary>
   <ul>
     <li><a href="https://www.mongodb.com/">MongoDB</a></li>
-    <li><a href="https://mongoosejs.com/">Mongoose</a></li>
   </ul>
 </details>
 
