@@ -41,7 +41,6 @@ document.getElementById('exportReportBtn').addEventListener('click', function ()
         });
 });
 
-// Enable/disable export button based on county selection
 function updateExportButton() {
     const county = document.getElementById('countyDropdown').value;
     const exportBtn = document.getElementById('exportReportBtn');
@@ -62,7 +61,7 @@ fetch('/api/getAllReportedCities')
                 dropdown.appendChild(option);
             });
         }
-        updateExportButton(); // Initial check
+        updateExportButton();
     })
     .catch(err => {
         console.error('Failed to load counties:', err);

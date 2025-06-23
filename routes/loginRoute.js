@@ -27,7 +27,6 @@ const loginRoute = (req, res) => {
                     return;
                 }
 
-                // Successful login
                 res.writeHead(302, { Location: '/home' });
                 res.end();
 

@@ -9,7 +9,7 @@ export class AuthController {
             req.on('data', chunk => body += chunk);
             req.on('end', async () => {
                 const data = parse(body);
-                const { username, email, password } = data;
+                const { username, email, password, role } = data;
 
                 try {
                     const existingUser = await User.findByEmailOrUsername(email, username);
@@ -20,12 +20,16 @@ export class AuthController {
                         return;
                     }
 
+                    const validRoles = ['user', 'authority'];
+                    const userRole = validRoles.includes(role) ? role : 'user';
+
                     const hashedPassword = await bcrypt.hash(password, 10);
 
                     const user = {
                         username,
                         email,
-                        hashedPassword
+                        hashedPassword,
+                        role: userRole
                     };
 
                     await User.create(user);

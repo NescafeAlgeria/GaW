@@ -64,27 +64,23 @@ const generateCsvBuffer = (data) => {
 };
 
 const generateSummaryStats = (data) => {
-    // Calculate average severity
     const validSeverities = data.filter(report => report.severity && !isNaN(report.severity));
     const avgSeverity = validSeverities.length > 0 
         ? (validSeverities.reduce((sum, report) => sum + Number(report.severity), 0) / validSeverities.length).toFixed(2)
         : 0;
 
-    // Count by counties
     const countiesCount = {};
     data.forEach(report => {
         const county = report.county || 'Unknown';
         countiesCount[county] = (countiesCount[county] || 0) + 1;
     });
 
-    // Count by categories
     const categoriesCount = {};
     data.forEach(report => {
         const category = report.category || 'Unknown';
         categoriesCount[category] = (categoriesCount[category] || 0) + 1;
     });
 
-    // Count by localities
     const localitiesCount = {};
     data.forEach(report => {
         const locality = report.locality || 'Unknown';
@@ -107,7 +103,7 @@ const generateSummaryStats = (data) => {
                 return { locality, county, count };
             })
             .sort((a, b) => b.count - a.count)
-            .slice(0, 10) // Top 10 localities
+            .slice(0, 10)
     };
 };
 
