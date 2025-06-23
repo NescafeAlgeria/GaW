@@ -2,6 +2,7 @@ import { parse } from 'querystring';
 import bcrypt from 'bcrypt';
 import { User } from '../models/User.js';
 import { Session } from '../models/Session.js';
+import { escapeHtml } from '../utils/xssProtection.js';
 
 export class AuthController {
     static signup = (req, res) => {
@@ -80,10 +81,10 @@ export class AuthController {
                     }
 
                     const sessionId = await Session.create(user.username);
-                    
-                    res.writeHead(302, { 
+
+                    res.writeHead(302, {
                         'Set-Cookie': `sessionId=${sessionId};  Path=/; Max-Age=3600`,
-                        'Location' : '/' 
+                        'Location': '/'
                     });
                     res.end();
 
@@ -101,25 +102,25 @@ export class AuthController {
 
     static logout = (req, res) => {
         if (req.method === 'GET') {
-                const cookies = req.headers.cookie.split('; ');
-                for (const cookie of cookies) {
-                    const [key, value] = cookie.split('=');
-                    if (key === 'sessionId') {
-                        Session.destroy(value)
-                            .then(() => {
-                                res.writeHead(302, {
-                                    'Set-Cookie': 'sessionId=; Path=/; Max-Age=0',
-                                    'Location': '/'
-                                });
-                                res.end();
-                            })
-                            .catch(err => {
-                                console.error('Logout error:', err);
-                                res.writeHead(500, { 'Content-Type': 'text/plain' });
-                                res.end('Internal server error');
+            const cookies = req.headers.cookie.split('; ');
+            for (const cookie of cookies) {
+                const [key, value] = cookie.split('=');
+                if (key === 'sessionId') {
+                    Session.destroy(value)
+                        .then(() => {
+                            res.writeHead(302, {
+                                'Set-Cookie': 'sessionId=; Path=/; Max-Age=0',
+                                'Location': '/'
                             });
-                    }
+                            res.end();
+                        })
+                        .catch(err => {
+                            console.error('Logout error:', err);
+                            res.writeHead(500, { 'Content-Type': 'text/plain' });
+                            res.end('Internal server error');
+                        });
                 }
+            }
 
         } else {
             res.writeHead(405, { 'Content-Type': 'text/plain' });
@@ -155,10 +156,8 @@ export class AuthController {
                 res.writeHead(404, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify({ error: 'User not found' }));
                 return;
-            }
-
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ username: user.username, role: user.role }));
+            } res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ username: escapeHtml(user.username), role: escapeHtml(user.role) }));
         } catch (error) {
             console.error('getCurrentUser error:', error);
             res.writeHead(500, { 'Content-Type': 'application/json' });

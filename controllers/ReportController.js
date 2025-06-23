@@ -1,6 +1,7 @@
 import https from 'https'
 import { Report } from '../models/Report.js'
 import { User } from '../models/User.js'
+import { escapeHtml } from '../utils/xssProtection.js'
 
 function reverseGeocode(lat, lon) {
     return new Promise((resolve, reject) => {
@@ -71,8 +72,9 @@ export class ReportController {
     static async getAllCounties(req, res) {
         try {
             const counties = await Report.getAllCounties();
+            const sanitizedCounties = counties.map(county => escapeHtml(county));
             res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ counties }));
+            res.end(JSON.stringify({ counties: sanitizedCounties }));
         } catch (err) {
             res.writeHead(500, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ error: 'Failed to fetch counties' }));
@@ -82,8 +84,16 @@ export class ReportController {
     static async getAllReports(req, res) {
         try {
             const reports = await Report.findAll();
+            const sanitizedReports = reports.map(report => ({
+                ...report,
+                county: escapeHtml(report.county || ''),
+                locality: escapeHtml(report.locality || ''),
+                category: escapeHtml(report.category || ''),
+                description: escapeHtml(report.description || ''),
+                severity: escapeHtml(report.severity || '')
+            }));
             res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify(reports));
+            res.end(JSON.stringify(sanitizedReports));
         } catch (err) {
             res.writeHead(500, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ error: 'Failed to fetch reports' }));
@@ -93,8 +103,14 @@ export class ReportController {
     static async getAllUsers(req, res) {
         try {
             const users = await User.findAll();
+            const sanitizedUsers = users.map(user => ({
+                ...user,
+                username: escapeHtml(user.username || ''),
+                email: escapeHtml(user.email || ''),
+                role: escapeHtml(user.role || '')
+            }));
             res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify(users));
+            res.end(JSON.stringify(sanitizedUsers));
         } catch (err) {
             res.writeHead(500, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ error: 'Failed to fetch users' }));

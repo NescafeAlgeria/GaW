@@ -1,7 +1,6 @@
 
 function getCookie(name) {
   const cookies = document.cookie.split('; ');
-  console.log('Cookies:', cookies);
   for (const cookie of cookies) {
     const [key, value] = cookie.split('=');
     if (key === name) {
@@ -11,9 +10,8 @@ function getCookie(name) {
   return null;
 }
 
-  const sessionId = getCookie('sessionId');
-  console.log('Session ID:', sessionId);
-  if (sessionId) {
-    document.querySelectorAll('.auth-buttons').forEach(el => el.style.display = 'none');
-    document.querySelectorAll('.logout-button').forEach(el => el.style.display = 'flex');
-  }
+const sessionId = getCookie('sessionId');
+if (sessionId) {
+  document.querySelectorAll('.auth-buttons').forEach(el => el.style.display = 'none');
+  document.querySelectorAll('.logout-button').forEach(el => el.style.display = 'flex');
+}
