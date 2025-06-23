@@ -254,10 +254,8 @@
       .btn-primary, .btn-secondary {
         width: 100%;
         max-width: 300px;
-      }
-    }
+      }    }
 
-    /* Enhanced report description box styling for in-theme look */
     #report-info textarea, textarea#report-text {
       width: 100%;
       min-height: 160px;

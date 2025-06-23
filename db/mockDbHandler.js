@@ -3,7 +3,6 @@ import mockData from './mockReports.json' with { type: 'json' };
 
 export async function insert(collection, document) {
     mockData.push({ collection, ...document });
-    console.log(`Mock insert into "${collection}":`, document);
     return { acknowledged: true };
 }
 

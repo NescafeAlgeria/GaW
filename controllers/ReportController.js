@@ -53,7 +53,6 @@ export class ReportController {
                 const { locality, county } = getLocalityAndCounty(address)
                 reportData.county = county
                 reportData.locality = locality
-                console.log("Received report data:", reportData);
                 const result = await Report.create(reportData)
                 if (!result) {
                     res.writeHead(500, { 'Content-Type': 'application/json' })
