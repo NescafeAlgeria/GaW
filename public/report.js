@@ -29,8 +29,8 @@ function onMapClick(e) {
     }
 
     marker
-        .setLatLng(e.latlng);    longitudeText.innerText = "Longitude: " + e.latlng.lng;
-    latitudeText.innerText = "Latitude: " + e.latlng.lat;
+        .setLatLng(e.latlng); longitudeText.innerText = e.latlng.lng;
+    latitudeText.innerText = e.latlng.lat;
     severityValue.innerText = severitySlider.value;
 
     reportInfoTab.style.display = 'flex';
