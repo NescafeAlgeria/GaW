@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Garbage Reporting Platform</title>
+    <link rel="stylesheet" href="/signup.css">
+</head>
+
+<body>
+    <header>
+        <div class="logo-container">
+            <h1>Garbage Reporting Platform</h1>
+            <p>Join us today</p>
+        </div>
+        <div class="auth-buttons">
+            <a href="/" class="btn-auth">Home</a>
+            <a href="/login" class="btn-auth btn-signin">Sign In</a>
+        </div>
+    </header>
+
+    <main>
+        <div class="signup-container">
+            <div class="signup-header">
+                <h2>Create Account</h2>
+                <p>Join thousands of users and get started today</p>
+            </div>
+
+            <form method="post" action="/api/signup">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="role">Account Type</label>
+                    <select id="role" name="role" required>
+                        <option value="">Select your role</option>
+                        <option value="user">Citizen</option>
+                        <option value="authority">Authority</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+
+                <button type="submit" class="btn-primary">Create Account</button>
+            </form>
+
+            <div class="divider">
+                <span>or</span>
+            </div>
+
+            <div class="signin-link">
+                <p>Already have an account? <a href="/login">Sign in here</a></p>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Garbage Reporting Platform. All rights reserved.</p>
+        <p>Secure registration with industry-standard encryption</p>
+    </footer>
+</body>
+
+</html>

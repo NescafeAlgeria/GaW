@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>IEEE Software Requirements Specification</title>
+    <link rel="stylesheet" href="srs-style.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>Software Requirements Specification</h1>
+        <p><strong>For:</strong> Garbage Monitoring on Web</p>
+        <p><strong>Version:</strong> 1.0 approved</p>
+        <p><strong>Prepared by:</strong> Mitila Alin & Craciun Mircea<br>
+            20/06/2025</p>
+    </header>
+
+    <nav>
+        <h2>Table of Contents</h2>
+        <ul>
+            <li><a href="#introduction">1. Introduction</a>
+                <ul>
+                    <li><a href="#purpose">1.1 Purpose</a></li>
+                    <li><a href="#conventions">1.2 Document Conventions</a></li>
+                    <li><a href="#audience">1.3 Intended Audience and Reading Suggestions</a></li>
+                    <li><a href="#scope">1.4 Product Scope</a></li>
+                    <li><a href="#references">1.5 References</a></li>
+                </ul>
+            </li>
+            <li><a href="#overall-description">2. Overall Description</a>
+                <ul>
+                    <li><a href="#perspective">2.1 Product Perspective</a></li>
+                    <li><a href="#functions">2.2 Product Functions</a></li>
+                    <li><a href="#user-classes">2.3 User Classes and Characteristics</a></li>
+                    <li><a href="#environment">2.4 Operating Environment</a></li>
+                    <li><a href="#constraints">2.5 Design and Implementation Constraints</a></li>
+                    <li><a href="#documentation">2.6 User Documentation</a></li>
+                    <li><a href="#assumptions">2.7 Assumptions and Dependencies</a></li>
+                </ul>
+            </li>
+            <li><a href="#external-interfaces">3. External Interface Requirements</a>
+                <ul>
+                    <li><a href="#user-interfaces">3.1 User Interfaces</a></li>
+                    <li><a href="#hardware-interfaces">3.2 Hardware Interfaces</a></li>
+                    <li><a href="#software-interfaces">3.3 Software Interfaces</a></li>
+                    <li><a href="#communication-interfaces">3.4 Communications Interfaces</a></li>
+                </ul>
+            </li>
+            <li><a href="#system-features">4. System Features</a></li>
+            <li><a href="#nonfunctional">5. Other Nonfunctional Requirements</a></li>
+            <li><a href="#other-requirements">6. Other Requirements</a></li>
+            <li><a href="#appendix-a">Appendix A: Glossary</a></li>
+            <li><a href="#appendix-b">Appendix B: Analysis Models</a></li>
+            <li><a href="#appendix-c">Appendix C: To Be Determined List</a></li>
+        </ul>
+    </nav>
+    <section id="introduction">
+        <h2>1. Introduction</h2>
+        <h3 id="purpose">1.1 Purpose</h3>
+        <p>The purpose of this document is to describe the software requirements for a garbage and waste monitoring
+            platform web application.
+            The application facilitates reporting and tracking waste issues in communities all around the world,
+            providing a user-friendly way for regular citizens to report garbage accumulation and incidents,
+            as well as a method for autorities to manage and respond to these reports in their respective counties. This
+            application supports a cleaner environment and streamlines recycling efforts.
+        </p>
+
+        <h3 id="conventions">1.2 Document Conventions</h3>
+        <p>The document follows IEEE section numbering standards</p>
+        <p>The document is follows the suggestions of the <a
+                href="https://github.com/rick4470/IEEE-SRS-Tempate/blob/master/README.md">IEEE-SRS-Template public
+                repository</a></p>
+
+        <h3 id="audience">1.3 Intended Audience and Reading Suggestions</h3>
+        <p>The document's target audience is:</p>
+        <ul>
+            <li>The Client (Conf. dr. Panu Andrei)</li>
+            <li>Current and future project managers/product owners</li>
+            <li>Current and future developers implementing these requirements</li>
+        </ul>
+
+        <h3 id="scope">1.4 Product Scope</h3>
+        <p>The purpose of the application is:</p>
+        <ul>
+            <li>Allowing citizens to report describe and garbage accumulation</li>
+            <li>Allowing authorities to easily manage and track garbage accumulation reports</li>
+            <li>Allowing authorities to generate reports based on the data collected from user reports</li>
+            <li>Facilitating better waste management and recycling efforts</li>
+            <li>Provide role-based access to making, viewing and managing the reports to users</li>
+        </ul>
+        <h3 id="references">1.5 References</h3>
+        <ul>
+            <li><a href="https://github.com/rick4470/IEEE-SRS-Tempate">IEEE SRS Template</a></li>
+            <li><a href="https://www.w3.org/standards/">W3C Web Standards</a></li>
+            <li><a href="https://www.mongodb.com/docs/">MongoDB Documentation</a></li>
+            <li><a href="https://leafletjs.com/">Leaflet JavaScript Library</a></li>
+            <li><a href="https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller">MVC Design pattern
+                    (core pattern behind application)</a></li>
+        </ul>
+    </section>
+
+    <section id="overall-description">
+        <h2>2. Overall Description</h2>
+        <h3 id="perspective">2.1 Product Perspective</h3>
+        <p>
+            Garbage Monitoring for Web is a standalone web application that provides a reporting service for the
+            end-users and integrates Leaflet mapping services, OpenStreetMap's nominatim geocoding API and MongoDB
+            database for storing and managing reports. The reporting service is not limited to a specific region, rather
+            allowing people all around the world to use it.
+        </p>
+
+        <h3 id="functions">2.2 Product Functions</h3>
+        <ul>
+            <li>Register/login for different types of users (citizen, authority, system administrator)</li>
+            <li>Submit location-based waste reports with description, severity evaluation and waste type</li>
+            <li>Generate dynamic PDF and CSV reports for a specific county and time range</li>
+            <li>Manage and delete reports and user accounts (system administrator only)</li>
+        </ul>
+
+        <h3 id="user-classes">2.3 User Classes and Characteristics</h3>
+        <ul>
+            <li>Citizens - Basic users, can report issues</li>
+            <li>Authorities - Local authorities, can report issues and generate county-specific reports</li>
+            <li>Application Administrators - Developers, administrators, can view and delete reports and user accounts
+            </li>
+        </ul>
+
+        <h3 id="environment">2.4 Operating Environment</h3>
+        <ul>
+            <li>Platform: Web browser</li>
+            <li>Backend: Node.js</li>
+            <li>Database: MongoDB</li>
+        </ul>
+
+        <h3 id="constraints">2.5 Design and Implementation Constraints</h3>
+        <ul>
+            <li>No usage of frameworks</li>
+            <li>Open-source libraries only</li>
+            <li>Usage of AJAX</li>
+            <li>Web services are exposed through a RESTful API</li>
+        </ul>
+
+        <h3 id="documentation">2.6 User Documentation</h3>
+        <ul>
+            <li>Setup + installation guide for local deployment</li>
+            <li>Descriptive video presentation of application functionality</li>
+        </ul>
+
+        <h3 id="assumptions">2.7 Assumptions and Dependencies</h3>
+        <ul>
+            <li>Users have internet access</li>
+            <li>Access to a browser with JavaScript enabled</li>
+            <li>OpenStreetMap Tiling API is available</li>
+            <li>OpenStreetMap Nominatim API is available</li>
+            <li>Database provided in the .env file is available</li>
+        </ul>
+    </section>
+
+    <section id="external-interfaces">
+        <h2>3. External Interface Requirements</h2>
+        <h3 id="user-interfaces">3.1 User Interfaces</h3>
+        <ul>
+            <li>Map interface to pin and report waste accumulations</li>
+            <li>Form for describing and categorizing incidents</li>
+            <li>Login/Register interface</li>
+            <li>Reports exporting panel (PDF, CSV)</li>
+            <li>Dashboard for viewing and deleting users and reports (admin only)</li>
+        </ul>
+
+        <h3 id="hardware-interfaces">3.2 Hardware Interfaces</h3>
+        <p>No direct hardware interfaces</p>
+
+        <h3 id="software-interfaces">3.3 Software Interfaces</h3>
+        <ul>
+            <li>OpenStreetMap API</li>
+            <li>PDF Generation Library (pdfkit)</li>
+            <li>Password hashing library (bcrypt)</li>
+            <li>MongoDB library</li>
+            <li>Leaflet library</li>
+        </ul>
+
+        <h3 id="communication-interfaces">3.4 Communications Interfaces</h3>
+        <ul>
+            <li>HTTPS for secure web traffic</li>
+            <li>REST API for frontend/backend communication</li>
+        </ul>
+    </section>
+
+    <section id="system-features">
+        <h2>4. System Features</h2>
+        <h3>4.1 User Authentication and Role Management</h3>
+        <p><strong>4.1.1 Description and Priority:</strong> High priority. The system must provide secure user
+            registration, login, and role-based access control supporting three user types: Citizens, Authorities, and
+            Administrators.</p>
+        <p><strong>4.1.2 Stimulus/Response Sequences:</strong></p>
+        <ul>
+            <li>User accesses signup page → System shows sign-up page</li>
+            <li>User submits registration data → System validates, hashes password, creates account, and redirects to
+                appropriate dashboard</li>
+            <li>User attempts login → System validates credentials and creates session</li>
+            <li>User accesses protected resource → System verifies session and role permissions</li>
+            <li>User clicks logout → System destroys session and redirects to home page</li>
+        </ul>
+        <p><strong>4.1.3 Functional Requirements:</strong></p>
+        <ul>
+            <li>REQ-1.1: Allows user registration with username, email, password, and role selection</li>
+            <li>REQ-1.2: Hashes passwords using bcrypt before storage</li>
+            <li>REQ-1.3: Validates unique email and username combinations</li>
+            <li>REQ-1.4: Creates and manages user sessions with time-based expiration</li>
+            <li>REQ-1.5: Enforces role-based access control for all protected routes</li>
+        </ul>
+
+        <h3>4.2 Interactive Garbage Report Creation</h3>
+        <p><strong>4.2.1 Description and Priority:</strong> High priority. All users must be able to create detailed
+            garbage reports by selecting locations on an interactive map and providing descriptive information.</p>
+
+        <p><strong>4.2.2 Stimulus/Response Sequences:</strong></p>
+        <ul>
+            <li>User clicks location on map → System displays marker and fills coordinates in the form</li>
+            <li>User fills form (category, severity, description) → System validates input fields</li>
+            <li>User submits report → System performs reverse geocoding, stores report in database → User receives
+                confirmation message</li>
+        </ul>
+
+        <p><strong>4.2.3 Functional Requirements:</strong></p>
+        <ul>
+            <li>REQ-2.1: Displays interactive map</li>
+            <li>REQ-2.2: Allows users to place markers by clicking on map locations</li>
+            <li>REQ-2.3: Automatically determine locality and county via Nominatim reverse geocoding</li>
+            <li>REQ-2.4: Provides severity rating, incident description and waste type selection</li>
+        </ul>
+
+
+        <h3>4.3 Data Export and Report Generation</h3>
+        <p><strong>4.3.1 Description and Priority:</strong> Medium priority. Authorities must be able to generate
+            PDF and CSV reports filtered by county and date ranges for Administrative purposes.</p>
+
+        <p><strong>4.3.2 Stimulus/Response Sequences:</strong></p>
+        <ul>
+            <li>Authority user accesses dashboard → System displays county selection, date filters and generation
+                buttons</li>
+            <li>User chooses export format (PDF/CSV) → System queries database and aggregates data</li>
+            <li>System generates requested report → System provides download link</li>
+        </ul>
+
+        <p><strong>4.3.3 Functional Requirements:</strong></p>
+        <ul>
+            <li>REQ-3.1: Generates PDF and CSV reports with grouped severity mapping</li>
+            <li>REQ-3.2: Supports date and county filtering</li>
+            <li>REQ-3.3: Reports include the cleanest and dirtiest localities</li>
+        </ul>
+
+        <h3>4.4 Administrative Dashboard System</h3>
+        <p><strong>4.4.1 Description and Priority:</strong> Medium priority. Administrators must have
+            tools to manage user accounts and reports.</p>
+
+        <p><strong>4.4.2 Stimulus/Response Sequences:</strong></p>
+        <ul>
+            <li>Admin accesses dashboard → System displays user management and report management tables</li>
+            <li>Admin clicks delete user → System prompts confirmation and removes user account</li>
+            <li>Admin clicks delete report → System prompts confirmation and removes report</li>
+        </ul>
+
+        <p><strong>4.4.3 Functional Requirements:</strong></p>
+        <ul>
+            <li>REQ-4.1: Displays table of all reports</li>
+            <li>REQ-4.2: Displays table of all users</li>
+            <li>REQ-4.3: Provides delete button for users</li>
+            <li>REQ-4.4: Provides delete button for reports</li>
+        </ul>
+    </section>
+
+    <section id="nonfunctional">
+        <h2>5. Other Nonfunctional Requirements</h2>
+
+        <h3>5.1 Safety Requirements</h3>
+        <ul>
+            <li>Misleading reports can be deleted by the admin</li>
+        </ul>
+
+        <h3>5.2 Security Requirements</h3>
+        <ul>
+            <li>Database security - using parametrized queries through MongoDB</li>
+            <li>Passwords are hashed before being stored</li>
+            <li>Session management</li>
+            <li>XSS (Cross Site Scripting) protection</li>
+        </ul>
+
+        <h3>5.3 Software Quality Attributes</h3>
+        <ul>
+            <li>Usability: intuitive interface and simple UI
+            </li>
+
+            <li>Safety: gracefully handle errors and exceptions
+            </li>
+
+            <li>Scalability: modular codebase with strong emphasis on the Model View Controller pattern
+            </li>
+        </ul>
+
+        <h3>5.4 Business Rules</h3>
+        <ul>
+            <li>Only authorities can generate reports
+            </li>
+
+            <li>Only admins can delete user accounts
+            </li>
+
+            <li>Only admins can delete reports
+            </li>
+        </ul>
+    </section>
+
+</body>
+
+</html>

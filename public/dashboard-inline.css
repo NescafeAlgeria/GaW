@@ -1,0 +1,136 @@
+.dashboard-section {
+    background-color: var(--light-gray);
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.dashboard-section.export-section {
+    max-width: 600px;
+    margin: 0 auto 2rem;
+}
+
+.dashboard-section h3 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.dashboard-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.dashboard-form label {
+    display: block;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-form select,
+.dashboard-form input[type="date"] {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 2px solid var(--primary-color);
+    background: var(--white);
+    color: var(--dark-gray);
+    border-radius: 4px;
+}
+
+.date-row {
+    display: flex;
+    gap: 1rem;
+}
+
+.date-row > div {
+    flex: 1;
+}
+
+.dashboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.dashboard-table thead tr {
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+
+.dashboard-table th,
+.dashboard-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.dashboard-table tbody tr {
+    border-bottom: 1px solid #ddd;
+}
+
+.dashboard-table .loading-cell,
+.dashboard-table .no-data-cell {
+    padding: 1rem;
+    text-align: center;
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+.delete-btn {
+    padding: 0.5rem 1rem;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.delete-btn:hover {
+    background-color: #c0392b;
+}
+
+.export-btn {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.1rem;
+    margin-top: 1rem;
+}
+
+.dashboard-export-inline {
+    background-color: var(--light-gray);
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.dashboard-form-inline {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.dashboard-form-inline label {
+    display: block;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-form-inline select,
+.dashboard-form-inline input[type="date"] {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 2px solid var(--primary-color);
+    background: var(--white);
+    color: var(--dark-gray);
+    border-radius: 4px;
+}

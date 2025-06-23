@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Garbage | Garbage Reporting Platform</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/report.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="report.js" defer></script>
+    <script src="/script.js" defer></script>
+</head>
+
+<body>
+    <header>
+        <div class="logo-container">
+            <h1>Garbage Reporting Platform</h1>
+            <p>Help keep our community clean</p>
+        </div>
+        <div class="auth-buttons">
+            <a href="/login" class="btn-auth btn-login">Login</a>
+            <a href="/signup" class="btn-auth btn-signup">Sign Up</a>
+        </div>
+        <div class="logout-button">
+
+            <a href="/" class="btn-auth btn-login">Home</a>
+            <a href="/dashboard" class="btn-auth btn-login">Dashboard</a>
+            <a href="/api/logout" class="btn-auth btn-logout">Logout</a>
+        </div>
+    </header>
+    <main>
+        <section class="hero hero-report">
+            <h2>Report Garbage</h2>
+            <p>Help us keep our neighborhoods clean by reporting garbage issues you spot. Provide the location and
+                details below.</p>
+        </section>
+        <div class="report-container">
+            <div id="map" class="round-edge map-container"></div>
+            <form id="report-info" class="round-edge report-form">
+                <div id="report-content">
+                    <p id="report-title" class="report-title">
+                        Report Garbage</p>
+                    <div class="coordinate-field">
+                        <label class="coordinate-label">Longitude:</label>
+                        <span id="report-longitude"></span>
+                    </div>
+                    <div class="coordinate-field">
+                        <label class="coordinate-label">Latitude:</label>
+                        <span id="report-latitude"></span>
+                    </div>
+                    <div class="severity-field">
+                        <label for="severity-slider" class="field-label">Severity:</label>
+                        <input type="range" id="severity-slider" name="severity" min="1" max="10" value="5"
+                            class="severity-slider">
+                        <span id="severity-value" class="severity-value">5</span>
+                    </div>
+                    <div class="form-field">
+                        <label for="report-category" class="field-label">Category:</label>
+                        <select id="report-category" name="category" class="round-edge report-select">
+                            <option value="household waste">Household Waste</option>
+                            <option value="paper">Paper</option>
+                            <option value="plastic">Plastic</option>
+                            <option value="glass">Glass</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label id="report-description" for="report-text" class="field-label">Details:</label>
+                        <textarea id="report-text" name="description" class="round-edge report-textarea" rows="4"
+                            cols="50" placeholder="Describe the situation..."></textarea>
+                    </div>
+                </div>
+                <p id="report-result" class="report-result"></p>
+                <button id="submit-report" class="btn-primary round-edge report-submit-btn"
+                    type="submit">Submit</button>
+            </form>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2025 Garbage Reporting Platform</p>
+        <p>Working together for cleaner neighborhoods</p>
+    </footer>
+</body>
+
+</html>

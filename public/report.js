@@ -1,4 +1,4 @@
-var map = L.map('map').setView([51.505, -0.09], 13);
+var map = L.map('map').setView([47.1585, 27.6014], 13);
 
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
@@ -13,12 +13,14 @@ const longitudeText = document.getElementById('report-longitude');
 const latitudeText = document.getElementById('report-latitude');
 const severityText = document.getElementById('report-severity');
 const severitySlider = document.getElementById('severity-slider');
+const severityValue = document.getElementById('severity-value');
 const descriptionText = document.getElementById('report-text');
 const submitButton = document.getElementById('submit-report');
 const resultText = document.getElementById('report-result');
+const categorySelect = document.getElementById('report-category');
 
 severitySlider.oninput = () => {
-    severityText.innerText = 'Severity: ' + severitySlider.value;
+    severityValue.innerText = severitySlider.value;
 }
 
 function onMapClick(e) {
@@ -27,11 +29,9 @@ function onMapClick(e) {
     }
 
     marker
-        .setLatLng(e.latlng);
-
-    longitudeText.innerText = "Longitude: " + e.latlng.lng;
+        .setLatLng(e.latlng);    longitudeText.innerText = "Longitude: " + e.latlng.lng;
     latitudeText.innerText = "Latitude: " + e.latlng.lat;
-    severityText.innerText = 'Severity: ' + 5;
+    severityValue.innerText = severitySlider.value;
 
     reportInfoTab.style.display = 'flex';
     reportInfoTab.style.width = '30%';
@@ -48,10 +48,23 @@ submitButton.addEventListener('click', async (event) => {
 
     event.preventDefault();
     const severity = severitySlider.value;
-    const lat = marker.getLatLng().lat;
-    const lng = marker.getLatLng().lng;
     const description = descriptionText.value;
-    const response = await fetch('/addReport', {
+    const category = categorySelect.value;
+    let lat, lng;
+    if (marker) {
+        lat = marker.getLatLng().lat;
+        lng = marker.getLatLng().lng;
+    }
+
+    if (!lat || !lng || !description || !category) {
+        resultText.innerText = 'Error: Please fill in all required fields and select a location on the map.';
+        resultText.style.color = 'red';
+        submitButton.innerText = 'Submit';
+        submitButton.disabled = false;
+        return;
+    }
+
+    const response = await fetch('/api/addReport', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -60,7 +73,8 @@ submitButton.addEventListener('click', async (event) => {
             severity: severity,
             lat: lat,
             lng: lng,
-            description: description
+            description: description,
+            category: category
         })
     });
     const result = await response.json();
