@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Authority Dashboard | Garbage Reporting Platform</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>Authority Dashboard | Garbage Reporting Platform</title>
     <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/dashboard-inline.css">
     <script src="dashboard.js" defer></script>
 </head>
 <body>
@@ -23,36 +23,35 @@
     <section class="hero">
         <h2>Export Reports</h2>
         <p>Generate and download reports by county in your preferred format.</p>
-    </section>
-
-    <section style="background-color: var(--light-gray); padding: 2rem; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); max-width: 600px; margin: 0 auto;">        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+    </section>    <section class="dashboard-section export-section">        
+        <div class="dashboard-form">
             <div>
-                <label for="countyDropdown" style="display: block; font-weight: bold; color: var(--primary-color); margin-bottom: 0.5rem;">Select County:</label>
-                <select id="countyDropdown" class="round-edge" style="width: 100%; padding: 0.75rem; font-size: 1rem; border: 2px solid var(--primary-color); background: var(--white); color: var(--dark-gray); border-radius: 4px;">
+                <label for="countyDropdown">Select County:</label>
+                <select id="countyDropdown" class="round-edge">
                     <option value="">Choose a county...</option>
                 </select>
             </div>
 
-            <div style="display: flex; gap: 1rem;">
-                <div style="flex: 1;">
-                    <label for="startDate" style="display: block; font-weight: bold; color: var(--primary-color); margin-bottom: 0.5rem;">From Date:</label>
-                    <input type="date" id="startDate" class="round-edge" style="width: 100%; padding: 0.75rem; font-size: 1rem; border: 2px solid var(--primary-color); background: var(--white); color: var(--dark-gray); border-radius: 4px;">
+            <div class="date-row">
+                <div>
+                    <label for="startDate">From Date:</label>
+                    <input type="date" id="startDate" class="round-edge">
                 </div>
-                <div style="flex: 1;">
-                    <label for="endDate" style="display: block; font-weight: bold; color: var(--primary-color); margin-bottom: 0.5rem;">To Date:</label>
-                    <input type="date" id="endDate" class="round-edge" style="width: 100%; padding: 0.75rem; font-size: 1rem; border: 2px solid var(--primary-color); background: var(--white); color: var(--dark-gray); border-radius: 4px;">
+                <div>
+                    <label for="endDate">To Date:</label>
+                    <input type="date" id="endDate" class="round-edge">
                 </div>
             </div>
 
             <div>
-                <label for="formatDropdown" style="display: block; font-weight: bold; color: var(--primary-color); margin-bottom: 0.5rem;">Export Format:</label>
-                <select id="formatDropdown" class="round-edge" style="width: 100%; padding: 0.75rem; font-size: 1rem; border: 2px solid var(--primary-color); background: var(--white); color: var(--dark-gray); border-radius: 4px;">
+                <label for="formatDropdown">Export Format:</label>
+                <select id="formatDropdown" class="round-edge">
                     <option value="pdf">PDF Report</option>
                     <option value="csv">CSV Data</option>
                 </select>
             </div>
 
-            <button id="exportReportBtn" class="btn-primary" style="width: 100%; padding: 1rem; font-size: 1.1rem; margin-top: 1rem;" disabled>
+            <button id="exportReportBtn" class="btn-primary export-btn" disabled>
                 Export Report
             </button>
         </div>

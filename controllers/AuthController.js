@@ -82,7 +82,7 @@ export class AuthController {
                     const sessionId = await Session.create(user.username);
                     
                     res.writeHead(302, { 
-                        'Set-Cookie': `sessionId=${sessionId};  Path=/; Max-Age=3600`, // 1 hour
+                        'Set-Cookie': `sessionId=${sessionId};  Path=/; Max-Age=3600`,
                         'Location' : '/' 
                     });
                     res.end();
@@ -97,11 +97,8 @@ export class AuthController {
             res.writeHead(405, { 'Content-Type': 'text/plain' });
             res.end('Method Not Allowed');
         }
-    };
-
-    static logout = (req, res) => {
+    };    static logout = (req, res) => {
         if (req.method === 'GET') {
-            // console.log(req.headers);
             Session.destroy(req.headers.cookie?.sessionId)
                 .then(() => {
                     res.writeHead(302, { 

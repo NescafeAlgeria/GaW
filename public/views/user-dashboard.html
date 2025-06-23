@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Dashboard | Garbage Reporting Platform</title>
     <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/user-dashboard.css">
 </head>
 <body>
 <header>
@@ -27,59 +28,6 @@
     </div>
 </main>
 
-<style>
-.container {
-    max-width: 600px;
-    margin: 2rem auto;
-    padding: 2rem;
-    text-align: center;
-}
-
-#welcome-message {
-    color: #2c3e50;
-    margin-bottom: 2rem;
-}
-
-.user-actions {
-    margin-top: 2rem;
-}
-
-.btn {
-    display: inline-block;
-    padding: 1rem 2rem;
-    background-color: #3498db;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    font-size: 1.1rem;
-    transition: background-color 0.3s;
-}
-
-.btn:hover {
-    background-color: #2980b9;
-}
-
-.btn-primary {
-    background-color: #27ae60;
-}
-
-.btn-primary:hover {
-    background-color: #229954;
-}
-</style>
-
-<script>
-document.addEventListener('DOMContentLoaded', async function() {
-    try {
-        const response = await fetch('/api/currentUser');
-        if (response.ok) {
-            const user = await response.json();
-            document.getElementById('welcome-message').textContent = `Hi, ${user.username}!`;
-        }
-    } catch (error) {
-        console.error('Error fetching user info:', error);
-    }
-});
-</script>
+<script src="/user-dashboard.js"></script>
 </body>
 </html>

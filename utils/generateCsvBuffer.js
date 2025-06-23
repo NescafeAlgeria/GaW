@@ -1,11 +1,9 @@
-// Helper function to properly escape CSV fields
 const escapeCSVField = (field) => {
     if (field === null || field === undefined) {
         return '';
     }
     
     const stringField = String(field);
-    // If field contains comma, quote, or newline, wrap it in quotes and escape internal quotes
     if (stringField.includes(',') || stringField.includes('"') || stringField.includes('\n')) {
         return `"${stringField.replace(/"/g, '""')}"`;
     }

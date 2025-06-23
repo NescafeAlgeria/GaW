@@ -1,6 +1,4 @@
 
-// show/hide auth buttons based on session cookie
-
 function getCookie(name) {
   const cookies = document.cookie.split('; ');
   console.log('Cookies:', cookies);
