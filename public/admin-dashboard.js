@@ -95,6 +95,7 @@ function displayUsers(users) {
             <td style="padding: 0.75rem;">${escapeHtml(user.role || 'user')}</td>
             <td style="padding: 0.75rem;">
                 <button onclick="deleteUser('${user._id}')" style="padding: 0.5rem 1rem; background-color: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9rem;">Delete</button>
+                ${!user.validated && user.role === 'authority' ? `<button onclick="validateUser('${user._id}')" style="padding: 0.5rem 1rem; background-color: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9rem;">Validate</button>` : ''}
             </td>
         </tr>
     `).join('');
@@ -145,5 +146,31 @@ async function deleteUser(userId) {
     } catch (error) {
         console.error('Error deleting user:', error);
         alert('Error deleting user');
+    }
+}
+
+async function validateUser(userId) {
+    if (!confirm('Are you sure you want to validate this user?')) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/users/${userId}/validate`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+
+        console.log('Validate response:', response);
+
+        if (response.ok) {
+            loadUsers();
+        } else {
+            alert('Error validating user');
+        }
+    } catch (error) {
+        console.error('Error validating user:', error);
+        alert('Error validating user');
     }
 }

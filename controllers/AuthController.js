@@ -1,4 +1,3 @@
-import { parse } from 'querystring';
 import bcrypt from 'bcrypt';
 import { User } from '../models/User.js';
 import { Session } from '../models/Session.js';
@@ -126,10 +125,47 @@ export class AuthController {
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({
                 username: escapeHtml(user.username),
-                role: escapeHtml(user.role || 'user')
+                role: escapeHtml(user.role || 'user'),
+                validated: user.validated || false,
             }));
         } catch (err) {
             console.error('getCurrentUser error:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Internal server error' }));
+        }
+    };
+    static validateUser = async (req, res, params = {}) => {
+        try {
+            const sessionId = getSessionId(req);
+            console.log('Session ID:', sessionId);
+            if (!sessionId) {
+                res.writeHead(401, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Not authenticated' }));
+                return;
+            }
+
+            const session = await Session.findBySessionId(sessionId);
+            console.log('Session:', session);
+            if (!session || session.role !== 'admin') {
+                res.writeHead(403, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Forbidden' }));
+                return;
+            }
+
+            const userId = params.id;
+            if (!userId) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'User ID is required' }));
+                return;
+            }
+            
+
+            await User.update(userId, { validated: true });
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ message: 'User validated successfully' }));
+        } catch (err) {
+            console.error('validateUser error:', err);
             res.writeHead(500, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ error: 'Internal server error' }));
         }

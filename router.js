@@ -44,6 +44,7 @@ const apiRoutes = [
   { method: 'POST', path: '/api/login', handler: AuthController.login },
   { method: 'POST', path: '/api/logout', handler: AuthController.logout },
   { method: 'POST', path: '/api/reports', handler: ReportController.create },
+  { method: 'POST', path: '/api/users/:id/validate', handler: AuthController.validateUser },
   { method: 'GET', path: '/api/reports/export', handler: ExportController.exportReport },
   { method: 'GET', path: '/api/reports/cities', handler: ReportController.getAllCounties },
   { method: 'GET', path: '/api/users/me', handler: AuthController.getCurrentUser },
@@ -109,7 +110,6 @@ const prepareFile = async (requestPath) => {
 // === Protected Paths (requires auth) ===
 const protectedPaths = [
 //   '/report',
-//   '/dashboard',
   '/admin-dashboard',
   '/authority-dashboard',
   '/user-dashboard',
@@ -120,6 +120,7 @@ const protectedPaths = [
   '/api/reports/:id',
   '/api/users/:id',
   '/api/users',
+  '/api/users/:id/validate',
 ];
 
 // === Route Entry Point ===

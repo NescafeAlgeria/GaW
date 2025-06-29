@@ -1,6 +1,4 @@
 import { servePage } from "../servePage.js";
-import { Session } from '../models/Session.js';
-import { User } from '../models/User.js';
 
 export class PageController {
     static home = servePage("home.html");

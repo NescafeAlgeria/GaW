@@ -63,7 +63,13 @@ submitButton.addEventListener('click', async (event) => {
         submitButton.disabled = false;
         return;
     }
-
+    if(localStorage.getItem('token') === null) {
+        resultText.innerText = 'Error: You must be logged in to submit a report.';
+        resultText.style.color = 'red';
+        submitButton.innerText = 'Submit';
+        submitButton.disabled = false;
+        return;
+    }
     const response = await fetch('/api/reports', {
         method: 'POST',
         headers: {

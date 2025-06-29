@@ -10,4 +10,5 @@
 - caching added to a couple of APIs (mainly the ones that return a list of data like users or reports)
 - made the dashboard kinda it's own single-page app, able to show the coresponding dashboard according to user role
 - made the dashboard load changes when deleting something
+- made report page check for auth client-side instead of server side bcs of restrictions
 

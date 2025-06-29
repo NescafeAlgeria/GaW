@@ -1,7 +1,7 @@
 (async () => {
     const token = localStorage.getItem('token');
     if (!token) {
-        document.querySelector('main').innerHTML = '<p>Please log in to access the dashboard.</p>';
+        document.querySelector('main').innerHTML = '<section class="hero"><h2>Please log in to access the dashboard.</h2></section>';
       return;
     }
 
@@ -19,7 +19,10 @@
     //   console.log('User info response:', userRes);
 
       const user = await userRes.json();
-    //   console.log('User info:', user);
+      if(user.role==='authority'  && !user.validated) {
+        document.querySelector('main').innerHTML = '<section class="hero"><h2>Your account is not validated. Please contact an administrator to validate your account.</h2></section>';
+        return;
+      }
       if (!user.role) {
         console.warn('User role missing');
         return;
