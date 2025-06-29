@@ -18,7 +18,11 @@ document.getElementById('exportReportBtn').addEventListener('click', function ()
         exportUrl += `&endDate=${encodeURIComponent(endDate)}`;
     }
 
-    fetch(exportUrl)
+    fetch(exportUrl, {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+    })
         .then(res => {
             if (!res.ok) {
                 throw new Error('Export failed');
@@ -49,7 +53,11 @@ function updateExportButton() {
 
 document.getElementById('countyDropdown').addEventListener('change', updateExportButton);
 
-fetch('/api/reports/cities')
+fetch('/api/reports/cities', {
+    headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+    }
+    })
     .then(response => response.json())
     .then(data => {
         const dropdown = document.getElementById('countyDropdown'); if (data.counties && Array.isArray(data.counties)) {

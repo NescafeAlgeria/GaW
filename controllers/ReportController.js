@@ -52,12 +52,12 @@ function getLocalityAndCounty(address) {
 }
 
 export class ReportController {
-    static async create(req, res) {
-        if (req.method !== 'POST') {
-            res.writeHead(405, { 'Content-Type': 'text/plain' })
-            res.end('Method Not Allowed')
-            return
-        }
+    static async create(req, res, params = {}) {
+        // if (req.method !== 'POST') {
+        //     res.writeHead(405, { 'Content-Type': 'text/plain' })
+        //     res.end('Method Not Allowed')
+        //     return
+        // }
 
         let body = ''
         req.on('data', chunk => body += chunk.toString())
@@ -95,11 +95,11 @@ export class ReportController {
         })
     }
 
-    static async getAllCounties(req, res) {
+    static async getAllCounties(req, res, params = {}) {
         try {
             const counties = await Report.getAllCounties()
             const sanitized = counties.map(escapeHtml)
-            res.writeHead(200, { 'Content-Type': 'application/json' })
+            res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' })
             res.end(JSON.stringify({ counties: sanitized }))
         } catch (err) {
             res.writeHead(500, { 'Content-Type': 'application/json' })
@@ -107,7 +107,7 @@ export class ReportController {
         }
     }
 
-    static async getAllReports(req, res) {
+    static async getAllReports(req, res, params = {}) {
         try {
             const reports = await Report.findAll()
             const sanitized = reports.map(r => ({
@@ -118,7 +118,7 @@ export class ReportController {
                 description: escapeHtml(r.description || ''),
                 severity: escapeHtml(r.severity || '')
             }))
-            res.writeHead(200, { 'Content-Type': 'application/json' })
+            res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' })
             res.end(JSON.stringify(sanitized))
         } catch (err) {
             res.writeHead(500, { 'Content-Type': 'application/json' })
@@ -126,7 +126,7 @@ export class ReportController {
         }
     }
 
-    static async getAllUsers(req, res) {
+    static async getAllUsers(req, res, params = {}) {
         const user = await getAuthenticatedUser(req)
         if (!requireRole(user, ['admin'])) {
             res.writeHead(403, { 'Content-Type': 'application/json' })
@@ -142,7 +142,7 @@ export class ReportController {
                 email: escapeHtml(u.email || ''),
                 role: escapeHtml(u.role || '')
             }))
-            res.writeHead(200, { 'Content-Type': 'application/json' })
+            res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' })
             res.end(JSON.stringify(sanitized))
         } catch (err) {
             res.writeHead(500, { 'Content-Type': 'application/json' })
@@ -150,12 +150,12 @@ export class ReportController {
         }
     }
 
-    static async deleteReport(req, res) {
-        if (req.method !== 'DELETE') {
-            res.writeHead(405, { 'Content-Type': 'text/plain' })
-            res.end('Method Not Allowed')
-            return
-        }
+    static async deleteReport(req, res, params = {}) {
+        // if (req.method !== 'DELETE') {
+        //     res.writeHead(405, { 'Content-Type': 'text/plain' })
+        //     res.end('Method Not Allowed')
+        //     return
+        // }
 
         const user = await getAuthenticatedUser(req)
         if (!requireRole(user, ['admin', 'authority'])) {
@@ -165,7 +165,12 @@ export class ReportController {
         }
 
         try {
-            const reportId = req.url.split('/').pop()
+            const reportId = params.id
+            if (!reportId) {
+                res.writeHead(400, { 'Content-Type': 'application/json' })
+                res.end(JSON.stringify({ error: 'Report ID is required' }))
+                return
+            }
             await Report.delete(reportId)
             res.writeHead(200, { 'Content-Type': 'application/json' })
             res.end(JSON.stringify({ success: true }))
@@ -175,12 +180,12 @@ export class ReportController {
         }
     }
 
-    static async deleteUser(req, res) {
-        if (req.method !== 'DELETE') {
-            res.writeHead(405, { 'Content-Type': 'text/plain' })
-            res.end('Method Not Allowed')
-            return
-        }
+    static async deleteUser(req, res, params = {}) {
+        // if (req.method !== 'DELETE') {
+        //     res.writeHead(405, { 'Content-Type': 'text/plain' })
+        //     res.end('Method Not Allowed')
+        //     return
+        // }
 
         const user = await getAuthenticatedUser(req)
         if (!requireRole(user, ['admin'])) {
@@ -190,7 +195,12 @@ export class ReportController {
         }
 
         try {
-            const userId = req.url.split('/').pop()
+            const userId = params.id
+            if (!userId) {
+                res.writeHead(400, { 'Content-Type': 'application/json' })
+                res.end(JSON.stringify({ error: 'User ID is required' }))
+                return
+            }
             await User.delete(userId)
             res.writeHead(200, { 'Content-Type': 'application/json' })
             res.end(JSON.stringify({ success: true }))

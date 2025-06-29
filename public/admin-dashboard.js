@@ -5,7 +5,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
 async function loadReports() {
     try {
-        const response = await fetch('/api/reports');
+        // const response = await fetch('/api/reports');
+
+        const response = await fetch('/api/reports', {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -27,7 +33,13 @@ async function loadReports() {
 
 async function loadUsers() {
     try {
-        const response = await fetch('/api/users');
+        //const response = await fetch('/api/users');
+
+        const response = await fetch('/api/users', {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -95,9 +107,12 @@ async function deleteReport(reportId) {
 
     try {
         const response = await fetch(`/api/reports/${reportId}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
         });
-
+        console.log('Delete response:', response);
         if (response.ok) {
             loadReports();
         } else {
@@ -116,7 +131,10 @@ async function deleteUser(userId) {
 
     try {
         const response = await fetch(`/api/users/${userId}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
         });
 
         if (response.ok) {

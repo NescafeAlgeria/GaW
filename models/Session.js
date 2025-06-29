@@ -34,7 +34,7 @@ export class Session {
   static async findBySessionId(sessionId) {
     try {
       const session = jwt.verify(sessionId, SECRET_KEY);
-      return session ? session.user : null;
+      return session ? session : null;
     }
     catch (err) {
       console.error('Invalid session ID:', err);
@@ -46,7 +46,7 @@ export class Session {
     // const session = await this.findBySessionId(sessionId);
     try {
       const session = jwt.verify(sessionId, SECRET_KEY);
-      return session ? session.user.username : null;
+      return session ? session.username : null;
     }
     catch (err) {
       console.error('Invalid session ID:', err);

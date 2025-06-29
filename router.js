@@ -33,6 +33,9 @@ const pageRoutes = {
   '/login': PageController.login,
   '/signup': PageController.signup,
   '/token': PageController.token,
+  '/admin-dashboard': PageController.adminDashboard,
+  '/authority-dashboard': PageController.authorityDashboard,
+  '/user-dashboard': PageController.userDashboard,
 };
 
 // === API Routes (RESTful) ===
@@ -107,12 +110,16 @@ const prepareFile = async (requestPath) => {
 const protectedPaths = [
 //   '/report',
 //   '/dashboard',
+  '/admin-dashboard',
+  '/authority-dashboard',
+  '/user-dashboard',
   '/api/reports',
   '/api/reports/export',
   '/api/reports/cities',
   '/api/users/me',
   '/api/reports/:id',
   '/api/users/:id',
+  '/api/users',
 ];
 
 // === Route Entry Point ===

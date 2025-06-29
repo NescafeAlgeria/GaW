@@ -36,14 +36,14 @@ export class AuthController {
             const userRole = validRoles.includes(role) ? role : 'user';
             const hashedPassword = await bcrypt.hash(password, 10);
 
-            await User.create({
+            const user = await User.create({
                 username,
                 email,
                 hashedPassword,
                 role: userRole
             });
 
-            const sessionId = await Session.create(username);
+            const sessionId = await Session.create(user);
 
             res.writeHead(201, {
                 'Content-Type': 'application/json',
@@ -68,7 +68,7 @@ export class AuthController {
                 return;
             }
 
-            const sessionId = await Session.create(user.username);
+            const sessionId = await Session.create(user);
             res.writeHead(200, {
                 'Content-Type': 'application/json',
                 // 'Authorization': `Bearer ${sessionId}`

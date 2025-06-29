@@ -82,6 +82,7 @@ export class Report {
                 throw new Error('Invalid ObjectId format');
             }
             const objectId = ObjectId.createFromHexString(reportId);
+            console.log('Deleting report with ID:', objectId);
             return await db.remove('reports', { _id: objectId });
         } catch (error) {
             console.error('Error deleting report:', error);

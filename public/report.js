@@ -67,7 +67,8 @@ submitButton.addEventListener('click', async (event) => {
     const response = await fetch('/api/reports', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
         body: JSON.stringify({
             severity: severity,
