@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 async function loadReports() {
     try {
-        const response = await fetch('/api/getAllReports');
+        const response = await fetch('/api/reports');
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -27,7 +27,7 @@ async function loadReports() {
 
 async function loadUsers() {
     try {
-        const response = await fetch('/api/getAllUsers');
+        const response = await fetch('/api/users');
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -94,7 +94,7 @@ async function deleteReport(reportId) {
     }
 
     try {
-        const response = await fetch(`/api/deleteReport/${reportId}`, {
+        const response = await fetch(`/api/reports/${reportId}`, {
             method: 'DELETE'
         });
 
@@ -115,7 +115,7 @@ async function deleteUser(userId) {
     }
 
     try {
-        const response = await fetch(`/api/deleteUser/${userId}`, {
+        const response = await fetch(`/api/users/${userId}`, {
             method: 'DELETE'
         });
 

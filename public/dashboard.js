@@ -9,7 +9,7 @@ document.getElementById('exportReportBtn').addEventListener('click', function ()
         return;
     }
 
-    let exportUrl = `/api/exportReport?county=${encodeURIComponent(county)}&format=${encodeURIComponent(format)}`;
+    let exportUrl = `/api/reports/export?county=${encodeURIComponent(county)}&format=${encodeURIComponent(format)}`;
 
     if (startDate) {
         exportUrl += `&startDate=${encodeURIComponent(startDate)}`;
@@ -49,7 +49,7 @@ function updateExportButton() {
 
 document.getElementById('countyDropdown').addEventListener('change', updateExportButton);
 
-fetch('/api/getAllReportedCities')
+fetch('/api/reports/cities')
     .then(response => response.json())
     .then(data => {
         const dropdown = document.getElementById('countyDropdown'); if (data.counties && Array.isArray(data.counties)) {

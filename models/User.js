@@ -16,11 +16,6 @@ export class User {
     return data ? new User(data) : null;
   }
 
-  static async findByUsername(username) {
-    const data = await findOne('users', { username });
-    return data ? new User(data) : null;
-  }
-
   static async findByEmailOrUsername(email, username) {
     const data = await db.findOne('users', {
       $or: [{ email }, { username }]

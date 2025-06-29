@@ -1,0 +1,9 @@
+- used jwt for sessions for added security
+- stored session in localStorage and use it with the Authorization header
+    - upside: good against csrf
+    - downside: have to manually add it to the header
+- made the api RESTful
+- added ajax handling on login/signup so the page doesn't just redirect to a json response
+- added pop-up to login/signup
+- session no longer stored in db because the session contains the user object (username, email, role)
+- i am going to crash out bcs the middleware won't work with the auth header

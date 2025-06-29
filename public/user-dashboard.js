@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', async function () {
     try {
-        const response = await fetch('/api/currentUser');
+        const response = await fetch('/api/users/me');
         if (response.ok) {
             const user = await response.json();
             document.getElementById('welcome-message').textContent = `Hi, ${user.username}!`;

@@ -1,35 +1,60 @@
-import { randomBytes } from 'crypto';
-import { db } from '../db/dbHandler.js';
+//import { randomBytes } from 'crypto';
+//import { db } from '../db/dbHandler.js';
+import dotenv from 'dotenv';
+import jwt from 'jsonwebtoken';
 
-const SESSION_DURATION = 24 * 60 * 60 * 1000;
+dotenv.config();
+
+const SESSION_DURATION = 24 * 60 * 60;
+const SECRET_KEY = process.env.JWT_SECRET;
 
 export class Session {
-  static async create(username) {
-    const sessionId = randomBytes(24).toString('hex');
-    const now = new Date();
+  static async create(userObj) {
+    // const sessionId = randomBytes(24).toString('hex');
+    const user = {
+      username: userObj.username,
+      role: userObj.role,
+      email: userObj.email,
+    }
+    const sessionId = jwt.sign(user, SECRET_KEY, { expiresIn: SESSION_DURATION });
+     
+    // const now = new Date();
 
-    const session = {
-      sessionId,
-      username,
-      createdAt: now,
-      expiresAt: new Date(now.getTime() + SESSION_DURATION),
-    };
+    // const session = {
+    //   sessionId,
+    //   username,
+    //   createdAt: now,
+    //   expiresAt: new Date(now.getTime() + SESSION_DURATION),
+    // };
 
-    await db.insert('sessions', session);
+    // await db.insert('sessions', session);
     return sessionId;
   }
 
   static async findBySessionId(sessionId) {
-    const sessions = await db.find('sessions', { sessionId });
-    return sessions.length > 0 ? sessions[0] : null;
+    try {
+      const session = jwt.verify(sessionId, SECRET_KEY);
+      return session ? session.user : null;
+    }
+    catch (err) {
+      console.error('Invalid session ID:', err);
+      return null;
+    }
   }
 
   static async getUsername(sessionId) {
-    const session = await this.findBySessionId(sessionId);
-    return session ? session.username : null;
+    // const session = await this.findBySessionId(sessionId);
+    try {
+      const session = jwt.verify(sessionId, SECRET_KEY);
+      return session ? session.user.username : null;
+    }
+    catch (err) {
+      console.error('Invalid session ID:', err);
+      return null;
+    }
   }
 
-  static async destroy(sessionId) {
-    return await db.remove('sessions', { sessionId });
-  }
+  // static async destroy(sessionId) {
+  //   return await db.remove('sessions', { sessionId });
+  // }
 }

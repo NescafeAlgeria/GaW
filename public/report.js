@@ -64,7 +64,7 @@ submitButton.addEventListener('click', async (event) => {
         return;
     }
 
-    const response = await fetch('/api/addReport', {
+    const response = await fetch('/api/reports', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

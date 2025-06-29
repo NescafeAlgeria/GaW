@@ -1,4 +1,4 @@
-import {servePage} from "../servePage.js";
+import { servePage } from "../servePage.js";
 import { Session } from '../models/Session.js';
 import { User } from '../models/User.js';
 
@@ -7,17 +7,18 @@ export class PageController {
     static report = servePage("report.html");
     static login = servePage("login.html");
     static signup = servePage("signup.html");
+    static token = servePage("token.html");
 
     static dashboard = async (req, res) => {
         try {
-            const cookies = req.headers.cookie;
-            if (!cookies) {
+            const authHeader = req.headers['authorization'];
+            if (!authHeader || !authHeader.startsWith('Bearer ')) {
                 res.writeHead(302, { 'Location': '/login' });
                 res.end();
                 return;
             }
 
-            const sessionId = cookies.split(';').find(c => c.trim().startsWith('sessionId='))?.split('=')[1];
+            const sessionId = authHeader.split(' ')[1];
             if (!sessionId) {
                 res.writeHead(302, { 'Location': '/login' });
                 res.end();
@@ -53,8 +54,8 @@ export class PageController {
             servePage(dashboardFile)(req, res);
         } catch (error) {
             console.error('Dashboard error:', error);
-            res.writeHead(302, { 'Location': '/login' });
-            res.end();
+            res.writeHead(500, { 'Content-Type': 'text/plain' });
+            res.end('Internal server error');
         }
     };
 }
