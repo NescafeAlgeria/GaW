@@ -257,3 +257,35 @@ footer p {
     max-width: 300px;
   }
 }
+
+
+
+.stats-section {
+  padding: 2rem;
+  background-color: #f8f8f8;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.counters-container {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.counter-box {
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+  width: 200px;
+}
+
+.counter-number {
+  font-size: 2.5rem;
+  color: var(--primary-light);
+  font-weight: bold;
+  margin-top: 0.5rem;
+}

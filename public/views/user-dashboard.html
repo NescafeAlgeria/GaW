@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="/user-dashboard.css">
     <script src="/home.js" defer></script>
+    <link rel="stylesheet" href="/dashboard-inline.css">
 </head>
 
 <body>
@@ -28,8 +29,33 @@
             <div class="user-actions">
                 <a href="/report" class="btn btn-primary">Report a Problem</a>
             </div>
+            
         </div>
+        <section class="dashboard-section">
+            <h3>Your Reports</h3>
+            <div class="table-container">
+                <table id="reports-table" class="dashboard-table">
+                    <thead>
+                        <tr>
+                            <th>County</th>
+                            <th>Locality</th>
+                            <th>Category</th>
+                            <th>Severity</th>
+                            <th>Description</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reports-tbody">
+                        <tr>
+                            <td colspan="7" class="loading-cell">Loading reports...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
     </main>
+
 
     <script src="/xssProtection.js"></script>
     <script src="/user-dashboard.js"></script>

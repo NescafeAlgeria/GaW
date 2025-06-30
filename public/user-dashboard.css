@@ -3,6 +3,7 @@
     margin: 2rem auto;
     padding: 2rem;
     text-align: center;
+
 }
 
 #welcome-message {
@@ -23,6 +24,7 @@
     border-radius: 5px;
     font-size: 1.1rem;
     transition: background-color 0.3s;
+    margin-bottom: 2rem;
 }
 
 .btn:hover {

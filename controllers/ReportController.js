@@ -126,6 +126,43 @@ export class ReportController {
         }
     }
 
+    static async getMyReports(req, res, params = {}) {
+        const user = await getAuthenticatedUser(req)
+        if (!user) {
+            res.writeHead(401, { 'Content-Type': 'application/json' })
+            res.end(JSON.stringify({ error: 'Unauthorized' }))
+            return
+        }
+        try {
+            const reports = await Report.findAll({ username: user.username })
+            const sanitized = reports.map(r => ({
+                ...r,
+                county: escapeHtml(r.county || ''),
+                locality: escapeHtml(r.locality || ''),
+                category: escapeHtml(r.category || ''),
+                description: escapeHtml(r.description || ''),
+                severity: escapeHtml(r.severity || '')
+            }))
+            res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' })
+            res.end(JSON.stringify(sanitized))
+        } catch (err) {
+            res.writeHead(500, { 'Content-Type': 'application/json' })
+            res.end(JSON.stringify({ error: 'Failed to fetch your reports' }))
+        }
+    }
+
+    static async getReportCount(req, res, params = {}) {
+        try {
+            const reports = await Report.findAll();
+            const count = reports.length;
+            res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' })
+            res.end(JSON.stringify({ count }));
+        } catch (err) {
+            res.writeHead(500, { 'Content-Type': 'application/json' })
+            res.end(JSON.stringify({ error: 'Failed to fetch report count' }))
+        }
+    }
+
     static async getAllUsers(req, res, params = {}) {
         const user = await getAuthenticatedUser(req)
         if (!requireRole(user, ['admin'])) {
@@ -150,6 +187,18 @@ export class ReportController {
         }
     }
 
+    static async getUserCount(req, res, params = {}) {
+        try {
+            const users = await User.findAll()
+            const count = users.length
+            res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' })
+            res.end(JSON.stringify({ count }))
+        } catch (err) {
+            res.writeHead(500, { 'Content-Type': 'application/json' })
+            res.end(JSON.stringify({ error: 'Failed to fetch user count' }))
+        }
+    }
+
     static async deleteReport(req, res, params = {}) {
         // if (req.method !== 'DELETE') {
         //     res.writeHead(405, { 'Content-Type': 'text/plain' })
@@ -157,20 +206,30 @@ export class ReportController {
         //     return
         // }
 
+        const reportId = params.id
+        if (!reportId) {
+            res.writeHead(400, { 'Content-Type': 'application/json' })
+            res.end(JSON.stringify({ error: 'Report ID is required' }))
+            return
+        }
+        const reportUser = await Report.findById(reportId)
+        if (!reportUser) {
+            res.writeHead(404, { 'Content-Type': 'application/json' })
+            res.end(JSON.stringify({ error: 'Report not found' }))
+            return
+        }
+
+
         const user = await getAuthenticatedUser(req)
-        if (!requireRole(user, ['admin', 'authority'])) {
+        if(user.username !== reportUser.username) {
+            if (!requireRole(user, ['admin', 'authority'])) {
             res.writeHead(403, { 'Content-Type': 'application/json' })
             res.end(JSON.stringify({ error: 'Forbidden' }))
             return
         }
+        }
 
         try {
-            const reportId = params.id
-            if (!reportId) {
-                res.writeHead(400, { 'Content-Type': 'application/json' })
-                res.end(JSON.stringify({ error: 'Report ID is required' }))
-                return
-            }
             await Report.delete(reportId)
             res.writeHead(200, { 'Content-Type': 'application/json' })
             res.end(JSON.stringify({ success: true }))

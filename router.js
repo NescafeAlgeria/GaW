@@ -44,12 +44,17 @@ const apiRoutes = [
   { method: 'POST', path: '/api/login', handler: AuthController.login },
   { method: 'POST', path: '/api/logout', handler: AuthController.logout },
   { method: 'POST', path: '/api/reports', handler: ReportController.create },
+
+  { method: 'GET', path: '/api/reports/count', handler: ReportController.getReportCount },
+  { method: 'GET', path: '/api/users/count', handler: ReportController.getUserCount },
   
   { method: 'GET', path: '/api/reports/export', handler: ExportController.exportReport },
   { method: 'GET', path: '/api/reports/cities', handler: ReportController.getAllCounties },
   { method: 'GET', path: '/api/users/me', handler: AuthController.getCurrentUser },
   { method: 'GET', path: '/api/reports', handler: ReportController.getAllReports },
   { method: 'GET', path: '/api/users', handler: ReportController.getAllUsers },
+  { method: 'GET', path: '/api/reports/me', handler: ReportController.getMyReports },
+
 
   { method: 'PATCH', path: '/api/users/:id/validate', handler: AuthController.validateUser },
   { method: 'PATCH', path: '/api/users/:id/role', handler: AuthController.changeUserRole },
@@ -72,6 +77,10 @@ function matchRoute(method, pathname, routes) {
 
     for (let i = 0; i < routeParts.length; i++) {
       if (routeParts[i].startsWith(':')) {
+        if(pathParts[i] === 'count') {
+          match = false;
+          break;
+        }
         params[routeParts[i].slice(1)] = pathParts[i];
       } else if (routeParts[i] !== pathParts[i]) {
         match = false;

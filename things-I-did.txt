@@ -7,8 +7,11 @@
 - added pop-up to login/signup
 - session no longer stored in db because the session contains the user object (username, email, role)
 - i am going to crash out bcs the middleware won't work with the auth header
-- caching added to a couple of APIs (mainly the ones that return a list of data like users or reports)
+- caching (no-cache because it breaks the dashboard) added to a couple of APIs (mainly the ones that return a list of data like users or reports)
 - made the dashboard kinda it's own single-page app, able to show the coresponding dashboard according to user role
 - made the dashboard load changes when deleting something
 - made report page check for auth client-side instead of server side bcs of restrictions
-
+- made admin dashboard be able to change user roles
+- added a counter for users and reports on the home page
+- added xss protection for all fields just before inserting/updating in the db
+- users can now see their reports on the dashboard, and can even delete them
