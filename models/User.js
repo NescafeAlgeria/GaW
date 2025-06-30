@@ -35,7 +35,6 @@ export class User {
         throw new Error('Invalid ObjectId format');
       }
       const objectId = ObjectId.createFromHexString(userId);
-      console.log('Updating user with ID:', objectId, 'with updates:', updates);
       const updatedData = await db.update('users', { _id: objectId }, updates);
       return new User(updatedData);
     } catch (error) {

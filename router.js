@@ -44,12 +44,16 @@ const apiRoutes = [
   { method: 'POST', path: '/api/login', handler: AuthController.login },
   { method: 'POST', path: '/api/logout', handler: AuthController.logout },
   { method: 'POST', path: '/api/reports', handler: ReportController.create },
-  { method: 'POST', path: '/api/users/:id/validate', handler: AuthController.validateUser },
+  
   { method: 'GET', path: '/api/reports/export', handler: ExportController.exportReport },
   { method: 'GET', path: '/api/reports/cities', handler: ReportController.getAllCounties },
   { method: 'GET', path: '/api/users/me', handler: AuthController.getCurrentUser },
   { method: 'GET', path: '/api/reports', handler: ReportController.getAllReports },
   { method: 'GET', path: '/api/users', handler: ReportController.getAllUsers },
+
+  { method: 'PATCH', path: '/api/users/:id/validate', handler: AuthController.validateUser },
+  { method: 'PATCH', path: '/api/users/:id/role', handler: AuthController.changeUserRole },
+
   { method: 'DELETE', path: '/api/reports/:id', handler: ReportController.deleteReport },
   { method: 'DELETE', path: '/api/users/:id', handler: ReportController.deleteUser },
 ];
@@ -121,6 +125,7 @@ const protectedPaths = [
   '/api/users/:id',
   '/api/users',
   '/api/users/:id/validate',
+  '/api/users/:id/role',
 ];
 
 // === Route Entry Point ===

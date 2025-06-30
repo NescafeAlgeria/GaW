@@ -95,6 +95,12 @@ function displayUsers(users) {
             <td style="padding: 0.75rem;">${escapeHtml(user.role || 'user')}</td>
             <td style="padding: 0.75rem;">
                 <button onclick="deleteUser('${user._id}')" style="padding: 0.5rem 1rem; background-color: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9rem;">Delete</button>
+                <select class="role-select" onchange="updateUserRole('${user._id}', this.value)" style="margin-left: 0.5rem; padding: 0.25rem; border: 1px solid #ccc; border-radius: 4px; font-size: 0.9rem;">
+                    <option value="" disabled selected>Change Role</option>
+                    <option value="user">User</option>
+                    <option value="authority">Authority</option>
+                    <option value="admin">Admin</option>
+                </select>
                 ${!user.validated && user.role === 'authority' ? `<button onclick="validateUser('${user._id}')" style="padding: 0.5rem 1rem; background-color: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9rem;">Validate</button>` : ''}
             </td>
         </tr>
@@ -156,13 +162,13 @@ async function validateUser(userId) {
 
     try {
         const response = await fetch(`/api/users/${userId}/validate`, {
-            method: 'POST',
+            method: 'PATCH',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
         });
 
-        console.log('Validate response:', response);
+        
 
         if (response.ok) {
             loadUsers();
@@ -172,5 +178,31 @@ async function validateUser(userId) {
     } catch (error) {
         console.error('Error validating user:', error);
         alert('Error validating user');
+    }
+}
+
+async function updateUserRole(userId, newRole) {
+    if (!confirm(`Are you sure you want to change this user's role to ${newRole}?`)) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/users/${userId}/role`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ role: newRole })
+        });
+
+        if (response.ok) {
+            loadUsers();
+        } else {
+            alert('Error updating user role');
+        }
+    } catch (error) {
+        console.error('Error updating user role:', error);
+        alert('Error updating user role');
     }
 }

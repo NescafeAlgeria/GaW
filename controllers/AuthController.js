@@ -137,7 +137,6 @@ export class AuthController {
     static validateUser = async (req, res, params = {}) => {
         try {
             const sessionId = getSessionId(req);
-            console.log('Session ID:', sessionId);
             if (!sessionId) {
                 res.writeHead(401, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify({ error: 'Not authenticated' }));
@@ -145,7 +144,6 @@ export class AuthController {
             }
 
             const session = await Session.findBySessionId(sessionId);
-            console.log('Session:', session);
             if (!session || session.role !== 'admin') {
                 res.writeHead(403, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify({ error: 'Forbidden' }));
@@ -170,4 +168,53 @@ export class AuthController {
             res.end(JSON.stringify({ error: 'Internal server error' }));
         }
     };
+    static changeUserRole = async (req, res, params = {}) => {
+        try {
+            const sessionId = getSessionId(req);
+            if (!sessionId) {
+                res.writeHead(401, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Not authenticated' }));
+                return;
+            }
+
+            const session = await Session.findBySessionId(sessionId);
+            if (!session || session.role !== 'admin') {
+                res.writeHead(403, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Forbidden' }));
+                return;
+            }
+
+            const userId = params.id;
+            if (!userId) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'User ID is required' }));
+                return;
+            }
+
+            const data = await getRequestBody(req);
+            console.log('Request data:', data);
+            const newRole = data.role;
+            if (!newRole) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'New role is required' }));
+                return;
+            }
+
+            const validRoles = ['user', 'authority', 'admin'];
+            if (!validRoles.includes(newRole)) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Invalid role' }));
+                return;
+            }
+
+            await User.update(userId, { role: newRole });
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ message: 'User role updated successfully' }));
+        } catch (err) {
+            console.error('changeUserRole error:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Internal server error' }));
+        }
+    }
 }
