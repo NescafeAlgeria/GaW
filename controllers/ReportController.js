@@ -3,6 +3,7 @@ import { Report } from '../models/Report.js'
 import { User } from '../models/User.js'
 import { Session } from '../models/Session.js'
 import { escapeHtml } from '../utils/xssProtection.js'
+import { ErrorFactory } from '../utils/ErrorFactory.js'
 
 // Helper: Get user from Authorization header
 async function getAuthenticatedUser(req) {
@@ -54,21 +55,15 @@ function getLocalityAndCounty(address) {
 
 export class ReportController {
     static async create(req, res, params = {}) {
-        // if (req.method !== 'POST') {
-        //     res.writeHead(405, { 'Content-Type': 'text/plain' })
-        //     res.end('Method Not Allowed')
-        //     return
-        // }
-
         let body = ''
         req.on('data', chunk => body += chunk.toString())
         req.on('end', async () => {
             try {
                 const user = await getAuthenticatedUser(req)
                 if (!user) {
-                    res.writeHead(401, { 'Content-Type': 'application/json' })
-                    res.end(JSON.stringify({ error: 'Unauthorized' }))
-                    return
+                    return ErrorFactory.createError(res, 401, 'UNAUTHORIZED', 'Unauthorized', {
+                        login: { href: '/api/login', method: 'POST' }
+                    });
                 }
 
                 const reportData = JSON.parse(body)
@@ -78,21 +73,30 @@ export class ReportController {
                 reportData.county = county
                 reportData.locality = locality
                 reportData.suburb = suburb
-                reportData.username = user.username // track who reported
+                reportData.username = user.username
 
                 const result = await Report.create(reportData)
                 if (!result) {
-                    res.writeHead(500, { 'Content-Type': 'application/json' })
-                    res.end(JSON.stringify({ error: 'Failed to save report.' }))
-                    return
+                    return ErrorFactory.createError(res, 500, 'SAVE_FAILED', 'Failed to save report', {
+                        reports: { href: '/api/reports', method: 'GET' }
+                    });
                 }
 
-                res.writeHead(200, { 'Content-Type': 'application/json' })
-                res.end(JSON.stringify({ message: 'Report received successfully!' }))
+                res.writeHead(201, { 'Content-Type': 'application/json' })
+                res.end(JSON.stringify({ 
+                    success: true,
+                    message: 'Report received successfully!',
+                    links: {
+                        self: { href: '/api/reports', method: 'POST' },
+                        reports: { href: '/api/reports', method: 'GET' },
+                        'my-reports': { href: '/api/reports/me', method: 'GET' }
+                    }
+                }))
             } catch (error) {
                 console.error('Create report error:', error)
-                res.writeHead(400, { 'Content-Type': 'application/json' })
-                res.end(JSON.stringify({ error: 'Invalid JSON or failed to save report.' }))
+                return ErrorFactory.createError(res, 400, 'INVALID_DATA', 'Invalid JSON or failed to save report', {
+                    reports: { href: '/api/reports', method: 'GET' }
+                });
             }
         })
     }
@@ -102,10 +106,19 @@ export class ReportController {
             const counties = await Report.getAllCounties()
             const sanitized = counties.map(escapeHtml)
             res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' })
-            res.end(JSON.stringify({ counties: sanitized }))
+            res.end(JSON.stringify({ 
+                success: true,
+                data: { counties: sanitized },
+                links: {
+                    self: { href: '/api/reports/cities', method: 'GET' },
+                    localities: { href: '/api/reports/localities', method: 'GET' },
+                    reports: { href: '/api/reports', method: 'GET' }
+                }
+            }))
         } catch (err) {
-            res.writeHead(500, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify({ error: 'Failed to fetch counties' }))
+            return ErrorFactory.createError(res, 500, 'FETCH_FAILED', 'Failed to fetch counties', {
+                reports: { href: '/api/reports', method: 'GET' }
+            });
         }
     }
 
@@ -114,10 +127,19 @@ export class ReportController {
             const localities = await Report.getAllLocalities()
             const sanitized = localities.map(escapeHtml)
             res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' })
-            res.end(JSON.stringify({ localities: sanitized }))
+            res.end(JSON.stringify({ 
+                success: true,
+                data: { localities: sanitized },
+                links: {
+                    self: { href: '/api/reports/localities', method: 'GET' },
+                    counties: { href: '/api/reports/cities', method: 'GET' },
+                    reports: { href: '/api/reports', method: 'GET' }
+                }
+            }))
         } catch (err) {
-            res.writeHead(500, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify({ error: 'Failed to fetch localities' }))
+            return ErrorFactory.createError(res, 500, 'FETCH_FAILED', 'Failed to fetch localities', {
+                reports: { href: '/api/reports', method: 'GET' }
+            });
         }
     }
 
@@ -133,19 +155,31 @@ export class ReportController {
                 severity: escapeHtml(r.severity || '')
             }))
             res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' })
-            res.end(JSON.stringify(sanitized))
+            res.end(JSON.stringify({
+                success: true,
+                data: sanitized,
+                links: {
+                    self: { href: '/api/reports', method: 'GET' },
+                    create: { href: '/api/reports', method: 'POST' },
+                    counties: { href: '/api/reports/cities', method: 'GET' },
+                    localities: { href: '/api/reports/localities', method: 'GET' },
+                    export: { href: '/api/reports/export', method: 'GET' }
+                }
+            }))
         } catch (err) {
-            res.writeHead(500, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify({ error: 'Failed to fetch reports' }))
+            return ErrorFactory.createError(res, 500, 'FETCH_FAILED', 'Failed to fetch reports', {
+                counties: { href: '/api/reports/cities', method: 'GET' },
+                localities: { href: '/api/reports/localities', method: 'GET' }
+            });
         }
     }
 
     static async getMyReports(req, res, params = {}) {
         const user = await getAuthenticatedUser(req)
         if (!user) {
-            res.writeHead(401, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify({ error: 'Unauthorized' }))
-            return
+            return ErrorFactory.createError(res, 401, 'UNAUTHORIZED', 'Unauthorized', {
+                login: { href: '/api/login', method: 'POST' }
+            });
         }
         try {
             const reports = await Report.findAll({ username: user.username })
@@ -158,10 +192,20 @@ export class ReportController {
                 severity: escapeHtml(r.severity || '')
             }))
             res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' })
-            res.end(JSON.stringify(sanitized))
+            res.end(JSON.stringify({
+                success: true,
+                data: sanitized,
+                links: {
+                    self: { href: '/api/reports/me', method: 'GET' },
+                    'create-report': { href: '/api/reports', method: 'POST' },
+                    'all-reports': { href: '/api/reports', method: 'GET' },
+                    profile: { href: '/api/users/me', method: 'GET' }
+                }
+            }))
         } catch (err) {
-            res.writeHead(500, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify({ error: 'Failed to fetch your reports' }))
+            return ErrorFactory.createError(res, 500, 'FETCH_FAILED', 'Failed to fetch your reports', {
+                reports: { href: '/api/reports', method: 'GET' }
+            });
         }
     }
 
@@ -170,19 +214,28 @@ export class ReportController {
             const reports = await Report.findAll();
             const count = reports.length;
             res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' })
-            res.end(JSON.stringify({ count }));
+            res.end(JSON.stringify({ 
+                success: true,
+                data: { count },
+                links: {
+                    self: { href: '/api/reports/count', method: 'GET' },
+                    reports: { href: '/api/reports', method: 'GET' },
+                    'user-count': { href: '/api/users/count', method: 'GET' }
+                }
+            }));
         } catch (err) {
-            res.writeHead(500, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify({ error: 'Failed to fetch report count' }))
+            return ErrorFactory.createError(res, 500, 'FETCH_FAILED', 'Failed to fetch report count', {
+                reports: { href: '/api/reports', method: 'GET' }
+            });
         }
     }
 
     static async getAllUsers(req, res, params = {}) {
         const user = await getAuthenticatedUser(req)
         if (!requireRole(user, ['admin'])) {
-            res.writeHead(403, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify({ error: 'Forbidden' }))
-            return
+            return ErrorFactory.createError(res, 403, 'FORBIDDEN', 'Forbidden', {
+                profile: { href: '/api/users/me', method: 'GET' },
+            });
         }
 
         try {
@@ -194,10 +247,18 @@ export class ReportController {
                 role: escapeHtml(u.role || '')
             }))
             res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' })
-            res.end(JSON.stringify(sanitized))
+            res.end(JSON.stringify({
+                success: true,
+                data: sanitized,
+                links: {
+                    self: { href: '/api/users', method: 'GET' },
+                    'user-count': { href: '/api/users/count', method: 'GET' }
+                }
+            }))
         } catch (err) {
-            res.writeHead(500, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify({ error: 'Failed to fetch users' }))
+            return ErrorFactory.createError(res, 500, 'FETCH_FAILED', 'Failed to fetch users', {
+                'user-count': { href: '/api/users/count', method: 'GET' }
+            });
         }
     }
 
@@ -206,80 +267,94 @@ export class ReportController {
             const users = await User.findAll()
             const count = users.length
             res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' })
-            res.end(JSON.stringify({ count }))
+            res.end(JSON.stringify({ 
+                success: true,
+                data: { count },
+                links: {
+                    self: { href: '/api/users/count', method: 'GET' },
+                    users: { href: '/api/users', method: 'GET' },
+                    'report-count': { href: '/api/reports/count', method: 'GET' }
+                }
+            }))
         } catch (err) {
-            res.writeHead(500, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify({ error: 'Failed to fetch user count' }))
+            return ErrorFactory.createError(res, 500, 'FETCH_FAILED', 'Failed to fetch user count', {
+                users: { href: '/api/users', method: 'GET' }
+            });
         }
     }
 
     static async deleteReport(req, res, params = {}) {
-        // if (req.method !== 'DELETE') {
-        //     res.writeHead(405, { 'Content-Type': 'text/plain' })
-        //     res.end('Method Not Allowed')
-        //     return
-        // }
-
         const reportId = params.id
         if (!reportId) {
-            res.writeHead(400, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify({ error: 'Report ID is required' }))
-            return
+            return ErrorFactory.createError(res, 400, 'REPORT_ID_REQUIRED', 'Report ID is required', {
+                reports: { href: '/api/reports', method: 'GET' }
+            });
         }
         const reportUser = await Report.findById(reportId)
         if (!reportUser) {
-            res.writeHead(404, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify({ error: 'Report not found' }))
-            return
+            return ErrorFactory.createError(res, 404, 'REPORT_NOT_FOUND', 'Report not found', {
+                reports: { href: '/api/reports', method: 'GET' }
+            });
         }
 
 
         const user = await getAuthenticatedUser(req)
         if (user.username !== reportUser.username) {
             if (!requireRole(user, ['admin', 'authority'])) {
-                res.writeHead(403, { 'Content-Type': 'application/json' })
-                res.end(JSON.stringify({ error: 'Forbidden' }))
-                return
+                return ErrorFactory.createError(res, 403, 'FORBIDDEN', 'Forbidden', {
+                    profile: { href: '/api/users/me', method: 'GET' },
+                    reports: { href: '/api/reports', method: 'GET' }
+                });
             }
         }
 
         try {
             await Report.delete(reportId)
             res.writeHead(200, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify({ success: true }))
+            res.end(JSON.stringify({ 
+                success: true,
+                message: 'Report deleted successfully',
+                links: {
+                    reports: { href: '/api/reports', method: 'GET' },
+                    'my-reports': { href: '/api/reports/me', method: 'GET' }
+                }
+            }))
         } catch (err) {
-            res.writeHead(500, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify({ error: 'Failed to delete report' }))
+            return ErrorFactory.createError(res, 500, 'DELETE_FAILED', 'Failed to delete report', {
+                reports: { href: '/api/reports', method: 'GET' }
+            });
         }
     }
 
     static async deleteUser(req, res, params = {}) {
-        // if (req.method !== 'DELETE') {
-        //     res.writeHead(405, { 'Content-Type': 'text/plain' })
-        //     res.end('Method Not Allowed')
-        //     return
-        // }
-
         const user = await getAuthenticatedUser(req)
         if (!requireRole(user, ['admin'])) {
-            res.writeHead(403, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify({ error: 'Forbidden' }))
-            return
+            return ErrorFactory.createError(res, 403, 'FORBIDDEN', 'Forbidden', {
+                profile: { href: '/api/users/me', method: 'GET' }
+            });
         }
 
         try {
             const userId = params.id
             if (!userId) {
-                res.writeHead(400, { 'Content-Type': 'application/json' })
-                res.end(JSON.stringify({ error: 'User ID is required' }))
-                return
+                return ErrorFactory.createError(res, 400, 'USER_ID_REQUIRED', 'User ID is required', {
+                    users: { href: '/api/users', method: 'GET' }
+                });
             }
             await User.delete(userId)
             res.writeHead(200, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify({ success: true }))
+            res.end(JSON.stringify({ 
+                success: true,
+                message: 'User deleted successfully',
+                links: {
+                    self: { href: `/api/users/${userId}`, method: 'DELETE' },
+                    users: { href: '/api/users', method: 'GET' }
+                }
+            }))
         } catch (err) {
-            res.writeHead(500, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify({ error: 'Failed to delete user' }))
+            return ErrorFactory.createError(res, 500, 'DELETE_FAILED', 'Failed to delete user', {
+                users: { href: '/api/users', method: 'GET' }
+            });
         }
     }
 }

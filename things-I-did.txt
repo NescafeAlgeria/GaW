@@ -15,3 +15,5 @@
 - added a counter for users and reports on the home page
 - added xss protection for all fields just before inserting/updating in the db
 - users can now see their reports on the dashboard, and can even delete them
+- refactored the api to use ErrorFactory
+- 

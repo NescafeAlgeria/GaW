@@ -102,8 +102,8 @@ fetch('/api/reports/cities', {
     .then(response => response.json())
     .then(data => {
         const dropdown = document.getElementById('countyDropdown');
-        if (data.counties && Array.isArray(data.counties)) {
-            data.counties.forEach(county => {
+        if (data.data.counties && Array.isArray(data.data.counties)) {
+            data.data.counties.forEach(county => {
                 const option = document.createElement('option');
                 option.value = county;
                 option.textContent = escapeHtml(county);
@@ -124,8 +124,8 @@ fetch('/api/reports/localities', {
     .then(response => response.json())
     .then(data => {
         const dropdown = document.getElementById('localityDropdown');
-        if (data.localities && Array.isArray(data.localities)) {
-            data.localities.forEach(locality => {
+        if (data.data.localities && Array.isArray(data.data.localities)) {
+            data.data.localities.forEach(locality => {
                 const option = document.createElement('option');
                 option.value = locality;
                 option.textContent = escapeHtml(locality);

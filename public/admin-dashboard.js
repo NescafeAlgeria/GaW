@@ -5,8 +5,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 async function loadReports() {
     try {
-        // const response = await fetch('/api/reports');
-
         const response = await fetch('/api/reports', {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -19,10 +17,10 @@ async function loadReports() {
 
         const reports = await response.json();
 
-        if (Array.isArray(reports)) {
-            displayReports(reports);
+        if (Array.isArray(reports.data)) {
+            displayReports(reports.data);
         } else {
-            console.error('Reports is not an array:', reports);
+            console.error('Reports is not an array:', reports.data);
             document.getElementById('reports-tbody').innerHTML = '<tr><td colspan="7" style="padding: 1rem; text-align: center;">Invalid data format</td></tr>';
         }
     } catch (error) {
@@ -33,7 +31,6 @@ async function loadReports() {
 
 async function loadUsers() {
     try {
-        //const response = await fetch('/api/users');
 
         const response = await fetch('/api/users', {
             headers: {
@@ -47,8 +44,8 @@ async function loadUsers() {
 
         const users = await response.json();
 
-        if (Array.isArray(users)) {
-            displayUsers(users);
+        if (Array.isArray(users.data)) {
+            displayUsers(users.data);
         } else {
             console.error('Users is not an array:', users);
             document.getElementById('users-tbody').innerHTML = '<tr><td colspan="4" style="padding: 1rem; text-align: center;">Invalid data format</td></tr>';
@@ -162,7 +159,7 @@ async function validateUser(userId) {
 
     try {
         const response = await fetch(`/api/users/${userId}/validate`, {
-            method: 'PATCH',
+            method: 'POST',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             }

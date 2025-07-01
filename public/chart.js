@@ -10,8 +10,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const users = await usersRes.json();
     const reports = await reportsRes.json();
 
-    animateCounter("userCount", users.count);
-    animateCounter("reportCount", reports.count);
+    animateCounter("userCount", users.data.count);
+    animateCounter("reportCount", reports.data.count);
   } catch (err) {
     console.error("Failed to load stats:", err);
   }

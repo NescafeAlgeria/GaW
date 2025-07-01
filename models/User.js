@@ -14,7 +14,7 @@ export class User {
       email: data.email,
       role: data.role || 'user',
     }
-    return new User(data);
+    return new User(newUser);
   }
 
   static async findByEmail(email) {

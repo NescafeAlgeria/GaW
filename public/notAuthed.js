@@ -19,17 +19,17 @@
     //   console.log('User info response:', userRes);
 
       const user = await userRes.json();
-      if(user.role==='authority'  && !user.validated) {
+      if(user.data.role==='authority'  && !user.data.validated) {
         document.querySelector('main').innerHTML = '<section class="hero"><h2>Your account is not validated. Please contact an administrator to validate your account.</h2></section>';
         return;
       }
-      if (!user.role) {
+      if (!user.data.role) {
         console.warn('User role missing');
         return;
       }
 
       let page;
-      switch (user.role) {
+      switch (user.data.role) {
         case 'admin':
           page = '/admin-dashboard';
           break;
