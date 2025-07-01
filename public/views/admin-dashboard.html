@@ -22,7 +22,7 @@
         <div class="auth-buttons">
             <a href="/" class="btn-auth btn-login">Home</a>
             <a href="/map" class="btn-auth btn-login">Overview</a>
-            <a href="/manage-recycle-points" class="btn-auth btn-login">Manage Recycle Points</a>
+            <a href="/manage-recycle-points-loader" class="btn-auth btn-login">Manage Recycle Points</a>
             <a href="#" id="logout" class="btn-auth btn-logout">Logout</a>
         </div>
     </header>
@@ -83,6 +83,28 @@
             </div>
         </section>
 
+
+        <section class="dashboard-section">
+            <h3>Users Management</h3>
+            <div class="table-container">
+                <table id="users-table" class="dashboard-table">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-tbody">
+                        <tr>
+                            <td colspan="4" class="loading-cell">Loading users...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
         <section class="dashboard-section">
             <h3>Reports Management</h3>
             <div class="table-container">
@@ -107,26 +129,6 @@
             </div>
         </section>
 
-        <section class="dashboard-section">
-            <h3>Users Management</h3>
-            <div class="table-container">
-                <table id="users-table" class="dashboard-table">
-                    <thead>
-                        <tr>
-                            <th>Username</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="users-tbody">
-                        <tr>
-                            <td colspan="4" class="loading-cell">Loading users...</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
     </main>
 
     <footer>

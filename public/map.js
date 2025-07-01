@@ -163,7 +163,11 @@ function styleFeature(feature) {
 
 async function loadGeoJSON() {
     try {
-        const response = await fetch(`/api/geojson/${encodeURIComponent(currentLocality)}`);
+        const response = await fetch(`/api/geojson/${encodeURIComponent(currentLocality)}`, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
         if (!response.ok) {
             throw new Error('Failed to load GeoJSON data');
         }
@@ -412,8 +416,6 @@ async function initPage() {
         document.getElementById('generate-chart').addEventListener('click', generateChart);
 
         await initMap();
-
-        console.log('Chart.js available:', typeof Chart !== 'undefined');
 
     } catch (error) {
         console.error('Error initializing page:', error);

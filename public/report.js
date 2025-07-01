@@ -49,8 +49,6 @@ fetch('/api/recycle-points')
         if (!data.success) return;
         const recyclePoints = data.data;
 
-        console.log(recyclePoints);
-
         recyclePoints.forEach(point => {
             const latitude = point.lat;
             const longitude = point.lng;
@@ -129,9 +127,6 @@ fetch('/api/recycle-points')
 
             marker.bindPopup(popupContent);
 
-            marker.on('click', () => {
-                console.log(`Recycle point clicked: ${point.name}`);
-            });
         });
 
     })
@@ -162,7 +157,7 @@ submitButton.addEventListener('click', async (event) => {
         submitButton.disabled = false;
         return;
     }
-    if(localStorage.getItem('token') === null) {
+    if (localStorage.getItem('token') === null) {
         resultText.innerText = 'Error: You must be logged in to submit a report.';
         resultText.style.color = 'red';
         submitButton.innerText = 'Submit';

@@ -211,7 +211,6 @@ export class RecyclePointController {
             try {
                 const data = JSON.parse(body);
 
-                console.log(data);
                 const { id, amount, category } = data;
 
                 if (!id || !amount || amount <= 0 || !category) {

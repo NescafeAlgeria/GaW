@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading Map...</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+    <main>
+        <section class="hero">
+            <h2>Loading map...</h2>
+        </section>
+    </main>
+    <script>
+        (async () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                document.querySelector('main').innerHTML = '<section class="hero"><h2>Please log in to access the map.</h2><a href="/login">Go to Login</a></section>';
+                return;
+            }
+
+            try {
+                const response = await fetch('/map-loader', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        document.querySelector('main').innerHTML = '<section class="hero"><h2>Please log in to access the map.</h2><a href="/login">Go to Login</a></section>';
+                    } else if (response.status === 403) {
+                        document.querySelector('main').innerHTML = '<section class="hero"><h2>Access denied. You do not have permission to access the map.</h2></section>';
+                    } else {
+                        document.querySelector('main').innerHTML = '<section class="hero"><h2>Error loading map.</h2></section>';
+                    }
+                    return;
+                }
+
+                const html = await response.text();
+                document.open();
+                document.write(html);
+                document.close();
+
+            } catch (error) {
+                console.error('Error loading map:', error);
+                document.querySelector('main').innerHTML = '<section class="hero"><h2>Error loading map.</h2></section>';
+            }
+        })();
+    </script>
+</body>
+
+</html>

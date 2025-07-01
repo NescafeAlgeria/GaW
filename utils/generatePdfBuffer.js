@@ -48,23 +48,18 @@ const generatePdfBuffer = (data, startDate = null, endDate = null, groupBy = 'lo
         doc.fillColor('#000000'); const minScore = garbageStatusSorted.reduce((min, zone) => Math.min(min, parseInt(zone.totalSeverity) + zone.reportsCount), Infinity);
         const maxScore = garbageStatusSorted.reduce((max, zone) => Math.max(max, parseInt(zone.totalSeverity) + zone.reportsCount), -Infinity);
 
-        console.log('Min score:', minScore, 'Max score:', maxScore);
-
         const scoreRange = maxScore - minScore; const scoreToColor = (score) => {
-            console.log('Calculating color for score:', score);
             let normalizedScore;
             if (scoreRange === 0 || garbageStatusSorted.length === 1) {
                 normalizedScore = 0.5;
             } else {
                 normalizedScore = (score - minScore) / scoreRange;
             }
-            console.log('Normalized score:', normalizedScore);
             const lightRed = [250, 230, 230];
             const lightGreen = [230, 250, 230];
             const red = Math.floor(lightRed[0] * normalizedScore + lightGreen[0] * (1 - normalizedScore));
             const green = Math.floor(lightRed[1] * normalizedScore + lightGreen[1] * (1 - normalizedScore));
             const blue = Math.floor(lightRed[2] * normalizedScore + lightGreen[2] * (1 - normalizedScore));
-            console.log('RGB:', red, green, blue);
             return [Math.min(255, Math.max(0, red)), Math.min(255, Math.max(0, green)), Math.min(255, Math.max(0, blue))];
         };
 
@@ -85,7 +80,6 @@ const generatePdfBuffer = (data, startDate = null, endDate = null, groupBy = 'lo
 
         startY += 5; garbageStatusSorted.forEach((zone, index) => {
             const yPos = startY + (index + 1) * 25;
-            console.log(`zone ${zone[groupBy]} - reports: ${zone.reportsCount}, severity: ${zone.totalSeverity}`);
             doc.fillColor(scoreToColor(zone.reportsCount + parseInt(zone.totalSeverity)));
             doc.rect(x, yPos - 5, width, 25).fill();
             doc.fillColor('#000000'); doc.text(zone[groupBy], x + 10, yPos);

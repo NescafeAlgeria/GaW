@@ -24,8 +24,10 @@ export class AuthController {
             const data = await getRequestBody(req);
             const { username, email, password, role } = data;
 
-            const existingUser = await User.findByEmailOrUsername(email, username);
-            if (existingUser) {
+            const existingUserByEmail = await User.findByEmail(email);
+            const existingUserByUsername = await User.findByUsername(username);
+
+            if (existingUserByEmail || existingUserByUsername) {
                 return ErrorFactory.createError(res, 409, 'USER_ALREADY_EXISTS', 'User already exists', {
                     login: { href: '/api/login', method: 'POST' }
                 });
@@ -124,7 +126,7 @@ export class AuthController {
 
             res.writeHead(200, {
                 'Content-Type': 'application/json',
-                'Cache-Control': 'private, max-age=300'
+                'Cache-Control': 'no-cache, no-store, must-revalidate'
             });
             res.end(JSON.stringify({
                 success: true,
@@ -210,7 +212,6 @@ export class AuthController {
             }
 
             const data = await getRequestBody(req);
-            console.log('Request data:', data);
             const newRole = data.role;
             if (!newRole) {
                 return ErrorFactory.createError(res, 400, 'ROLE_REQUIRED', 'New role is required', {

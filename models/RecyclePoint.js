@@ -44,7 +44,6 @@ export class RecyclePoint {
 
     static async deleteById(id) {
         if (!id) throw new Error("ID is required");
-        console.log(`Deleting recycle point with ID: ${id}`);
         if (!ObjectId.isValid(id)) {
             throw new Error('Invalid ObjectId format');
         }

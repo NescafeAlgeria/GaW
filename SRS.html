@@ -61,10 +61,11 @@
         <h3 id="purpose">1.1 Purpose</h3>
         <p>The purpose of this document is to describe the software requirements for a garbage and waste monitoring
             platform web application.
-            The application facilitates reporting and tracking waste issues in communities all around the world,
-            providing a user-friendly way for regular citizens to report garbage accumulation and incidents,
-            as well as a method for autorities to manage and respond to these reports in their respective counties. This
-            application supports a cleaner environment and streamlines recycling efforts.
+            The application facilitates reporting and tracking waste issues in communities, providing a user-friendly
+            way for regular citizens to report garbage accumulation and incidents, as well as a method for authorities
+            to manage and respond to these reports. The system also includes recycle point management functionality and
+            interactive map-based overview capabilities. This application supports a cleaner environment and streamlines
+            waste management efforts.
         </p>
 
         <h3 id="conventions">1.2 Document Conventions</h3>
@@ -84,11 +85,13 @@
         <h3 id="scope">1.4 Product Scope</h3>
         <p>The purpose of the application is:</p>
         <ul>
-            <li>Allowing citizens to report describe and garbage accumulation</li>
-            <li>Allowing authorities to easily manage and track garbage accumulation reports</li>
-            <li>Allowing authorities to generate reports based on the data collected from user reports</li>
+            <li>Allowing citizens to report and describe garbage accumulation incidents</li>
+            <li>Allowing authorities to easily manage, track and mark garbage reports as solved</li>
+            <li>Allowing authorities to generate PDF and CSV reports based on collected data</li>
+            <li>Providing interactive map-based overview with neighborhood visualization and chart analytics</li>
+            <li>Managing recycle points with capacity tracking and garbage collection functionality</li>
             <li>Facilitating better waste management and recycling efforts</li>
-            <li>Provide role-based access to making, viewing and managing the reports to users</li>
+            <li>Provide role-based access to making, viewing and managing reports to users</li>
         </ul>
         <h3 id="references">1.5 References</h3>
         <ul>
@@ -96,8 +99,11 @@
             <li><a href="https://www.w3.org/standards/">W3C Web Standards</a></li>
             <li><a href="https://www.mongodb.com/docs/">MongoDB Documentation</a></li>
             <li><a href="https://leafletjs.com/">Leaflet JavaScript Library</a></li>
+            <li><a href="https://www.chartjs.org/">Chart.js Library</a></li>
             <li><a href="https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller">MVC Design pattern
                     (core pattern behind application)</a></li>
+            <li><a href="https://en.wikipedia.org/wiki/Representational_state_transfer">REST Architectural Style</a>
+            </li>
         </ul>
     </section>
 
@@ -105,17 +111,24 @@
         <h2>2. Overall Description</h2>
         <h3 id="perspective">2.1 Product Perspective</h3>
         <p>
-            Garbage Monitoring for Web is a standalone web application that provides a reporting service for the
-            end-users and integrates Leaflet mapping services, OpenStreetMap's nominatim geocoding API and MongoDB
-            database for storing and managing reports. The reporting service is not limited to a specific region, rather
-            allowing people all around the world to use it.
+            Garbage Monitoring for Web is a standalone web application that provides a comprehensive reporting service
+            for
+            end-users and integrates Leaflet mapping services, Chart.js visualization library, OpenStreetMap's nominatim
+            geocoding API and MongoDB database for storing and managing reports. The system includes interactive map
+            overview functionality with neighborhood polygon visualization and chart-based analytics. The reporting
+            service
+            supports locality-based operations and recycle point management.
         </p>
 
         <h3 id="functions">2.2 Product Functions</h3>
         <ul>
             <li>Register/login for different types of users (citizen, authority, system administrator)</li>
             <li>Submit location-based waste reports with description, severity evaluation and waste type</li>
-            <li>Generate dynamic PDF and CSV reports for a specific county and time range</li>
+            <li>Mark reports as solved and manage report lifecycle</li>
+            <li>Interactive map overview with neighborhood polygons colored by report density</li>
+            <li>Chart-based analytics showing cumulative report trends by category and time</li>
+            <li>Generate dynamic PDF and CSV reports for specific localities and time ranges</li>
+            <li>Create and manage recycle points with capacity tracking and garbage collection</li>
             <li>Manage and delete reports and user accounts (system administrator only)</li>
         </ul>
 
@@ -163,10 +176,12 @@
         <h3 id="user-interfaces">3.1 User Interfaces</h3>
         <ul>
             <li>Map interface to pin and report waste accumulations</li>
+            <li>Interactive overview map with neighborhood visualization and chart analytics</li>
             <li>Form for describing and categorizing incidents</li>
             <li>Login/Register interface</li>
             <li>Reports exporting panel (PDF, CSV)</li>
             <li>Dashboard for viewing and deleting users and reports (admin only)</li>
+            <li>Recycle point management interface for creating and tracking facilities</li>
         </ul>
 
         <h3 id="hardware-interfaces">3.2 Hardware Interfaces</h3>
@@ -176,9 +191,11 @@
         <ul>
             <li>OpenStreetMap API</li>
             <li>PDF Generation Library (pdfkit)</li>
+            <li>CSV Generation functionality</li>
             <li>Password hashing library (bcrypt)</li>
             <li>MongoDB library</li>
             <li>Leaflet library</li>
+            <li>Chart.js library</li>
         </ul>
 
         <h3 id="communication-interfaces">3.4 Communications Interfaces</h3>
@@ -210,11 +227,14 @@
             <li>REQ-1.3: Validates unique email and username combinations</li>
             <li>REQ-1.4: Creates and manages user sessions with time-based expiration</li>
             <li>REQ-1.5: Enforces role-based access control for all protected routes</li>
+            <li>REQ-1.6: Provides user validation and role change functionality for administrators</li>
         </ul>
 
-        <h3>4.2 Interactive Garbage Report Creation</h3>
+        <h3>4.2 Interactive Garbage Report Creation and Management</h3>
         <p><strong>4.2.1 Description and Priority:</strong> High priority. All users must be able to create detailed
-            garbage reports by selecting locations on an interactive map and providing descriptive information.</p>
+            garbage reports by selecting locations on an interactive map and providing descriptive information.
+            Authorities
+            must be able to mark reports as solved.</p>
 
         <p><strong>4.2.2 Stimulus/Response Sequences:</strong></p>
         <ul>
@@ -222,6 +242,7 @@
             <li>User fills form (category, severity, description) → System validates input fields</li>
             <li>User submits report → System performs reverse geocoding, stores report in database → User receives
                 confirmation message</li>
+            <li>Authority views report → Authority marks report as solved → System updates report status</li>
         </ul>
 
         <p><strong>4.2.3 Functional Requirements:</strong></p>
@@ -230,45 +251,89 @@
             <li>REQ-2.2: Allows users to place markers by clicking on map locations</li>
             <li>REQ-2.3: Automatically determine locality and county via Nominatim reverse geocoding</li>
             <li>REQ-2.4: Provides severity rating, incident description and waste type selection</li>
+            <li>REQ-2.5: Allows authorities to mark reports as solved</li>
         </ul>
 
-
-        <h3>4.3 Data Export and Report Generation</h3>
-        <p><strong>4.3.1 Description and Priority:</strong> Medium priority. Authorities must be able to generate
-            PDF and CSV reports filtered by county and date ranges for Administrative purposes.</p>
+        <h3>4.3 Interactive Map Overview and Analytics</h3>
+        <p><strong>4.3.1 Description and Priority:</strong> High priority. The system must provide an interactive
+            map overview showing neighborhoods as colored polygons based on report density, with integrated chart
+            analytics for data visualization.</p>
 
         <p><strong>4.3.2 Stimulus/Response Sequences:</strong></p>
         <ul>
-            <li>Authority user accesses dashboard → System displays county selection, date filters and generation
+            <li>User accesses overview page → System displays map with neighborhood polygons colored by report density
+            </li>
+            <li>User selects locality from dropdown → System loads corresponding GeoJSON and updates map visualization
+            </li>
+            <li>User configures chart parameters → System generates cumulative report chart by category and time range
+            </li>
+        </ul>
+
+        <p><strong>4.3.3 Functional Requirements:</strong></p>
+        <ul>
+            <li>REQ-3.1: Displays interactive map with neighborhood polygon overlays</li>
+            <li>REQ-3.2: Colors neighborhoods based on report density calculations</li>
+            <li>REQ-3.3: Provides locality selection dropdown with supported locations</li>
+            <li>REQ-3.4: Generates cumulative report charts using Chart.js with date range filtering</li>
+            <li>REQ-3.5: Displays chart analytics for different waste categories over time</li>
+        </ul>
+
+
+        <h3>4.4 Data Export and Report Generation</h3>
+        <p><strong>4.4.1 Description and Priority:</strong> Medium priority. Authorities must be able to generate
+            PDF and CSV reports filtered by locality and date ranges for administrative purposes.</p>
+
+        <p><strong>4.4.2 Stimulus/Response Sequences:</strong></p>
+        <ul>
+            <li>Authority user accesses dashboard → System displays locality selection, date filters and generation
                 buttons</li>
             <li>User chooses export format (PDF/CSV) → System queries database and aggregates data</li>
             <li>System generates requested report → System provides download link</li>
         </ul>
 
-        <p><strong>4.3.3 Functional Requirements:</strong></p>
+        <p><strong>4.4.3 Functional Requirements:</strong></p>
         <ul>
-            <li>REQ-3.1: Generates PDF and CSV reports with grouped severity mapping</li>
-            <li>REQ-3.2: Supports date and county filtering</li>
-            <li>REQ-3.3: Reports include the cleanest and dirtiest localities</li>
+            <li>REQ-4.1: Generates PDF and CSV reports with grouped data by locality</li>
+            <li>REQ-4.2: Supports date and locality filtering</li>
+            <li>REQ-4.3: Reports include statistical analysis and aggregated information</li>
         </ul>
 
-        <h3>4.4 Administrative Dashboard System</h3>
-        <p><strong>4.4.1 Description and Priority:</strong> Medium priority. Administrators must have
+        <h3>4.5 Recycle Point Management System</h3>
+        <p><strong>4.5.1 Description and Priority:</strong> Medium priority. Authorities must be able to create and
+            manage recycle points with capacity tracking and garbage collection functionality.</p>
+
+        <p><strong>4.5.2 Stimulus/Response Sequences:</strong></p>
+        <ul>
+            <li>Authority creates recycle point → System stores location, capacity and contact information</li>
+            <li>Authority adds garbage to recycle point → System updates fill amounts and validates capacity limits</li>
+            <li>Authority clears recycle point → System resets fill amounts to zero</li>
+        </ul>
+
+        <p><strong>4.5.3 Functional Requirements:</strong></p>
+        <ul>
+            <li>REQ-5.1: Allows creation of recycle points with location, capacity and operational details</li>
+            <li>REQ-5.2: Tracks fill amounts by waste category with capacity validation</li>
+            <li>REQ-5.3: Provides garbage addition and clearing functionality</li>
+            <li>REQ-5.4: Manages recycle point operational hours and contact information</li>
+        </ul>
+
+        <h3>4.6 Administrative Dashboard System</h3>
+        <p><strong>4.6.1 Description and Priority:</strong> Medium priority. Administrators must have
             tools to manage user accounts and reports.</p>
 
-        <p><strong>4.4.2 Stimulus/Response Sequences:</strong></p>
+        <p><strong>4.6.2 Stimulus/Response Sequences:</strong></p>
         <ul>
             <li>Admin accesses dashboard → System displays user management and report management tables</li>
             <li>Admin clicks delete user → System prompts confirmation and removes user account</li>
             <li>Admin clicks delete report → System prompts confirmation and removes report</li>
         </ul>
 
-        <p><strong>4.4.3 Functional Requirements:</strong></p>
+        <p><strong>4.6.3 Functional Requirements:</strong></p>
         <ul>
-            <li>REQ-4.1: Displays table of all reports</li>
-            <li>REQ-4.2: Displays table of all users</li>
-            <li>REQ-4.3: Provides delete button for users</li>
-            <li>REQ-4.4: Provides delete button for reports</li>
+            <li>REQ-6.1: Displays table of all reports with filtering capabilities</li>
+            <li>REQ-6.2: Displays table of all users with role management</li>
+            <li>REQ-6.3: Provides delete functionality for users and reports</li>
+            <li>REQ-6.4: Shows system statistics and counts</li>
         </ul>
     </section>
 
@@ -284,8 +349,9 @@
         <ul>
             <li>Database security - using parametrized queries through MongoDB</li>
             <li>Passwords are hashed before being stored</li>
-            <li>Session management</li>
-            <li>XSS (Cross Site Scripting) protection</li>
+            <li>Session management with bearer token authentication</li>
+            <li>XSS (Cross Site Scripting) protection through input sanitization</li>
+            <li>RESTful API with proper HTTP cache control headers</li>
         </ul>
 
         <h3>5.3 Software Quality Attributes</h3>
@@ -302,14 +368,12 @@
 
         <h3>5.4 Business Rules</h3>
         <ul>
-            <li>Only authorities can generate reports
-            </li>
-
-            <li>Only admins can delete user accounts
-            </li>
-
-            <li>Only admins can delete reports
-            </li>
+            <li>Only authorities can generate reports and mark reports as solved</li>
+            <li>Only authorities can create and manage recycle points</li>
+            <li>Only admins can delete user accounts</li>
+            <li>Only admins can delete reports and validate users</li>
+            <li>Users can only view and delete their own reports</li>
+            <li>Recycle point capacity limits must be enforced when adding garbage</li>
         </ul>
     </section>
 

@@ -6,7 +6,7 @@ import { ReportController } from './controllers/ReportController.js';
 import { ExportController } from './controllers/ExportController.js';
 import { PageController } from './controllers/PageController.js';
 import { AuthController } from './controllers/AuthController.js';
-import { authMiddleware } from './middleware.js';
+import { authMiddleware, requireUser, requireAuthority, requireAdmin } from './middleware.js';
 import { RecyclePointController } from "./controllers/RecyclePointController.js";
 
 const MIME_TYPES = {
@@ -31,14 +31,16 @@ const pageRoutes = {
   '/': PageController.home,
   '/report': PageController.report,
   '/dashboard': PageController.dashboard,
-  '/map': PageController.map,
+  '/map': PageController.mapLoader,
+  '/map-loader': PageController.map,
   '/login': PageController.login,
   '/signup': PageController.signup,
   '/token': PageController.token,
   '/admin-dashboard': PageController.adminDashboard,
   '/authority-dashboard': PageController.authorityDashboard,
   '/user-dashboard': PageController.userDashboard,
-  '/manage-recycle-points': PageController.manageRecyclePoints,
+  '/manage-recycle-points': PageController.manageRecyclePointsLoader,
+  '/manage-recycle-points-loader': PageController.manageRecyclePoints,
 };
 
 // === API Routes (RESTful) ===
@@ -112,6 +114,27 @@ function matchRoute(method, pathname, routes) {
   return null;
 }
 
+function matchProtectedRoute(pathname) {
+  for (const route of protectedRoutes) {
+    const routeParts = route.path.split('/').filter(Boolean);
+    const pathParts = pathname.split('/').filter(Boolean);
+    if (routeParts.length !== pathParts.length) continue;
+
+    let match = true;
+    for (let i = 0; i < routeParts.length; i++) {
+      if (routeParts[i].startsWith(':')) {
+        continue;
+      } else if (routeParts[i] !== pathParts[i]) {
+        match = false;
+        break;
+      }
+    }
+
+    if (match) return route;
+  }
+  return null;
+}
+
 // === Middleware Runner ===
 async function runMiddlewares(req, res, middlewares) {
   for (const mw of middlewares) {
@@ -140,24 +163,25 @@ const prepareFile = async (requestPath) => {
 };
 
 // === Protected Paths (requires auth) ===
-const protectedPaths = [
-  //   '/report',
-  '/admin-dashboard',
-  '/authority-dashboard',
-  '/user-dashboard',
-  '/api/reports',
-  '/api/reports/export',
-  '/api/reports/cities',
-  '/api/users/me',
-  '/api/reports/:id',
-  '/api/users/:id',
-  '/api/users',
-  '/api/users/:id/validate',
-  '/api/users/:id/role',
-  '/api/recycle-points/garbage',
-  '/api/recycle-points/:id',
-  '/manage-recycle-points',
-  '/api/reports/:id/solve',
+const protectedRoutes = [
+  { path: '/admin-dashboard', middleware: requireAdmin },
+  { path: '/authority-dashboard', middleware: requireAuthority },
+  { path: '/user-dashboard', middleware: requireUser },
+  { path: '/manage-recycle-points-loader', middleware: requireAuthority },
+  { path: '/map-loader', middleware: requireAuthority },
+  { path: '/api/reports', middleware: requireUser },
+  { path: '/api/reports/export', middleware: requireUser },
+  { path: '/api/reports/cities', middleware: requireUser },
+  { path: '/api/users/me', middleware: requireUser },
+  { path: '/api/reports/:id', middleware: requireUser },
+  { path: '/api/users/:id', middleware: requireAdmin },
+  { path: '/api/users', middleware: requireAdmin },
+  { path: '/api/users/:id/validate', middleware: requireAdmin },
+  { path: '/api/users/:id/role', middleware: requireAdmin },
+  { path: '/api/recycle-points/garbage', middleware: requireAuthority },
+  { path: '/api/recycle-points/:id', middleware: requireAuthority },
+  { path: '/api/geojson/:locality', middleware: requireAuthority },
+  { path: '/api/reports/:id/solve', middleware: requireAuthority },
 ];
 
 // === Route Entry Point ===
@@ -166,12 +190,11 @@ export const routeRequest = async (req, res) => {
   const pathname = parsedUrl.pathname;
   const method = req.method.toUpperCase();
 
-  // Handle API routes
   const apiMatch = matchRoute(method, pathname, apiRoutes);
   if (apiMatch) {
-    const protectedRoute = matchRoute(method, pathname, protectedPaths.map(p => ({ method, path: p })));
+    const protectedRoute = matchProtectedRoute(pathname);
     if (protectedRoute) {
-      const isAuthenticated = await runMiddlewares(req, res, [authMiddleware]);
+      const isAuthenticated = await runMiddlewares(req, res, [protectedRoute.middleware]);
       if (!isAuthenticated) {
         res.writeHead(401, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: 'Unauthorized' }));
@@ -189,10 +212,10 @@ export const routeRequest = async (req, res) => {
     return;
   }
 
-  // Handle page routes
   if (method === 'GET' && pageRoutes[pathname]) {
-    if (protectedPaths.includes(pathname)) {
-      const isAuthenticated = await runMiddlewares(req, res, [authMiddleware]);
+    const protectedRoute = matchProtectedRoute(pathname);
+    if (protectedRoute) {
+      const isAuthenticated = await runMiddlewares(req, res, [protectedRoute.middleware]);
       if (!isAuthenticated) {
         res.writeHead(302, { Location: '/login' });
         res.end();
@@ -202,7 +225,6 @@ export const routeRequest = async (req, res) => {
     return pageRoutes[pathname](req, res);
   }
 
-  // Static files
   try {
     const { found, ext, stream } = await prepareFile(pathname);
     const mimeType = MIME_TYPES[ext] || MIME_TYPES.default;

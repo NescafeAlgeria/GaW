@@ -79,7 +79,6 @@ async function deleteReport(reportId) {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
         });
-        console.log('Delete response:', response);
         if (response.ok) {
             loadReports();
         } else {

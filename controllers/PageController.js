@@ -11,6 +11,8 @@ export class PageController {
     static authorityDashboard = servePage("authority-dashboard.html");
     static userDashboard = servePage("user-dashboard.html");
     static map = servePage("map.html");
+    static mapLoader = servePage("map-loader.html");
 
     static manageRecyclePoints = servePage("manage-recycle-points.html");
+    static manageRecyclePointsLoader = servePage("manage-recycle-points-loader.html");
 }

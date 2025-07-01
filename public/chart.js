@@ -11,7 +11,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const users = await usersRes.json();
     const reports = await reportsRes.json();
     const solved = await solvedRes.json();
-    console.log("solved", solved.data);
     animateCounter("userCount", users.data.count);
     animateCounter("reportCount", reports.data.count);
     animateCounter("solvedCount", solved.data.count);

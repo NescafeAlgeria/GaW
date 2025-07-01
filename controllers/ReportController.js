@@ -408,7 +408,6 @@ export class ReportController {
                 })
             }
 
-            console.log('Fetching reports for locality:', locality)
             const reports = await Report.findByLocality(locality)
             res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' })
             res.end(JSON.stringify({
@@ -514,8 +513,6 @@ export class ReportController {
             const locality = params.locality
             const startDate = parsedUrl.query.startDate
             const endDate = parsedUrl.query.endDate
-
-            console.log('Fetching reports for chart:', { locality, startDate, endDate })
 
             if (!locality) {
                 return ErrorFactory.createError(res, 400, 'MISSING_PARAMETER', 'Locality parameter is required', {

@@ -13,8 +13,7 @@ export const servePage = (pageName) => {
             }
 
             res.writeHead(200, {
-                'Content-Type': 'text/html',
-                'Cache-Control': 'public, max-age=3600'
+                'Content-Type': 'text/html'
             });
             res.end(content);
         });

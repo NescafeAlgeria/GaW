@@ -229,7 +229,6 @@ function loadRecyclePoints() {
                 return;
             }
             const recyclePoints = data.data;
-            console.log('Loaded recycle points:', recyclePoints.length);
 
             recyclePoints.forEach(point => {
                 const latitude = point.lat;
