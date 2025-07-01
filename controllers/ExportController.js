@@ -1,6 +1,7 @@
 import { Report } from '../models/Report.js';
 import generatePdfBuffer from '../utils/generatePdfBuffer.js';
 import generateCsvBuffer from '../utils/generateCsvBuffer.js';
+import { generateHtmlBuffer } from '../utils/generateHtmlBuffer.js';
 import { ErrorFactory } from '../utils/ErrorFactory.js';
 
 export class ExportController {
@@ -30,8 +31,8 @@ export class ExportController {
                 });
             }
 
-            if (!['pdf', 'csv'].includes(format)) {
-                return ErrorFactory.createError(res, 400, 'INVALID_FORMAT', 'Format must be either "pdf" or "csv"', {
+            if (!['pdf', 'csv', 'html'].includes(format)) {
+                return ErrorFactory.createError(res, 400, 'INVALID_FORMAT', 'Format must be either "pdf", "csv", or "html"', {
                     reports: { href: '/api/reports', method: 'GET' }
                 });
             }
@@ -58,6 +59,14 @@ export class ExportController {
                     'Cache-Control': 'private, max-age=0'
                 });
                 res.end(csvBuffer);
+            } else if (format === 'html') {
+                const htmlBuffer = await generateHtmlBuffer(reports, county, locality, startDate, endDate);
+                res.writeHead(200, {
+                    'Content-Type': 'text/html',
+                    'Content-Disposition': `attachment; filename="${sanitizedName}_report.html"`,
+                    'Cache-Control': 'private, max-age=0'
+                });
+                res.end(htmlBuffer);
             } else {
                 const pdfBuffer = await generatePdfBuffer(reports, startDate, endDate, groupBy);
                 res.writeHead(200, {

@@ -17,23 +17,14 @@ function requireRole(user, allowedRoles) {
     return user && allowedRoles.includes(user.role)
 }
 
-function reverseGeocode(lat, lon) {
-    return new Promise((resolve, reject) => {
-        const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&addressdetails=1`
-        const options = { headers: { 'User-Agent': 'GaW' } }
-        https.get(url, options, (res) => {
-            let data = ''
-            res.on('data', chunk => data += chunk)
-            res.on('end', () => {
-                try {
-                    const json = JSON.parse(data)
-                    resolve(json.address)
-                } catch (err) {
-                    reject(err)
-                }
-            })
-        }).on('error', reject)
-    })
+async function reverseGeocode(lat, lon) {
+    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&addressdetails=1`
+    const response = await fetch(url, { headers: { 'User-Agent': 'GaW' } })
+    if (!response.ok) {
+        throw new Error(`Reverse geocoding failed: ${response.statusText}`)
+    }
+    const json = await response.json()
+    return json.address
 }
 
 function getLocalityAndCounty(address) {
