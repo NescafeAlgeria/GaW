@@ -61,6 +61,7 @@ const apiRoutes = [
 
   { method: 'POST', path: '/api/users/:id/validate', handler: AuthController.validateUser },
   { method: 'PATCH', path: '/api/users/:id/role', handler: AuthController.changeUserRole },
+  { method: 'POST', path: '/api/reports/:id/solve', handler: ReportController.solveReport },
 
   { method: 'DELETE', path: '/api/reports/:id', handler: ReportController.deleteReport },
   { method: 'DELETE', path: '/api/users/:id', handler: ReportController.deleteUser },
@@ -148,6 +149,8 @@ const protectedPaths = [
   '/api/users/:id/role',
   '/api/recycle-points/garbage',
   '/api/recycle-points/:id',
+  '/manage-recycle-points',
+  '/api/reports/:id/solve',
 ];
 
 // === Route Entry Point ===

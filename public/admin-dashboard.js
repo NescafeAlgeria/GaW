@@ -62,9 +62,8 @@ function displayReports(reports) {
         tbody.innerHTML = '<tr><td colspan="7" style="padding: 1rem; text-align: center;">No reports found</td></tr>';
         return;
     }
-
     tbody.innerHTML = reports.map(report => `
-        <tr style="border-bottom: 1px solid #ddd;">
+        <tr style="border-bottom: 1px solid #ddd; ${report.solved === 'true' ? `background-color:#ccc` : ``};">
             <td style="padding: 0.75rem;">${escapeHtml(report.county || 'Unknown')}</td>
             <td style="padding: 0.75rem;">${escapeHtml(report.locality || 'Unknown')}</td>
             <td style="padding: 0.75rem;">${escapeHtml(report.category || 'N/A')}</td>
@@ -73,6 +72,7 @@ function displayReports(reports) {
             <td style="padding: 0.75rem;">${report.createdAt ? new Date(report.createdAt).toLocaleDateString() : 'N/A'}</td>
             <td style="padding: 0.75rem;">
                 <button onclick="deleteReport('${report._id}')" style="padding: 0.5rem 1rem; background-color: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9rem;">Delete</button>
+                ${report.solved === 'true' ? '' : `<button onclick="solveReport('${report._id}')" style="padding: 0.5rem 1rem; background-color: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9rem;">Solve</button>`}
             </td>
         </tr>
     `).join('');
@@ -201,5 +201,29 @@ async function updateUserRole(userId, newRole) {
     } catch (error) {
         console.error('Error updating user role:', error);
         alert('Error updating user role');
+    }
+}
+
+async function solveReport(reportId) {
+    if (!confirm('Are you sure you want to mark this report as solved?')) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/reports/${reportId}/solve`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+
+        if (response.ok) {
+            loadReports();
+        } else {
+            alert('Error marking report as solved');
+        }
+    } catch (error) {
+        console.error('Error marking report as solved:', error);
+        alert('Error marking report as solved');
     }
 }

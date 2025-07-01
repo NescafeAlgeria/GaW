@@ -152,7 +152,8 @@ export class ReportController {
                 locality: escapeHtml(r.locality || ''),
                 category: escapeHtml(r.category || ''),
                 description: escapeHtml(r.description || ''),
-                severity: escapeHtml(r.severity || '')
+                severity: escapeHtml(r.severity || ''),
+                solved: escapeHtml(r.solved || 'false'),
             }))
             res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' })
             res.end(JSON.stringify({
@@ -189,7 +190,8 @@ export class ReportController {
                 locality: escapeHtml(r.locality || ''),
                 category: escapeHtml(r.category || ''),
                 description: escapeHtml(r.description || ''),
-                severity: escapeHtml(r.severity || '')
+                severity: escapeHtml(r.severity || ''),
+                solved: escapeHtml(r.solved || 'false'),
             }))
             res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' })
             res.end(JSON.stringify({
@@ -225,6 +227,51 @@ export class ReportController {
             }));
         } catch (err) {
             return ErrorFactory.createError(res, 500, 'FETCH_FAILED', 'Failed to fetch report count', {
+                reports: { href: '/api/reports', method: 'GET' }
+            });
+        }
+    }
+
+    static async solveReport(req, res, params = {}) {
+        const reportId = params.id
+        if (!reportId) {
+            return ErrorFactory.createError(res, 400, 'REPORT_ID_REQUIRED', 'Report ID is required', {
+                reports: { href: '/api/reports', method: 'GET' }
+            });
+        }
+        const report = await Report.findById(reportId)
+        if (!report) {
+            return ErrorFactory.createError(res, 404, 'REPORT_NOT_FOUND', 'Report not found', {
+                reports: { href: '/api/reports', method: 'GET' }
+            });
+        }
+        const user = await getAuthenticatedUser(req)
+        if (!user) {
+            return ErrorFactory.createError(res, 401, 'UNAUTHORIZED', 'Unauthorized', {
+                login: { href: '/api/login', method: 'POST' }
+            });
+        }
+            if (!requireRole(user, ['admin', 'authority'])) {
+                return ErrorFactory.createError(res, 403, 'FORBIDDEN', 'Forbidden', {
+                    profile: { href: '/api/users/me', method: 'GET' },
+                    reports: { href: '/api/reports', method: 'GET' }
+                });
+            }
+
+        try {
+            await Report.solve(reportId)
+            res.writeHead(200, { 'Content-Type': 'application/json' })
+            res.end(JSON.stringify({ 
+                success: true,
+                message: 'Report marked as solved successfully',
+                links: {
+                    self: { href: `/api/reports/${reportId}/solve`, method: 'POST' },
+                    report: { href: `/api/reports/${reportId}`, method: 'GET' },
+                }
+            }))
+        } catch (err) {
+            console.error('Solve report error:', err)
+            return ErrorFactory.createError(res, 500, 'SOLVE_FAILED', 'Failed to mark report as solved', {
                 reports: { href: '/api/reports', method: 'GET' }
             });
         }
