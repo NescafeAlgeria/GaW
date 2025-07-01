@@ -184,7 +184,6 @@ const protectedRoutes = [
   { path: '/api/users/:id/role', middleware: requireAdmin },
   { path: '/api/recycle-points/garbage', middleware: requireAuthority },
   { path: '/api/recycle-points/:id', middleware: requireAuthority },
-  { path: '/api/recycle-points', middleware: requireAuthority },
   { path: '/api/geojson/:locality', middleware: requireAuthority },
   { path: '/api/reports/:id/solve', middleware: requireAuthority },
 ];
