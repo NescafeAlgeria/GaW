@@ -337,4 +337,44 @@ export class ReportController {
             ErrorFactory.createError(res, 500, 'SERVER_ERROR', 'Failed to serve GeoJSON')
         }
     }
+
+    static async getReportsForChart(req, res, params = {}) {
+        try {
+            const url = await import('url')
+            const parsedUrl = url.parse(req.url, true)
+            const locality = params.locality
+            const startDate = parsedUrl.query.startDate
+            const endDate = parsedUrl.query.endDate
+
+            console.log('Fetching reports for chart:', { locality, startDate, endDate })
+
+            if (!locality) {
+                ErrorFactory.createError(res, 400, 'MISSING_PARAMETER', 'Locality parameter is required')
+                return
+            }
+
+            if (!startDate || !endDate) {
+                ErrorFactory.createError(res, 400, 'MISSING_PARAMETER', 'Start date and end date are required')
+                return
+            }
+
+            const reports = await Report.findByLocalityAndDateRange(locality, startDate, endDate)
+            const sanitized = reports.map(r => ({
+                ...r,
+                county: escapeHtml(r.county || ''),
+                locality: escapeHtml(r.locality || ''),
+                suburb: escapeHtml(r.suburb || ''),
+                category: escapeHtml(r.category || ''),
+                description: escapeHtml(r.description || ''),
+                severity: escapeHtml(r.severity || ''),
+                timestamp: r.timestamp
+            }))
+
+            res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' })
+            res.end(JSON.stringify(sanitized))
+        } catch (err) {
+            console.error('Error fetching reports for chart:', err)
+            ErrorFactory.createError(res, 500, 'FETCH_FAILED', 'Failed to fetch reports for chart')
+        }
+    }
 }

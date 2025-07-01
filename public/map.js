@@ -2,6 +2,7 @@ let map;
 let neighborhoodData = {};
 let reports = [];
 let currentLocality = 'Iași';
+let reportsChart = null;
 
 async function loadSupportedLocalities() {
     try {
@@ -37,6 +38,27 @@ function populateLocalityDropdown(localities) {
             initMap();
         }
     });
+}
+
+function populateChartLocalityDropdown(localities) {
+    const select = document.getElementById('chart-locality-select');
+    select.innerHTML = '';
+
+    localities.forEach(locality => {
+        const option = document.createElement('option');
+        option.value = locality;
+        option.textContent = locality;
+        select.appendChild(option);
+    });
+}
+
+function setDefaultDates() {
+    const endDate = new Date();
+    const startDate = new Date();
+    startDate.setMonth(startDate.getMonth() - 1);
+
+    document.getElementById('start-date').value = startDate.toISOString().split('T')[0];
+    document.getElementById('end-date').value = endDate.toISOString().split('T')[0];
 }
 
 function getColorByReportCount(count) {
@@ -165,6 +187,78 @@ async function loadReports() {
     }
 }
 
+async function loadChartData(locality, startDate, endDate) {
+    try {
+        const url = `/api/reports/chart/${encodeURIComponent(locality)}?startDate=${startDate}&endDate=${endDate}`;
+        const response = await fetch(url, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+        if (!response.ok) {
+            throw new Error('Failed to load chart data');
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error loading chart data:', error);
+        throw error;
+    }
+}
+
+function processChartData(reports) {
+    const categories = ['household waste', 'paper', 'plastic', 'glass'];
+    const categoryLabels = ['Household Waste', 'Paper', 'Plastic', 'Glass'];
+    const dateMap = {};
+
+    reports.forEach(report => {
+        const date = new Date(report.createdAt).toISOString().split('T')[0];
+        const category = report.category ? report.category.toLowerCase() : 'household waste';
+
+        if (!dateMap[date]) {
+            dateMap[date] = {};
+            categories.forEach(cat => {
+                dateMap[date][cat] = 0;
+            });
+        }
+        if (categories.includes(category)) {
+            dateMap[date][category]++;
+        }
+    });
+
+    const sortedDates = Object.keys(dateMap).sort();
+
+    const cumulativeTotals = {};
+    categories.forEach(cat => {
+        cumulativeTotals[cat] = 0;
+    });
+
+    const datasets = categoryLabels.map((label, index) => {
+        const category = categories[index];
+        const colors = [
+            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'
+        ];
+
+        const cumulativeData = sortedDates.map(date => {
+            cumulativeTotals[category] += dateMap[date][category];
+            return cumulativeTotals[category];
+        });
+
+        return {
+            label: label,
+            data: cumulativeData,
+            borderColor: colors[index],
+            backgroundColor: colors[index] + '20',
+            tension: 0.1,
+            fill: false
+        };
+    });
+
+    return {
+        labels: sortedDates,
+        datasets: datasets
+    };
+}
+
 async function initMap() {
     try {
         document.getElementById('loading').style.display = 'block';
@@ -220,14 +314,125 @@ async function initMap() {
     }
 }
 
+async function generateChart() {
+    try {
+        const locality = document.getElementById('chart-locality-select').value;
+        const startDate = document.getElementById('start-date').value;
+        const endDate = document.getElementById('end-date').value;
+
+        if (!locality || !startDate || !endDate) {
+            alert('Please select locality and date range');
+            return;
+        }
+
+        if (new Date(startDate) > new Date(endDate)) {
+            alert('Start date must be before end date');
+            return;
+        }
+
+        const reports = await loadChartData(locality, startDate, endDate);
+        const chartData = processChartData(reports);
+
+        const canvas = document.getElementById('reports-chart');
+        if (!canvas) {
+            console.error('Chart canvas not found');
+            return;
+        }
+
+        const ctx = canvas.getContext('2d');
+
+        if (reportsChart) {
+            reportsChart.destroy();
+        }
+
+        canvas.style.display = 'block';
+        canvas.style.position = 'relative';
+        canvas.style.zIndex = '1';
+
+        reportsChart = new Chart(ctx, {
+            type: 'line',
+            data: chartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: `Cumulative Reports by Category in ${locality}`,
+                        font: {
+                            size: 16
+                        }
+                    },
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Date'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Total Number of Reports'
+                        },
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+
+    } catch (error) {
+        console.error('Error generating chart:', error);
+        alert('Failed to generate chart. Please try again.');
+    }
+}
+
 async function initPage() {
     try {
-        const localities = await loadSupportedLocalities();
-        populateLocalityDropdown(localities);
+        const [supportedLocalities, allLocalities] = await Promise.all([
+            loadSupportedLocalities(),
+            loadAllLocalities()
+        ]);
+
+        populateLocalityDropdown(supportedLocalities);
+        populateChartLocalityDropdown(allLocalities);
+        setDefaultDates();
+
+        document.getElementById('generate-chart').addEventListener('click', generateChart);
+
         await initMap();
+
+        console.log('Chart.js available:', typeof Chart !== 'undefined');
+
     } catch (error) {
         console.error('Error initializing page:', error);
     }
 }
 
 document.addEventListener('DOMContentLoaded', initPage);
+
+async function loadAllLocalities() {
+    try {
+        const response = await fetch('/api/reports/localities', {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+        if (!response.ok) {
+            throw new Error('Failed to load all localities');
+        }
+        const data = await response.json();
+        return data.localities || [];
+    } catch (error) {
+        console.error('Error loading all localities:', error);
+        return [];
+    }
+}

@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="/map.js" defer></script>
     <script src="/script.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -85,11 +86,35 @@
                 </div>
             </div>
         </section>
+
+        <section class="chart-section">
+            <h2>Reports Over Time by Category</h2>
+            <div class="chart-controls">
+                <div class="control-group">
+                    <label for="chart-locality-select">Locality:</label>
+                    <select id="chart-locality-select">
+                        <option value="">Loading localities...</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label for="start-date">Start Date:</label>
+                    <input type="date" id="start-date">
+                </div>
+                <div class="control-group">
+                    <label for="end-date">End Date:</label>
+                    <input type="date" id="end-date">
+                </div>
+                <div class="control-group">
+                    <button id="generate-chart" class="btn-primary">Generate Chart</button>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="reports-chart"></canvas>
+            </div>
+        </section>
     </main>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </body>
-
-</html>
 
 </html>

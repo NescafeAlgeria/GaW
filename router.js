@@ -58,6 +58,7 @@ const apiRoutes = [
   { method: 'GET', path: '/api/localities/supported', handler: ReportController.getSupportedLocalities },
   { method: 'GET', path: '/api/geojson/:locality', handler: ReportController.getGeoJsonForLocality },
   { method: 'GET', path: '/api/reports/locality/:locality', handler: ReportController.getReportsByLocality },
+  { method: 'GET', path: '/api/reports/chart/:locality', handler: ReportController.getReportsForChart },
   { method: 'GET', path: '/api/users/me', handler: AuthController.getCurrentUser },
   { method: 'GET', path: '/api/reports', handler: ReportController.getAllReports },
   { method: 'GET', path: '/api/users', handler: ReportController.getAllUsers },

@@ -148,6 +148,10 @@ export class Report {
         });
     }
 
+    static async findByLocalityAndDateRange(locality, startDate, endDate) {
+        return await this.findByLocality(locality, startDate, endDate);
+    }
+
     static async delete(reportId) {
         try {
             if (!ObjectId.isValid(reportId)) {
