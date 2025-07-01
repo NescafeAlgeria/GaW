@@ -196,7 +196,7 @@ export async function generateHtmlBuffer(reports, county, locality, startDate, e
             </div>
             <div class="summary-card">
                 <h3>Solved Reports</h3>
-                <div class="number">${reports.filter(r => r.solved).length}</div>
+                <div class="number">${reports.filter(r => r.solved === 'true').length}</div>
             </div>
         </div>
 
@@ -231,7 +231,7 @@ export async function generateHtmlBuffer(reports, county, locality, startDate, e
                                 <td>${report.category || 'N/A'}</td>
                                 <td>${report.severity || 'N/A'}</td>
                                 <td>${(report.description || '').substring(0, 100)}${(report.description || '').length > 100 ? '...' : ''}</td>
-                                <td>${report.solved ? 'Solved' : 'Pending'}</td>
+                                <td>${report.solved === 'true' ? 'Solved' : 'Pending'}</td>
                             </tr>
                         `).join('')}
                     </tbody>
