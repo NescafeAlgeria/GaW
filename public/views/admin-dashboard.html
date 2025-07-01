@@ -21,6 +21,7 @@
         </div>
         <div class="auth-buttons">
             <a href="/" class="btn-auth btn-login">Home</a>
+            <a href="/manage-recycle-points" class="btn-auth btn-login">Manage Recycle Points</a>
             <a href="#" id="logout" class="btn-auth btn-logout">Logout</a>
         </div>
     </header>
@@ -35,9 +36,24 @@
             <h3>Data Export</h3>
             <div class="dashboard-form">
                 <div>
+                    <label for="exportType">Export Type:</label>
+                    <select id="exportType" class="round-edge">
+                        <option value="county">County Report (by Locality)</option>
+                        <option value="locality">Neighbourhood Report (by Suburb)</option>
+                    </select>
+                </div>
+
+                <div id="countySelection">
                     <label for="countyDropdown">Select County:</label>
                     <select id="countyDropdown" class="round-edge">
                         <option value="">Choose a county...</option>
+                    </select>
+                </div>
+
+                <div id="localitySelection" style="display: none;">
+                    <label for="localityDropdown">Select Locality:</label>
+                    <select id="localityDropdown" class="round-edge">
+                        <option value="">Choose a locality...</option>
                     </select>
                 </div>
 

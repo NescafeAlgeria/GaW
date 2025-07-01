@@ -63,7 +63,7 @@ export class User {
 
   static async findAll() {
     return await db.find('users', {});
-  }  
+  }
   static async delete(userId) {
     try {
       if (!ObjectId.isValid(userId)) {

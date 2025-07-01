@@ -48,7 +48,8 @@ function getLocalityAndCounty(address) {
         }
     }
     const county = address.county || 'Unknown'
-    return { locality, county }
+    const suburb = address.suburb || locality
+    return { locality, county, suburb }
 }
 
 export class ReportController {
@@ -73,9 +74,10 @@ export class ReportController {
                 const reportData = JSON.parse(body)
                 const { lat, lng } = reportData
                 const address = await reverseGeocode(lat, lng)
-                const { locality, county } = getLocalityAndCounty(address)
+                const { locality, county, suburb } = getLocalityAndCounty(address)
                 reportData.county = county
                 reportData.locality = locality
+                reportData.suburb = suburb
                 reportData.username = user.username // track who reported
 
                 const result = await Report.create(reportData)
@@ -104,6 +106,18 @@ export class ReportController {
         } catch (err) {
             res.writeHead(500, { 'Content-Type': 'application/json' })
             res.end(JSON.stringify({ error: 'Failed to fetch counties' }))
+        }
+    }
+
+    static async getAllLocalities(req, res, params = {}) {
+        try {
+            const localities = await Report.getAllLocalities()
+            const sanitized = localities.map(escapeHtml)
+            res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' })
+            res.end(JSON.stringify({ localities: sanitized }))
+        } catch (err) {
+            res.writeHead(500, { 'Content-Type': 'application/json' })
+            res.end(JSON.stringify({ error: 'Failed to fetch localities' }))
         }
     }
 
@@ -221,12 +235,12 @@ export class ReportController {
 
 
         const user = await getAuthenticatedUser(req)
-        if(user.username !== reportUser.username) {
+        if (user.username !== reportUser.username) {
             if (!requireRole(user, ['admin', 'authority'])) {
-            res.writeHead(403, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify({ error: 'Forbidden' }))
-            return
-        }
+                res.writeHead(403, { 'Content-Type': 'application/json' })
+                res.end(JSON.stringify({ error: 'Forbidden' }))
+                return
+            }
         }
 
         try {

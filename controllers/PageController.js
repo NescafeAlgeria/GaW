@@ -60,4 +60,5 @@ export class PageController {
     //         res.end('Internal server error');
     //     }
     // };
+    static manageRecyclePoints = servePage("manage-recycle-points.html");
 }

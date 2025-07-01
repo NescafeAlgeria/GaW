@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Recycle Points | Garbage Reporting Platform</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/report.css">
+    <link rel="stylesheet" href="/manage-recycle-points.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="manage-recycle-points.js" defer></script>
+    <script src="/script.js" defer></script>
+</head>
+
+<body>
+    <header>
+        <div class="logo-container">
+            <h1>Garbage Reporting Platform</h1>
+            <p>Help keep our community clean</p>
+        </div>
+        <div class="auth-buttons">
+            <a href="/login" class="btn-auth btn-login">Login</a>
+            <a href="/signup" class="btn-auth btn-signup">Sign Up</a>
+        </div>
+        <div class="logout-button">
+            <a href="/" class="btn-auth btn-login">Home</a>
+            <a href="/dashboard" class="btn-auth btn-login">Dashboard</a>
+            <a href="/manage-recycle-points" class="btn-auth btn-login">Manage Recycle Points</a>
+            <a href="/api/logout" class="btn-auth btn-logout">Logout</a>
+        </div>
+    </header>
+    <main>
+        <section class="hero hero-report">
+            <h2>Manage Recycle Points</h2>
+            <p>Add new recycling points to help citizens find proper waste disposal locations in their neighborhoods.
+            </p>
+        </section>
+        <div class="report-container">
+            <div id="map" class="round-edge map-container"></div>
+            <form id="recycle-point-form" class="round-edge report-form">
+                <div id="recycle-point-content">
+                    <p id="form-title" class="report-title">Add Recycle Point</p>
+                    <div class="coordinate-field">
+                        <label class="coordinate-label">Longitude:</label>
+                        <span id="point-longitude"></span>
+                    </div>
+                    <div class="coordinate-field">
+                        <label class="coordinate-label">Latitude:</label>
+                        <span id="point-latitude"></span>
+                    </div>
+                    <div class="form-field">
+                        <label for="point-name" class="field-label">Name:</label>
+                        <input type="text" id="point-name" name="name" class="round-edge report-textarea"
+                            placeholder="Recycle point name..." required>
+                    </div>
+                    <div class="form-field">
+                        <label for="point-address" class="field-label">Address:</label>
+                        <input type="text" id="point-address" name="address" class="round-edge report-textarea"
+                            placeholder="Full address..." required>
+                    </div>
+                    <div class="form-field">
+                        <label for="point-description" class="field-label">Description:</label>
+                        <textarea id="point-description" name="description" class="round-edge report-textarea" rows="3"
+                            placeholder="Description of the recycle point..."></textarea>
+                    </div>
+                    <div class="form-field">
+                        <label class="field-label">Waste Categories & Capacities (kg):</label>
+                        <div class="capacity-inputs">
+                            <div class="capacity-item">
+                                <label><input type="number" name="householdCapacity" min="0" placeholder="0"> Household
+                                    Waste</label>
+                            </div>
+                            <div class="capacity-item">
+                                <label><input type="number" name="plasticCapacity" min="0" placeholder="0">
+                                    Plastic</label>
+                            </div>
+                            <div class="capacity-item">
+                                <label><input type="number" name="paperCapacity" min="0" placeholder="0"> Paper</label>
+                            </div>
+                            <div class="capacity-item">
+                                <label><input type="number" name="glassCapacity" min="0" placeholder="0"> Glass</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label for="opening-hour" class="field-label">Opening Hour:</label>
+                        <input type="time" id="opening-hour" name="openingHour" class="round-edge report-textarea"
+                            required>
+                    </div>
+                    <div class="form-field">
+                        <label for="closing-hour" class="field-label">Closing Hour:</label>
+                        <input type="time" id="closing-hour" name="closingHour" class="round-edge report-textarea"
+                            required>
+                    </div>
+                    <div class="form-field">
+                        <label for="contact-phone" class="field-label">Contact Phone:</label>
+                        <input type="tel" id="contact-phone" name="contactPhone" class="round-edge report-textarea"
+                            placeholder="Phone number">
+                    </div>
+                    <div class="form-field">
+                        <label for="contact-email" class="field-label">Contact Email:</label>
+                        <input type="email" id="contact-email" name="contactEmail" class="round-edge report-textarea"
+                            placeholder="Email address">
+                    </div>
+                </div>
+                <p id="form-result" class="report-result"></p>
+                <button id="submit-point" class="btn-primary round-edge report-submit-btn" type="submit">Add Recycle
+                    Point
+                </button>
+            </form>
+            <div id="recycle-point-info" class="round-edge report-form" style="display: none;">
+                <div id="info-content">
+                    <p class="report-title">Recycle Point Info</p>
+                    <div id="point-info-display" style="font-family: Arial, sans-serif; color: #333;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2025 Garbage Reporting Platform</p>
+        <p>Working together for cleaner neighborhoods</p>
+    </footer>
+</body>
+
+</html>

@@ -7,6 +7,7 @@ import { ExportController } from './controllers/ExportController.js';
 import { PageController } from './controllers/PageController.js';
 import { AuthController } from './controllers/AuthController.js';
 import { authMiddleware } from './middleware.js';
+import { RecyclePointController } from "./controllers/RecyclePointController.js";
 
 const MIME_TYPES = {
   default: 'application/octet-stream',
@@ -36,6 +37,7 @@ const pageRoutes = {
   '/admin-dashboard': PageController.adminDashboard,
   '/authority-dashboard': PageController.authorityDashboard,
   '/user-dashboard': PageController.userDashboard,
+  '/manage-recycle-points': PageController.manageRecyclePoints,
 };
 
 // === API Routes (RESTful) ===
@@ -47,9 +49,10 @@ const apiRoutes = [
 
   { method: 'GET', path: '/api/reports/count', handler: ReportController.getReportCount },
   { method: 'GET', path: '/api/users/count', handler: ReportController.getUserCount },
-  
+
   { method: 'GET', path: '/api/reports/export', handler: ExportController.exportReport },
   { method: 'GET', path: '/api/reports/cities', handler: ReportController.getAllCounties },
+  { method: 'GET', path: '/api/reports/localities', handler: ReportController.getAllLocalities },
   { method: 'GET', path: '/api/users/me', handler: AuthController.getCurrentUser },
   { method: 'GET', path: '/api/reports', handler: ReportController.getAllReports },
   { method: 'GET', path: '/api/users', handler: ReportController.getAllUsers },
@@ -61,6 +64,14 @@ const apiRoutes = [
 
   { method: 'DELETE', path: '/api/reports/:id', handler: ReportController.deleteReport },
   { method: 'DELETE', path: '/api/users/:id', handler: ReportController.deleteUser },
+
+
+  { method: 'POST', path: '/api/recycle-points/garbage', handler: RecyclePointController.AddGarbage },
+  { method: 'DELETE', path: '/api/recycle-points/garbage', handler: RecyclePointController.ClearGarbage },
+
+  { method: 'DELETE', path: '/api/recycle-points/:id', handler: RecyclePointController.delete },
+  { method: 'GET', path: '/api/recycle-points', handler: RecyclePointController.get },
+  { method: 'POST', path: '/api/recycle-points', handler: RecyclePointController.create },
 ];
 
 // === Utility to Match Route ===
@@ -77,7 +88,7 @@ function matchRoute(method, pathname, routes) {
 
     for (let i = 0; i < routeParts.length; i++) {
       if (routeParts[i].startsWith(':')) {
-        if(pathParts[i] === 'count') {
+        if (pathParts[i] === 'count') {
           match = false;
           break;
         }
@@ -122,7 +133,7 @@ const prepareFile = async (requestPath) => {
 
 // === Protected Paths (requires auth) ===
 const protectedPaths = [
-//   '/report',
+  //   '/report',
   '/admin-dashboard',
   '/authority-dashboard',
   '/user-dashboard',
