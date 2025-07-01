@@ -277,6 +277,27 @@ export class ReportController {
         }
     }
 
+    static async getSolvedReportCount(req, res, params = {}) {
+        try {
+            const solvedReports = await Report.findAll({ solved: 'true' })
+            const count = solvedReports.length
+            res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' })
+            res.end(JSON.stringify({ 
+                success: true,
+                data: { count },
+                links: {
+                    self: { href: '/api/reports/count/solved', method: 'GET' },
+                    reports: { href: '/api/reports', method: 'GET' },
+                }
+            }))
+        } catch (err) {
+            console.error('Get solved report count error:', err)
+            return ErrorFactory.createError(res, 500, 'FETCH_FAILED', 'Failed to fetch solved report count', {
+                reports: { href: '/api/reports', method: 'GET' }
+            });
+        }
+    }
+
     static async getAllUsers(req, res, params = {}) {
         const user = await getAuthenticatedUser(req)
         if (!requireRole(user, ['admin'])) {

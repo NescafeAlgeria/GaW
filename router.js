@@ -49,6 +49,7 @@ const apiRoutes = [
 
   { method: 'GET', path: '/api/reports/count', handler: ReportController.getReportCount },
   { method: 'GET', path: '/api/users/count', handler: ReportController.getUserCount },
+  { method: 'GET', path: '/api/reports/count/solved', handler: ReportController.getSolvedReportCount },
 
   { method: 'GET', path: '/api/reports/export', handler: ExportController.exportReport },
   { method: 'GET', path: '/api/reports/cities', handler: ReportController.getAllCounties },
