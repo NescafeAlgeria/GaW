@@ -7,6 +7,7 @@ import { ExportController } from './controllers/ExportController.js';
 import { PageController } from './controllers/PageController.js';
 import { AuthController } from './controllers/AuthController.js';
 import { authMiddleware } from './middleware.js';
+import { RecyclePointController } from "./controllers/RecyclePointController.js";
 
 const MIME_TYPES = {
     default: 'application/octet-stream',
@@ -27,6 +28,7 @@ const pageRoutes = {
     '/dashboard': PageController.dashboard,
     '/login': PageController.login,
     '/signup': PageController.signup,
+    '/manage-recycle-points': PageController.manageRecyclePoints,
 };
 
 const apiRoutes = {
@@ -38,7 +40,16 @@ const apiRoutes = {
     '/api/getAllReportedCities': ReportController.getAllCounties,
     '/api/currentUser': AuthController.getCurrentUser,
     '/api/getAllReports': ReportController.getAllReports,
-    '/api/getAllUsers': ReportController.getAllUsers
+    '/api/getAllUsers': ReportController.getAllUsers,
+    '/api/recycle-points': {
+        GET: RecyclePointController.get,
+        POST: RecyclePointController.create,
+        DELETE: RecyclePointController.delete
+    },
+    '/api/recycle-points/garbage': {
+        POST: RecyclePointController.AddGarbage,
+        DELETE: RecyclePointController.ClearGarbage
+    }
 };
 
 const STATIC_PATH = path.join(process.cwd(), './public');
@@ -57,21 +68,21 @@ const prepareFile = async (requestPath) => {
 };
 
 async function runMiddlewares(req, res, middlewares) {
-  for (const mw of middlewares) {
-    let finished = false;
+    for (const mw of middlewares) {
+        let finished = false;
 
-    await new Promise(resolve => {
-      mw(req, res, () => {
-        finished = true;
-        resolve();
-      });
-    });
+        await new Promise(resolve => {
+            mw(req, res, () => {
+                finished = true;
+                resolve();
+            });
+        });
 
-    if (!finished) {
-      return false;
+        if (!finished) {
+            return false;
+        }
     }
-  }
-  return true;
+    return true;
 }
 
 const protectedRoutes = [
@@ -85,6 +96,7 @@ const protectedRoutes = [
 export const routeRequest = async (req, res) => {
     const parsedUrl = url.parse(req.url, true);
     const pathname = parsedUrl.pathname;
+    const method = req.method;
 
     if (protectedRoutes.includes(pathname)) {
         const isAuthenticated = await runMiddlewares(req, res, [authMiddleware]);
@@ -94,20 +106,32 @@ export const routeRequest = async (req, res) => {
             return;
         }
     }
-
-    if (pathname.startsWith('/api/deleteReport/')) {
-        ReportController.deleteReport(req, res);
-        return;
-    }
-
-    if (pathname.startsWith('/api/deleteUser/')) {
-        ReportController.deleteUser(req, res);
-        return;
-    }
-
     if (apiRoutes[pathname]) {
-        apiRoutes[pathname](req, res);
+        if (apiRoutes[pathname][method]) {
+            apiRoutes[pathname][method](req, res);
+        } else {
+            apiRoutes[pathname](req, res);
+        }
         return;
+    }
+    for (const route in apiRoutes) {
+        if (pathname.startsWith(route + '/')) {
+            const remainingPath = pathname.substring(route.length + 1);
+            const moreSpecificRoute = route + '/' + remainingPath;
+
+            if (apiRoutes[moreSpecificRoute]) {
+                continue;
+            }
+
+            const handler = apiRoutes[route];
+            if (handler && handler[method]) {
+                const segments = remainingPath.split('/');
+                if (segments.length === 1 && segments[0]) {
+                    handler[method](req, res);
+                    return;
+                }
+            }
+        }
     }
 
     if (pageRoutes[pathname]) {

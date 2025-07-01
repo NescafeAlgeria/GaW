@@ -15,6 +15,7 @@ const generateCsvBuffer = (data, startDate = null, endDate = null) => {
         return Buffer.from('\uFEFF' + 'No data available\n', 'utf-8');
     }
 
+
     const garbageStatusPerZone = {};
     data.forEach(report => {
         const zone = report.locality || 'Unknown';

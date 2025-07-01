@@ -35,7 +35,9 @@ export class User {
 
   static async findAll() {
     return await db.find('users', {});
-  }  static async delete(userId) {
+  }
+
+  static async delete(userId) {
     try {
       if (!ObjectId.isValid(userId)) {
         throw new Error('Invalid ObjectId format');
