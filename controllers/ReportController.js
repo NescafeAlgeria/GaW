@@ -3,6 +3,7 @@ import { Report } from '../models/Report.js'
 import { User } from '../models/User.js'
 import { Session } from '../models/Session.js'
 import { escapeHtml } from '../utils/xssProtection.js'
+import { ErrorFactory } from '../utils/ErrorFactory.js'
 
 // Helper: Get user from Authorization header
 async function getAuthenticatedUser(req) {
@@ -66,8 +67,7 @@ export class ReportController {
             try {
                 const user = await getAuthenticatedUser(req)
                 if (!user) {
-                    res.writeHead(401, { 'Content-Type': 'application/json' })
-                    res.end(JSON.stringify({ error: 'Unauthorized' }))
+                    ErrorFactory.createError(res, 401, 'UNAUTHORIZED', 'Authentication required')
                     return
                 }
 
@@ -82,8 +82,7 @@ export class ReportController {
 
                 const result = await Report.create(reportData)
                 if (!result) {
-                    res.writeHead(500, { 'Content-Type': 'application/json' })
-                    res.end(JSON.stringify({ error: 'Failed to save report.' }))
+                    ErrorFactory.createError(res, 500, 'SAVE_FAILED', 'Failed to save report')
                     return
                 }
 
@@ -91,8 +90,7 @@ export class ReportController {
                 res.end(JSON.stringify({ message: 'Report received successfully!' }))
             } catch (error) {
                 console.error('Create report error:', error)
-                res.writeHead(400, { 'Content-Type': 'application/json' })
-                res.end(JSON.stringify({ error: 'Invalid JSON or failed to save report.' }))
+                ErrorFactory.createError(res, 400, 'INVALID_REQUEST', 'Invalid JSON or failed to save report')
             }
         })
     }
@@ -104,8 +102,7 @@ export class ReportController {
             res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' })
             res.end(JSON.stringify({ counties: sanitized }))
         } catch (err) {
-            res.writeHead(500, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify({ error: 'Failed to fetch counties' }))
+            ErrorFactory.createError(res, 500, 'FETCH_FAILED', 'Failed to fetch counties')
         }
     }
 
@@ -116,8 +113,7 @@ export class ReportController {
             res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' })
             res.end(JSON.stringify({ localities: sanitized }))
         } catch (err) {
-            res.writeHead(500, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify({ error: 'Failed to fetch localities' }))
+            ErrorFactory.createError(res, 500, 'FETCH_FAILED', 'Failed to fetch localities')
         }
     }
 
@@ -135,16 +131,14 @@ export class ReportController {
             res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' })
             res.end(JSON.stringify(sanitized))
         } catch (err) {
-            res.writeHead(500, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify({ error: 'Failed to fetch reports' }))
+            ErrorFactory.createError(res, 500, 'FETCH_FAILED', 'Failed to fetch reports')
         }
     }
 
     static async getMyReports(req, res, params = {}) {
         const user = await getAuthenticatedUser(req)
         if (!user) {
-            res.writeHead(401, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify({ error: 'Unauthorized' }))
+            ErrorFactory.createError(res, 401, 'UNAUTHORIZED', 'Authentication required')
             return
         }
         try {
@@ -160,8 +154,7 @@ export class ReportController {
             res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' })
             res.end(JSON.stringify(sanitized))
         } catch (err) {
-            res.writeHead(500, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify({ error: 'Failed to fetch your reports' }))
+            ErrorFactory.createError(res, 500, 'FETCH_FAILED', 'Failed to fetch your reports')
         }
     }
 
@@ -172,16 +165,14 @@ export class ReportController {
             res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' })
             res.end(JSON.stringify({ count }));
         } catch (err) {
-            res.writeHead(500, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify({ error: 'Failed to fetch report count' }))
+            ErrorFactory.createError(res, 500, 'FETCH_FAILED', 'Failed to fetch report count')
         }
     }
 
     static async getAllUsers(req, res, params = {}) {
         const user = await getAuthenticatedUser(req)
         if (!requireRole(user, ['admin'])) {
-            res.writeHead(403, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify({ error: 'Forbidden' }))
+            ErrorFactory.createError(res, 403, 'FORBIDDEN', 'Admin access required')
             return
         }
 
@@ -196,8 +187,7 @@ export class ReportController {
             res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' })
             res.end(JSON.stringify(sanitized))
         } catch (err) {
-            res.writeHead(500, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify({ error: 'Failed to fetch users' }))
+            ErrorFactory.createError(res, 500, 'FETCH_FAILED', 'Failed to fetch users')
         }
     }
 
@@ -208,8 +198,7 @@ export class ReportController {
             res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' })
             res.end(JSON.stringify({ count }))
         } catch (err) {
-            res.writeHead(500, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify({ error: 'Failed to fetch user count' }))
+            ErrorFactory.createError(res, 500, 'FETCH_FAILED', 'Failed to fetch user count')
         }
     }
 
@@ -222,14 +211,12 @@ export class ReportController {
 
         const reportId = params.id
         if (!reportId) {
-            res.writeHead(400, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify({ error: 'Report ID is required' }))
+            ErrorFactory.createError(res, 400, 'MISSING_PARAMETER', 'Report ID is required')
             return
         }
         const reportUser = await Report.findById(reportId)
         if (!reportUser) {
-            res.writeHead(404, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify({ error: 'Report not found' }))
+            ErrorFactory.createError(res, 404, 'NOT_FOUND', 'Report not found')
             return
         }
 
@@ -237,8 +224,7 @@ export class ReportController {
         const user = await getAuthenticatedUser(req)
         if (user.username !== reportUser.username) {
             if (!requireRole(user, ['admin', 'authority'])) {
-                res.writeHead(403, { 'Content-Type': 'application/json' })
-                res.end(JSON.stringify({ error: 'Forbidden' }))
+                ErrorFactory.createError(res, 403, 'FORBIDDEN', 'Access denied')
                 return
             }
         }
@@ -248,8 +234,7 @@ export class ReportController {
             res.writeHead(200, { 'Content-Type': 'application/json' })
             res.end(JSON.stringify({ success: true }))
         } catch (err) {
-            res.writeHead(500, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify({ error: 'Failed to delete report' }))
+            ErrorFactory.createError(res, 500, 'DELETE_FAILED', 'Failed to delete report')
         }
     }
 
@@ -262,24 +247,94 @@ export class ReportController {
 
         const user = await getAuthenticatedUser(req)
         if (!requireRole(user, ['admin'])) {
-            res.writeHead(403, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify({ error: 'Forbidden' }))
+            ErrorFactory.createError(res, 403, 'FORBIDDEN', 'Admin access required')
             return
         }
 
         try {
             const userId = params.id
             if (!userId) {
-                res.writeHead(400, { 'Content-Type': 'application/json' })
-                res.end(JSON.stringify({ error: 'User ID is required' }))
+                ErrorFactory.createError(res, 400, 'MISSING_PARAMETER', 'User ID is required')
                 return
             }
             await User.delete(userId)
             res.writeHead(200, { 'Content-Type': 'application/json' })
             res.end(JSON.stringify({ success: true }))
         } catch (err) {
-            res.writeHead(500, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify({ error: 'Failed to delete user' }))
+            ErrorFactory.createError(res, 500, 'DELETE_FAILED', 'Failed to delete user')
+        }
+    }
+
+    static async getReportsByLocality(req, res, params = {}) {
+        try {
+            const locality = params.locality
+            if (!locality) {
+                ErrorFactory.createError(res, 400, 'MISSING_PARAMETER', 'Locality parameter is required')
+                return
+            }
+
+            console.log('Fetching reports for locality:', locality)
+            const reports = await Report.findByLocality(locality)
+            const sanitized = reports.map(r => ({
+                ...r,
+                county: escapeHtml(r.county || ''),
+                locality: escapeHtml(r.locality || ''),
+                suburb: escapeHtml(r.suburb || ''),
+                category: escapeHtml(r.category || ''),
+                description: escapeHtml(r.description || ''),
+                severity: escapeHtml(r.severity || '')
+            }))
+            res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' })
+            res.end(JSON.stringify(sanitized))
+        } catch (err) {
+            console.error('Error fetching reports by locality:', err)
+            ErrorFactory.createError(res, 500, 'FETCH_FAILED', 'Failed to fetch reports for locality')
+        }
+    }
+
+    static async getSupportedLocalities(req, res, params = {}) {
+        try {
+            const { getSupportedLocalities } = await import('../config/geoMapping.js');
+            const localities = getSupportedLocalities();
+            res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' })
+            res.end(JSON.stringify({ localities }))
+        } catch (err) {
+            console.error('Error fetching supported localities:', err)
+            ErrorFactory.createError(res, 500, 'FETCH_FAILED', 'Failed to fetch supported localities')
+        }
+    }
+
+    static async getGeoJsonForLocality(req, res, params = {}) {
+        try {
+            const locality = params.locality
+            if (!locality) {
+                ErrorFactory.createError(res, 400, 'MISSING_PARAMETER', 'Locality parameter is required')
+                return
+            }
+
+            const { getGeoJsonPath } = await import('../config/geoMapping.js')
+            const geoJsonPath = getGeoJsonPath(locality)
+
+            if (!geoJsonPath) {
+                ErrorFactory.createError(res, 404, 'NOT_FOUND', 'GeoJSON not found for locality')
+                return
+            }
+
+            const fs = await import('fs')
+            const path = await import('path')
+            const fullPath = path.join(process.cwd(), 'public', geoJsonPath)
+
+            try {
+                const geoJsonData = await fs.promises.readFile(fullPath, 'utf8')
+                res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600' })
+                res.end(geoJsonData)
+            } catch (fileError) {
+                console.error('Error reading GeoJSON file:', fileError)
+                ErrorFactory.createError(res, 404, 'FILE_NOT_FOUND', 'GeoJSON file not found')
+            }
+        } catch (err) {
+            console.error('Error serving GeoJSON:', err)
+            ErrorFactory.createError(res, 500, 'SERVER_ERROR', 'Failed to serve GeoJSON')
         }
     }
 }

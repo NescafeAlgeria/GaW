@@ -31,6 +31,7 @@ const pageRoutes = {
   '/': PageController.home,
   '/report': PageController.report,
   '/dashboard': PageController.dashboard,
+  '/map': PageController.map,
   '/login': PageController.login,
   '/signup': PageController.signup,
   '/token': PageController.token,
@@ -51,8 +52,12 @@ const apiRoutes = [
   { method: 'GET', path: '/api/users/count', handler: ReportController.getUserCount },
 
   { method: 'GET', path: '/api/reports/export', handler: ExportController.exportReport },
+  { method: 'GET', path: '/api/reports/export/csv', handler: ExportController.exportCSV },
   { method: 'GET', path: '/api/reports/cities', handler: ReportController.getAllCounties },
   { method: 'GET', path: '/api/reports/localities', handler: ReportController.getAllLocalities },
+  { method: 'GET', path: '/api/localities/supported', handler: ReportController.getSupportedLocalities },
+  { method: 'GET', path: '/api/geojson/:locality', handler: ReportController.getGeoJsonForLocality },
+  { method: 'GET', path: '/api/reports/locality/:locality', handler: ReportController.getReportsByLocality },
   { method: 'GET', path: '/api/users/me', handler: AuthController.getCurrentUser },
   { method: 'GET', path: '/api/reports', handler: ReportController.getAllReports },
   { method: 'GET', path: '/api/users', handler: ReportController.getAllUsers },
@@ -92,7 +97,7 @@ function matchRoute(method, pathname, routes) {
           match = false;
           break;
         }
-        params[routeParts[i].slice(1)] = pathParts[i];
+        params[routeParts[i].slice(1)] = decodeURIComponent(pathParts[i]);
       } else if (routeParts[i] !== pathParts[i]) {
         match = false;
         break;

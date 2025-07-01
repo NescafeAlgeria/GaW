@@ -1,5 +1,6 @@
 import { db } from '../db/dbHandler.js';
 import { ObjectId } from 'mongodb';
+import { normalizeLocality } from '../config/geoMapping.js';
 
 export class Report {
     static async create(data) {
@@ -10,7 +11,7 @@ export class Report {
             description: data.description || '',
             category: data.category,
             createdAt: new Date(),
-            locality: data.locality || 'Unknown',
+            locality: normalizeLocality(data.locality) || 'Unknown',
             county: data.county || 'Unknown',
             suburb: data.suburb || 'Unknown',
             username: data.username || 'Unknown',
@@ -106,7 +107,8 @@ export class Report {
             throw new Error('Locality is required');
         }
 
-        let filter = { locality };
+        const normalizedLocality = normalizeLocality(locality);
+        let filter = { locality: normalizedLocality };
 
         if (startDate || endDate) {
             filter.createdAt = {};
@@ -120,7 +122,7 @@ export class Report {
             }
         }
 
-        const allReports = await db.find('reports', { locality });
+        const allReports = await db.find('reports', { locality: normalizedLocality });
 
         if (!startDate && !endDate) {
             return allReports;

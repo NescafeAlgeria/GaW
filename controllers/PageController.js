@@ -10,6 +10,7 @@ export class PageController {
     static adminDashboard = servePage("admin-dashboard.html");
     static authorityDashboard = servePage("authority-dashboard.html");
     static userDashboard = servePage("user-dashboard.html");
+    static map = servePage("map.html");
 
     // static dashboard = async (req, res) => {
     //     try {

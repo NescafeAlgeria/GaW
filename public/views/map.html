@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neighborhood Map - Garbage Reporting Platform</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/map.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="/map.js" defer></script>
+    <script src="/script.js" defer></script>
+</head>
+
+<body>
+    <header>
+        <div class="logo-container">
+            <h1>Garbage Reporting Platform</h1>
+            <p>Neighborhood Report Map</p>
+        </div>
+        <div class="auth-buttons">
+            <a href="/login" class="btn-auth btn-login">Login</a>
+            <a href="/signup" class="btn-auth btn-signup">Sign Up</a>
+        </div>
+        <div class="logout-button">
+            <a href="/" class="btn-auth btn-login">Home</a>
+            <a href="/dashboard" class="btn-auth btn-login">Dashboard</a>
+            <a href="/manage-recycle-points" class="btn-auth btn-login authority-admin-only"
+                style="display: none;">Manage Recycle Points</a>
+            <a href="#" id="logout" class="btn-auth btn-logout">Logout</a>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h2>Interactive Neighborhood Map</h2>
+            <div class="hero-buttons">
+                <label for="locality-select">Select Locality:</label>
+                <select id="locality-select">
+                    <option value="">Loading localities...</option>
+                </select>
+            </div>
+        </section>
+
+        <section class="content">
+            <div class="map-container">
+                <div id="loading" class="loading-overlay">
+                    Loading map and data...
+                </div>
+                <div id="map" class="map-display"></div>
+                <div class="legend">
+                    <h3>Report Density</h3>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #f7f7f7;"></div>
+                        <span>No reports</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #006837;"></div>
+                        <span>1-2 reports</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #31a354;"></div>
+                        <span>3-5 reports</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #78c679;"></div>
+                        <span>6-10 reports</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #addd8e;"></div>
+                        <span>11-20 reports</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #d9f0a3;"></div>
+                        <span>21-30 reports</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #fee08b;"></div>
+                        <span>31-50 reports</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #fd8d3c;"></div>
+                        <span>51+ reports</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</body>
+
+</html>
+
+</html>
