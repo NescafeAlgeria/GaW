@@ -82,7 +82,6 @@ export class ReportController {
                 }))
             } catch (error) {
                 console.error('Create report error:', error)
-                ErrorFactory.createError(res, 400, 'INVALID_REQUEST', 'Invalid JSON or failed to save report')
                 return ErrorFactory.createError(res, 400, 'INVALID_DATA', 'Invalid JSON or failed to save report', {
                     reports: { href: '/api/reports', method: 'GET' }
                 });
