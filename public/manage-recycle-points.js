@@ -164,7 +164,8 @@ submitButton.addEventListener('click', async (event) => {
         const response = await fetch('/api/recycle-points', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
             body: JSON.stringify(requestData)
         });
@@ -216,7 +217,12 @@ function loadRecyclePoints() {
     });
     recyclePointMarkers = [];
 
-    fetch('/api/recycle-points')
+    fetch('/api/recycle-points', {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+    },)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -300,7 +306,8 @@ async function addGarbage(pointId, category) {
         const response = await fetch('/api/recycle-points/garbage', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
             body: JSON.stringify({ id: pointId, amount: amount, category: category })
         });
@@ -343,7 +350,8 @@ async function clearGarbage(pointId, category) {
         const response = await fetch('/api/recycle-points/garbage', {
             method: 'DELETE',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
             body: JSON.stringify({ id: pointId, amount: amount, category: category })
         });
@@ -380,7 +388,8 @@ async function deleteRecyclePoint(pointId) {
         const response = await fetch(`/api/recycle-points/${pointId}`, {
             method: 'DELETE',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
         });
 

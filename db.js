@@ -50,6 +50,8 @@ function sanitizeUpdateData(updateData) {
                 value instanceof Date
             ) {
                 sanitized[key] = typeof value === 'string' ? escapeHtml(value) : value;
+            } else {
+                sanitized[key] = sanitizeUpdateData(value);
             }
         }
     }
