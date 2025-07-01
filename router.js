@@ -52,6 +52,7 @@ const apiRoutes = [
 
   { method: 'GET', path: '/api/reports/export', handler: ExportController.exportReport },
   { method: 'GET', path: '/api/reports/cities', handler: ReportController.getAllCounties },
+  { method: 'GET', path: '/api/reports/localities', handler: ReportController.getAllLocalities },
   { method: 'GET', path: '/api/users/me', handler: AuthController.getCurrentUser },
   { method: 'GET', path: '/api/reports', handler: ReportController.getAllReports },
   { method: 'GET', path: '/api/users', handler: ReportController.getAllUsers },
@@ -64,11 +65,13 @@ const apiRoutes = [
   { method: 'DELETE', path: '/api/reports/:id', handler: ReportController.deleteReport },
   { method: 'DELETE', path: '/api/users/:id', handler: ReportController.deleteUser },
 
-    {method: 'GET', path: '/api/recycle-points', handler: RecyclePointController.get},
-    {method: 'POST', path: '/api/recycle-points', handler: RecyclePointController.create},
-    {method: 'DELETE', path: '/api/recycle-points/:id', handler: RecyclePointController.delete},
-    {method: 'POST', path: '/api/recycle-points/garbage', handler: RecyclePointController.AddGarbage},
-    {method: 'DELETE', path: '/api/recycle-points/garbage', handler: RecyclePointController.ClearGarbage}
+
+  { method: 'POST', path: '/api/recycle-points/garbage', handler: RecyclePointController.AddGarbage },
+  { method: 'DELETE', path: '/api/recycle-points/garbage', handler: RecyclePointController.ClearGarbage },
+
+  { method: 'DELETE', path: '/api/recycle-points/:id', handler: RecyclePointController.delete },
+  { method: 'GET', path: '/api/recycle-points', handler: RecyclePointController.get },
+  { method: 'POST', path: '/api/recycle-points', handler: RecyclePointController.create },
 ];
 
 // === Utility to Match Route ===
@@ -85,7 +88,7 @@ function matchRoute(method, pathname, routes) {
 
     for (let i = 0; i < routeParts.length; i++) {
       if (routeParts[i].startsWith(':')) {
-        if(pathParts[i] === 'count') {
+        if (pathParts[i] === 'count') {
           match = false;
           break;
         }
@@ -130,7 +133,7 @@ const prepareFile = async (requestPath) => {
 
 // === Protected Paths (requires auth) ===
 const protectedPaths = [
-//   '/report',
+  //   '/report',
   '/admin-dashboard',
   '/authority-dashboard',
   '/user-dashboard',

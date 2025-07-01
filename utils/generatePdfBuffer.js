@@ -1,7 +1,7 @@
 import PDFDocument from 'pdfkit'
 import path from 'path'
 
-const generatePdfBuffer = (data) => {
+const generatePdfBuffer = (data, startDate = null, endDate = null, groupBy = 'locality') => {
     return new Promise((resolve, reject) => {
         const doc = new PDFDocument();
         const buffers = []
@@ -14,10 +14,10 @@ const generatePdfBuffer = (data) => {
             console.warn('Could not load DejaVu font, using default font')
         } const garbageStatusPerZone = {};
         data.forEach(report => {
-            const zone = report.locality || 'Unknown';
+            const zone = report[groupBy] || 'Unknown';
             if (!garbageStatusPerZone[zone]) {
                 garbageStatusPerZone[zone] = {
-                    locality: zone,
+                    [groupBy]: zone,
                     reportsCount: 0,
                     totalSeverity: 0,
                 };
@@ -36,10 +36,13 @@ const generatePdfBuffer = (data) => {
         doc.on('end', () => resolve(Buffer.concat(buffers)))
         doc.on('error', reject)
 
-        doc.fontSize(18).text(`Garbage Situation for ${data[0].county}`, { align: 'center' })
+        const areaName = data[0]?.[groupBy === 'locality' ? 'county' : 'locality'] || 'Unknown';
+        const groupLabel = groupBy === 'locality' ? 'Locality' : 'Neighbourhood';
+
+        doc.fontSize(18).text(`Garbage Situation for ${areaName}`, { align: 'center' })
         doc.moveDown()
 
-        doc.fontSize(14).text('Garbage Status by Locality', { underline: true })
+        doc.fontSize(14).text(`Garbage Status by ${groupLabel}`, { underline: true })
         doc.moveDown(0.5)
 
         doc.fillColor('#000000'); const minScore = garbageStatusSorted.reduce((min, zone) => Math.min(min, parseInt(zone.totalSeverity) + zone.reportsCount), Infinity);
@@ -76,16 +79,16 @@ const generatePdfBuffer = (data) => {
         doc.fillColor('#e8e8e8');
         doc.rect(x, startY, width, 22).fill();
         doc.fillColor('#000000');
-        doc.text("Locality", x + 10, startY + 5);
+        doc.text(groupLabel, x + 10, startY + 5);
         doc.text("Severity Score", x + width / 2 - 100, startY + 5, { align: 'center', width: 200 });
         doc.text("Nr of Reports", x + width - 200, startY + 5, { align: 'right', width: 200 });
 
         startY += 5; garbageStatusSorted.forEach((zone, index) => {
             const yPos = startY + (index + 1) * 25;
-            console.log(`zone ${zone.locality} - reports: ${zone.reportsCount}, severity: ${zone.totalSeverity}`);
+            console.log(`zone ${zone[groupBy]} - reports: ${zone.reportsCount}, severity: ${zone.totalSeverity}`);
             doc.fillColor(scoreToColor(zone.reportsCount + parseInt(zone.totalSeverity)));
             doc.rect(x, yPos - 5, width, 25).fill();
-            doc.fillColor('#000000'); doc.text(zone.locality, x + 10, yPos);
+            doc.fillColor('#000000'); doc.text(zone[groupBy], x + 10, yPos);
             doc.text(parseInt(zone.totalSeverity).toString(), x + width / 2 - 100, yPos, { align: 'center', width: 200 });
             doc.text(zone.reportsCount, x + width - 10, yPos, { align: 'right' });
         });
@@ -95,9 +98,9 @@ const generatePdfBuffer = (data) => {
         doc.x = margin;
 
         doc.fillColor('#871d1d');
-        doc.fontSize(14).text('Dirtiest locality: ' + garbageStatusSorted[0].locality);
+        doc.fontSize(14).text(`Dirtiest ${groupLabel.toLowerCase()}: ` + garbageStatusSorted[0][groupBy]);
         doc.fillColor('#21871d');
-        doc.fontSize(14).text('Cleanest locality: ' + garbageStatusSorted[garbageStatusSorted.length - 1].locality); doc.fillColor('black');
+        doc.fontSize(14).text(`Cleanest ${groupLabel.toLowerCase()}: ` + garbageStatusSorted[garbageStatusSorted.length - 1][groupBy]); doc.fillColor('black');
         doc.moveDown();
 
         doc.fontSize(16).text('Detailed Reports');
@@ -111,8 +114,8 @@ const generatePdfBuffer = (data) => {
         doc.text("#", x + 5, detailStartY + 5, { width: width * 0.05 });
         doc.text("Category", x + width * 0.05, detailStartY + 5, { width: width * 0.25 });
         doc.text("Severity", x + width * 0.3, detailStartY + 5, { width: width * 0.1, align: 'center' });
-        doc.text("Locality", x + width * 0.4, detailStartY + 5, { width: width * 0.25 });
-        doc.text("County", x + width * 0.65, detailStartY + 5, { width: width * 0.35 });
+        doc.text(groupLabel, x + width * 0.4, detailStartY + 5, { width: width * 0.25 });
+        doc.text(groupBy === 'locality' ? 'County' : 'Locality', x + width * 0.65, detailStartY + 5, { width: width * 0.35 });
 
         detailStartY += 22;
 
@@ -129,8 +132,8 @@ const generatePdfBuffer = (data) => {
             doc.text((index + 1).toString(), x + 5, yPos + 5, { width: width * 0.05 });
             doc.text(item.category || 'N/A', x + width * 0.05, yPos + 5, { width: width * 0.25 - 5 });
             doc.text(parseInt(item.severity).toString(), x + width * 0.3, yPos + 5, { width: width * 0.1, align: 'center' });
-            doc.text(item.locality || 'Unknown', x + width * 0.4, yPos + 5, { width: width * 0.25 - 5 });
-            doc.text(item.county || 'Unknown', x + width * 0.65, yPos + 5, { width: width * 0.35 - 5 });
+            doc.text(item[groupBy] || 'Unknown', x + width * 0.4, yPos + 5, { width: width * 0.25 - 5 });
+            doc.text(item[groupBy === 'locality' ? 'county' : 'locality'] || 'Unknown', x + width * 0.65, yPos + 5, { width: width * 0.35 - 5 });
         });
 
         doc.end()

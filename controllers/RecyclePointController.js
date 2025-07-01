@@ -31,21 +31,21 @@ export class RecyclePointController {
             try {
                 const data = JSON.parse(body);
                 await RecyclePoint.create(data);
+
+                res.statusCode = 201;
+                res.setHeader('Content-Type', 'application/json');
+                res.setHeader('Cache-Control', 'no-cache, no-store');
+                res.end(
+                    JSON.stringify({
+                        success: true,
+                        message: "Recycle point created successfully.",
+                        links: RecyclePointController.generalLinks
+                    })
+                );
             } catch (error) {
                 ErrorFactory.createError(res, 400, "BAD_REQUEST", "Invalid JSON or failed to save recycle point.", RecyclePointController.generalLinks);
             }
         });
-
-        res.statusCode = 201;
-        res.setHeader('Content-Type', 'application/json');
-        res.setHeader('Cache-Control', 'no-cache, no-store');
-        res.end(
-            JSON.stringify({
-                success: true,
-                message: "Recycle point created successfully.",
-                links: RecyclePointController.generalLinks
-            })
-        );
     }
 
     static async get(req, res) {
@@ -119,24 +119,17 @@ export class RecyclePointController {
         }
     }
 
-    static async delete(req, res) {
+    static async delete(req, res, params = {}) {
         if (req.method !== "DELETE") {
             ErrorFactory.createError(res, 405, "BAD_METHOD", "HTTP method not allowed", RecyclePointController.generalLinks);
             return;
         }
 
-        const parsedUrl = url.parse(req.url, true);
-        const pathName = parsedUrl.pathname;
-
-        const subpaths = pathName.split('/').filter(Boolean);
-
-        if (subpaths.length !== 3 || subpaths[1] !== 'recycle-points' || !subpaths[2]) {
-            ErrorFactory.createError(res, 404, "NOT_FOUND", "Couldn't find the requested resource.", RecyclePointController.generalLinks);
-            console.log('Invalid path:', pathName);
+        const id = params.id;
+        if (!id) {
+            ErrorFactory.createError(res, 400, "BAD_REQUEST", "Recycle point ID is required", RecyclePointController.generalLinks);
             return;
         }
-
-        const id = subpaths[2];
 
         try {
             await RecyclePoint.deleteById(id);

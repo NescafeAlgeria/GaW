@@ -60,41 +60,5 @@ export class PageController {
     //         res.end('Internal server error');
     //     }
     // };
-    static manageRecyclePoints = async (req, res) => {
-        try {
-            const cookies = req.headers.cookie;
-            if (!cookies) {
-                res.writeHead(302, { 'Location': '/login' });
-                res.end();
-                return;
-            }
-
-            const sessionId = cookies.split(';').find(c => c.trim().startsWith('sessionId='))?.split('=')[1];
-            if (!sessionId) {
-                res.writeHead(302, { 'Location': '/login' });
-                res.end();
-                return;
-            }
-
-            const session = await Session.findBySessionId(sessionId);
-            if (!session) {
-                res.writeHead(302, { 'Location': '/login' });
-                res.end();
-                return;
-            }
-
-            const user = await User.findByUsername(session.username);
-            if (!user || (user.role !== 'authority' && user.role !== 'admin')) {
-                res.writeHead(403, { 'Content-Type': 'text/html' });
-                res.end('<h1>403 Forbidden</h1><p>Access denied. Authority or Admin role required.</p>');
-                return;
-            }
-
-            servePage('manage-recycle-points.html')(req, res);
-        } catch (error) {
-            console.error('Manage recycle points error:', error);
-            res.writeHead(302, { 'Location': '/login' });
-            res.end();
-        }
-    };
+    static manageRecyclePoints = servePage("manage-recycle-points.html");
 }

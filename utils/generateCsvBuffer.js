@@ -10,7 +10,7 @@ const escapeCSVField = (field) => {
     return stringField;
 };
 
-const generateCsvBuffer = (data, startDate = null, endDate = null) => {
+const generateCsvBuffer = (data, startDate = null, endDate = null, groupBy = 'locality') => {
     if (!data || data.length === 0) {
         return Buffer.from('\uFEFF' + 'No data available\n', 'utf-8');
     }
@@ -18,10 +18,10 @@ const generateCsvBuffer = (data, startDate = null, endDate = null) => {
 
     const garbageStatusPerZone = {};
     data.forEach(report => {
-        const zone = report.locality || 'Unknown';
+        const zone = report[groupBy] || 'Unknown';
         if (!garbageStatusPerZone[zone]) {
             garbageStatusPerZone[zone] = {
-                locality: zone,
+                [groupBy]: zone,
                 reportsCount: 0,
                 totalSeverity: 0,
             };
@@ -41,23 +41,26 @@ const generateCsvBuffer = (data, startDate = null, endDate = null) => {
         timeIntervalText = `Time Period: Until ${endDate}`;
     }
 
+    const areaName = data[0]?.[groupBy === 'locality' ? 'county' : 'locality'] || 'Unknown';
+    const groupLabel = groupBy === 'locality' ? 'Locality' : 'Neighbourhood';
+
     const csvLines = [
-        `Garbage Situation for ${data[0]?.county || 'Unknown'}`,
+        `Garbage Situation for ${areaName}`,
         timeIntervalText,
         '',
-        'Garbage Status by Locality',
-        'Locality,Severity Score,Nr of Reports',
+        `Garbage Status by ${groupLabel}`,
+        `${groupLabel},Severity Score,Nr of Reports`,
         ...garbageStatusSorted.map(zone =>
-            `${escapeCSVField(zone.locality)},${parseInt(zone.totalSeverity)},${zone.reportsCount}`
+            `${escapeCSVField(zone[groupBy])},${parseInt(zone.totalSeverity)},${zone.reportsCount}`
         ),
         '',
-        `Dirtiest locality: ${garbageStatusSorted[0]?.locality || 'Unknown'}`,
-        `Cleanest locality: ${garbageStatusSorted[garbageStatusSorted.length - 1]?.locality || 'Unknown'}`,
+        `Dirtiest ${groupLabel.toLowerCase()}: ${garbageStatusSorted[0]?.[groupBy] || 'Unknown'}`,
+        `Cleanest ${groupLabel.toLowerCase()}: ${garbageStatusSorted[garbageStatusSorted.length - 1]?.[groupBy] || 'Unknown'}`,
         '',
         'Detailed Reports',
-        '#,Category,Severity,Locality,County,Latitude,Longitude,Description,Date',
+        `#,Category,Severity,${groupLabel},${groupBy === 'locality' ? 'County' : 'Locality'},Latitude,Longitude,Description,Date`,
         ...data.map((item, index) =>
-            `${index + 1},${escapeCSVField(item.category || 'N/A')},${parseInt(item.severity) || 0},${escapeCSVField(item.locality || 'Unknown')},${escapeCSVField(item.county || 'Unknown')},${item.lat || 0},${item.lng || 0},${escapeCSVField(item.description || '')},${new Date(item.createdAt).toLocaleDateString()}`
+            `${index + 1},${escapeCSVField(item.category || 'N/A')},${parseInt(item.severity) || 0},${escapeCSVField(item[groupBy] || 'Unknown')},${escapeCSVField(item[groupBy === 'locality' ? 'county' : 'locality'] || 'Unknown')},${item.lat || 0},${item.lng || 0},${escapeCSVField(item.description || '')},${new Date(item.createdAt).toLocaleDateString()}`
         )
     ];
 
