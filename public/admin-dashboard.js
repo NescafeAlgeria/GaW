@@ -64,11 +64,11 @@ function displayReports(reports) {
     }
     tbody.innerHTML = reports.map(report => `
         <tr style="border-bottom: 1px solid #ddd; ${report.solved === 'true' ? `background-color:#ccc` : ``};">
-            <td style="padding: 0.75rem;">${escapeHtml(report.county || 'Unknown')}</td>
-            <td style="padding: 0.75rem;">${escapeHtml(report.locality || 'Unknown')}</td>
-            <td style="padding: 0.75rem;">${escapeHtml(report.category || 'N/A')}</td>
-            <td style="padding: 0.75rem;">${escapeHtml(report.severity || 'N/A')}</td>
-            <td style="padding: 0.75rem; max-width: 200px; word-wrap: break-word;">${escapeHtml(report.description || 'No description')}</td>
+            <td style="padding: 0.75rem;">${report.county || 'Unknown'}</td>
+            <td style="padding: 0.75rem;">${report.locality || 'Unknown'}</td>
+            <td style="padding: 0.75rem;">${report.category || 'N/A'}</td>
+            <td style="padding: 0.75rem;">${report.severity || 'N/A'}</td>
+            <td style="padding: 0.75rem; max-width: 200px; word-wrap: break-word;">${report.description || 'No description'}</td>
             <td style="padding: 0.75rem;">${report.createdAt ? new Date(report.createdAt).toLocaleDateString() : 'N/A'}</td>
             <td style="padding: 0.75rem;">
                 <button onclick="deleteReport('${report._id}')" style="padding: 0.5rem 1rem; background-color: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9rem;">Delete</button>
@@ -87,9 +87,9 @@ function displayUsers(users) {
 
     tbody.innerHTML = users.map(user => `
         <tr style="border-bottom: 1px solid #ddd;">
-            <td style="padding: 0.75rem;">${escapeHtml(user.username || 'N/A')}</td>
-            <td style="padding: 0.75rem;">${escapeHtml(user.email || 'N/A')}</td>
-            <td style="padding: 0.75rem;">${escapeHtml(user.role || 'user')}</td>
+            <td style="padding: 0.75rem;">${user.username || 'N/A'}</td>
+            <td style="padding: 0.75rem;">${user.email || 'N/A'}</td>
+            <td style="padding: 0.75rem;">${user.role || 'user'}</td>
             <td style="padding: 0.75rem;">
                 <button onclick="deleteUser('${user._id}')" style="padding: 0.5rem 1rem; background-color: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9rem;">Delete</button>
                 <select class="role-select" onchange="updateUserRole('${user._id}', this.value)" style="margin-left: 0.5rem; padding: 0.25rem; border: 1px solid #ccc; border-radius: 4px; font-size: 0.9rem;">
@@ -165,7 +165,7 @@ async function validateUser(userId) {
             }
         });
 
-        
+
 
         if (response.ok) {
             loadUsers();

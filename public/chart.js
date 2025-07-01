@@ -23,14 +23,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 function animateCounter(id, target) {
   const el = document.getElementById(id);
   let start = 0;
-  const duration = 500; // total animation time in ms
+  const duration = 500;
   const startTime = performance.now();
 
   function update(currentTime) {
     const elapsed = currentTime - startTime;
     const progress = Math.min(elapsed / duration, 1);
     const current = Math.floor(progress * target);
-    el.textContent = current.toLocaleString(); // formatted with commas
+    el.textContent = current.toLocaleString();
 
     if (progress < 1) {
       requestAnimationFrame(update);

@@ -54,14 +54,16 @@ export class ExportController {
                 const csvBuffer = generateCsvBuffer(reports, startDate, endDate, groupBy);
                 res.writeHead(200, {
                     'Content-Type': 'text/csv',
-                    'Content-Disposition': `attachment; filename="${sanitizedName}_report.csv"`
+                    'Content-Disposition': `attachment; filename="${sanitizedName}_report.csv"`,
+                    'Cache-Control': 'private, max-age=0'
                 });
                 res.end(csvBuffer);
             } else {
                 const pdfBuffer = await generatePdfBuffer(reports, startDate, endDate, groupBy);
                 res.writeHead(200, {
                     'Content-Type': 'application/pdf',
-                    'Content-Disposition': `inline; filename="${sanitizedName}_report.pdf"`
+                    'Content-Disposition': `inline; filename="${sanitizedName}_report.pdf"`,
+                    'Cache-Control': 'private, max-age=0'
                 });
                 res.end(pdfBuffer);
             }

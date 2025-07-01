@@ -1,12 +1,12 @@
 const popup = document.getElementById('popup');
 function showPopup(message, isSuccess = false) {
-      popup.textContent = message;
-      popup.className = 'popup' + (isSuccess ? ' success' : '');
-      popup.style.display = 'block';
-      setTimeout(() => {
+    popup.textContent = message;
+    popup.className = 'popup' + (isSuccess ? ' success' : '');
+    popup.style.display = 'block';
+    setTimeout(() => {
         popup.style.display = 'none';
-      }, 3000);
-    }
+    }, 3000);
+}
 
 document.getElementById('signupForm').addEventListener("submit", async function (e) {
     e.preventDefault();
@@ -28,13 +28,12 @@ document.getElementById('signupForm').addEventListener("submit", async function 
         const data = await response.json();
 
         if (!response.ok) {
-            // Show popup error
             showPopup("Signup failed: " + (data.error || "Unknown error"));
             return;
         }
 
         if (data.token) {
-            localStorage.setItem("token", data.token); 
+            localStorage.setItem("token", data.token);
             window.location.href = "/";
         }
     } catch (err) {

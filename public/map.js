@@ -11,7 +11,7 @@ async function loadSupportedLocalities() {
             throw new Error('Failed to load supported localities');
         }
         const data = await response.json();
-        return data.localities;
+        return data.data ? data.data.localities : data.localities;
     } catch (error) {
         console.error('Error loading supported localities:', error);
         return ['Iași'];
@@ -167,7 +167,8 @@ async function loadGeoJSON() {
         if (!response.ok) {
             throw new Error('Failed to load GeoJSON data');
         }
-        return await response.json();
+        const data = await response.json();
+        return data.data || data;
     } catch (error) {
         console.error('Error loading GeoJSON:', error);
         throw error;
@@ -180,7 +181,8 @@ async function loadReports() {
         if (!response.ok) {
             throw new Error('Failed to load reports data');
         }
-        return await response.json();
+        const data = await response.json();
+        return data.data ? data.data.reports : data;
     } catch (error) {
         console.error('Error loading reports:', error);
         throw error;
@@ -198,7 +200,8 @@ async function loadChartData(locality, startDate, endDate) {
         if (!response.ok) {
             throw new Error('Failed to load chart data');
         }
-        return await response.json();
+        const data = await response.json();
+        return data.data ? data.data.reports : data;
     } catch (error) {
         console.error('Error loading chart data:', error);
         throw error;
@@ -430,7 +433,7 @@ async function loadAllLocalities() {
             throw new Error('Failed to load all localities');
         }
         const data = await response.json();
-        return data.localities || [];
+        return data.data ? data.data.localities : (data.localities || []);
     } catch (error) {
         console.error('Error loading all localities:', error);
         return [];

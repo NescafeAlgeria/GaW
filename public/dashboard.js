@@ -106,7 +106,7 @@ fetch('/api/reports/cities', {
             data.data.counties.forEach(county => {
                 const option = document.createElement('option');
                 option.value = county;
-                option.textContent = escapeHtml(county);
+                option.textContent = county;
                 dropdown.appendChild(option);
             });
         }
@@ -128,7 +128,7 @@ fetch('/api/reports/localities', {
             data.data.localities.forEach(locality => {
                 const option = document.createElement('option');
                 option.value = locality;
-                option.textContent = escapeHtml(locality);
+                option.textContent = locality;
                 dropdown.appendChild(option);
             });
         }

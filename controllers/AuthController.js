@@ -1,7 +1,6 @@
 import bcrypt from 'bcrypt';
 import { User } from '../models/User.js';
 import { Session } from '../models/Session.js';
-import { escapeHtml } from '../utils/xssProtection.js';
 import { ErrorFactory } from '../utils/ErrorFactory.js';
 
 function getRequestBody(req) {
@@ -47,10 +46,11 @@ export class AuthController {
 
             res.writeHead(201, {
                 'Content-Type': 'application/json',
+                'Cache-Control': 'no-cache, no-store, must-revalidate'
             });
-            res.end(JSON.stringify({ 
+            res.end(JSON.stringify({
                 success: true,
-                message: 'Signup successful', 
+                message: 'Signup successful',
                 token: sessionId,
                 links: {
                     self: { href: '/api/signup', method: 'POST' },
@@ -80,10 +80,11 @@ export class AuthController {
             const sessionId = await Session.create(user);
             res.writeHead(200, {
                 'Content-Type': 'application/json',
+                'Cache-Control': 'no-cache, no-store, must-revalidate'
             });
-            res.end(JSON.stringify({ 
+            res.end(JSON.stringify({
                 success: true,
-                message: 'Login successful', 
+                message: 'Login successful',
                 token: sessionId,
                 links: {
                     self: { href: '/api/login', method: 'POST' },
@@ -97,31 +98,6 @@ export class AuthController {
             });
         }
     };
-
-    // static logout = async (req, res) => {
-    //     try {
-    //         const sessionId = getSessionId(req);
-    //         if (!sessionId) {
-    //             return ErrorFactory.createError(res, 401, 'NO_SESSION', 'No session found', {
-    //                 login: { href: '/api/login', method: 'POST' }
-    //             });
-    //         }
-
-    //         await Session.destroy(sessionId);
-    //         res.writeHead(200, { 'Content-Type': 'application/json' });
-    //         res.end(JSON.stringify({ 
-    //             success: true,
-    //             message: 'Logout successful',
-    //             links: {
-    //                 login: { href: '/api/login', method: 'POST' },
-    //                 signup: { href: '/api/signup', method: 'POST' }
-    //             }
-    //         }));
-    //     } catch (err) {
-    //         console.error('Logout error:', err);
-    //         return ErrorFactory.createError(res, 500, 'INTERNAL_SERVER_ERROR', 'Internal server error', {});
-    //     }
-    // };
 
     static getCurrentUser = async (req, res) => {
         try {
@@ -146,12 +122,15 @@ export class AuthController {
                 });
             }
 
-            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.writeHead(200, {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'private, max-age=300'
+            });
             res.end(JSON.stringify({
                 success: true,
                 data: {
-                    username: escapeHtml(user.username),
-                    role: escapeHtml(user.role || 'user'),
+                    username: user.username,
+                    role: user.role || 'user',
                     validated: user.validated || false,
                 },
                 links: {
@@ -186,12 +165,15 @@ export class AuthController {
                     users: { href: '/api/users', method: 'GET' }
                 });
             }
-            
+
 
             await User.update(userId, { validated: true });
 
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ 
+            res.writeHead(200, {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-cache'
+            });
+            res.end(JSON.stringify({
                 success: true,
                 message: 'User validated successfully',
                 links: {
@@ -245,8 +227,11 @@ export class AuthController {
 
             await User.update(userId, { role: newRole });
 
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ 
+            res.writeHead(200, {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-cache'
+            });
+            res.end(JSON.stringify({
                 success: true,
                 message: 'User role updated successfully',
                 links: {

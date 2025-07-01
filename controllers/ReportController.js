@@ -2,10 +2,8 @@ import https from 'https'
 import { Report } from '../models/Report.js'
 import { User } from '../models/User.js'
 import { Session } from '../models/Session.js'
-import { escapeHtml } from '../utils/xssProtection.js'
 import { ErrorFactory } from '../utils/ErrorFactory.js'
 
-// Helper: Get user from Authorization header
 async function getAuthenticatedUser(req) {
     const authHeader = req.headers['authorization']
     if (!authHeader?.startsWith('Bearer ')) return null
@@ -15,7 +13,6 @@ async function getAuthenticatedUser(req) {
     return await User.findByUsername(session.username)
 }
 
-// Helper: Role check
 function requireRole(user, allowedRoles) {
     return user && allowedRoles.includes(user.role)
 }
@@ -105,11 +102,10 @@ export class ReportController {
     static async getAllCounties(req, res, params = {}) {
         try {
             const counties = await Report.getAllCounties()
-            const sanitized = counties.map(escapeHtml)
             res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' })
             res.end(JSON.stringify({
                 success: true,
-                data: { counties: sanitized },
+                data: { counties },
                 links: {
                     self: { href: '/api/reports/cities', method: 'GET' },
                     localities: { href: '/api/reports/localities', method: 'GET' },
@@ -126,11 +122,10 @@ export class ReportController {
     static async getAllLocalities(req, res, params = {}) {
         try {
             const localities = await Report.getAllLocalities()
-            const sanitized = localities.map(escapeHtml)
             res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' })
             res.end(JSON.stringify({
                 success: true,
-                data: { localities: sanitized },
+                data: { localities },
                 links: {
                     self: { href: '/api/reports/localities', method: 'GET' },
                     counties: { href: '/api/reports/cities', method: 'GET' },
@@ -147,19 +142,10 @@ export class ReportController {
     static async getAllReports(req, res, params = {}) {
         try {
             const reports = await Report.findAll()
-            const sanitized = reports.map(r => ({
-                ...r,
-                county: escapeHtml(r.county || ''),
-                locality: escapeHtml(r.locality || ''),
-                category: escapeHtml(r.category || ''),
-                description: escapeHtml(r.description || ''),
-                severity: escapeHtml(r.severity || ''),
-                solved: escapeHtml(r.solved || 'false'),
-            }))
             res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' })
             res.end(JSON.stringify({
                 success: true,
-                data: sanitized,
+                data: reports,
                 links: {
                     self: { href: '/api/reports', method: 'GET' },
                     create: { href: '/api/reports', method: 'POST' },
@@ -185,19 +171,10 @@ export class ReportController {
         }
         try {
             const reports = await Report.findAll({ username: user.username })
-            const sanitized = reports.map(r => ({
-                ...r,
-                county: escapeHtml(r.county || ''),
-                locality: escapeHtml(r.locality || ''),
-                category: escapeHtml(r.category || ''),
-                description: escapeHtml(r.description || ''),
-                severity: escapeHtml(r.severity || ''),
-                solved: escapeHtml(r.solved || 'false'),
-            }))
             res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' })
             res.end(JSON.stringify({
                 success: true,
-                data: sanitized,
+                data: reports,
                 links: {
                     self: { href: '/api/reports/me', method: 'GET' },
                     'create-report': { href: '/api/reports', method: 'POST' },
@@ -252,12 +229,12 @@ export class ReportController {
                 login: { href: '/api/login', method: 'POST' }
             });
         }
-            if (!requireRole(user, ['admin', 'authority'])) {
-                return ErrorFactory.createError(res, 403, 'FORBIDDEN', 'Forbidden', {
-                    profile: { href: '/api/users/me', method: 'GET' },
-                    reports: { href: '/api/reports', method: 'GET' }
-                });
-            }
+        if (!requireRole(user, ['admin', 'authority'])) {
+            return ErrorFactory.createError(res, 403, 'FORBIDDEN', 'Forbidden', {
+                profile: { href: '/api/users/me', method: 'GET' },
+                reports: { href: '/api/reports', method: 'GET' }
+            });
+        }
 
         try {
             await Report.solve(reportId)
@@ -309,16 +286,10 @@ export class ReportController {
 
         try {
             const users = await User.findAll()
-            const sanitized = users.map(u => ({
-                ...u,
-                username: escapeHtml(u.username || ''),
-                email: escapeHtml(u.email || ''),
-                role: escapeHtml(u.role || '')
-            }))
             res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' })
             res.end(JSON.stringify({
                 success: true,
-                data: sanitized,
+                data: users,
                 links: {
                     self: { href: '/api/users', method: 'GET' },
                     'user-count': { href: '/api/users/count', method: 'GET' }
@@ -431,26 +402,30 @@ export class ReportController {
         try {
             const locality = params.locality
             if (!locality) {
-                ErrorFactory.createError(res, 400, 'MISSING_PARAMETER', 'Locality parameter is required')
-                return
+                return ErrorFactory.createError(res, 400, 'MISSING_PARAMETER', 'Locality parameter is required', {
+                    localities: { href: '/api/reports/localities', method: 'GET' },
+                    reports: { href: '/api/reports', method: 'GET' }
+                })
             }
 
             console.log('Fetching reports for locality:', locality)
             const reports = await Report.findByLocality(locality)
-            const sanitized = reports.map(r => ({
-                ...r,
-                county: escapeHtml(r.county || ''),
-                locality: escapeHtml(r.locality || ''),
-                suburb: escapeHtml(r.suburb || ''),
-                category: escapeHtml(r.category || ''),
-                description: escapeHtml(r.description || ''),
-                severity: escapeHtml(r.severity || '')
-            }))
             res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' })
-            res.end(JSON.stringify(sanitized))
+            res.end(JSON.stringify({
+                success: true,
+                data: { reports },
+                links: {
+                    self: { href: `/api/reports/locality/${encodeURIComponent(locality)}`, method: 'GET' },
+                    localities: { href: '/api/reports/localities', method: 'GET' },
+                    reports: { href: '/api/reports', method: 'GET' }
+                }
+            }))
         } catch (err) {
             console.error('Error fetching reports by locality:', err)
-            ErrorFactory.createError(res, 500, 'FETCH_FAILED', 'Failed to fetch reports for locality')
+            return ErrorFactory.createError(res, 500, 'FETCH_FAILED', 'Failed to fetch reports for locality', {
+                localities: { href: '/api/reports/localities', method: 'GET' },
+                reports: { href: '/api/reports', method: 'GET' }
+            })
         }
     }
 
@@ -459,10 +434,21 @@ export class ReportController {
             const { getSupportedLocalities } = await import('../config/geoMapping.js');
             const localities = getSupportedLocalities();
             res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' })
-            res.end(JSON.stringify({ localities }))
+            res.end(JSON.stringify({
+                success: true,
+                data: { localities },
+                links: {
+                    self: { href: '/api/localities/supported', method: 'GET' },
+                    localities: { href: '/api/reports/localities', method: 'GET' },
+                    reports: { href: '/api/reports', method: 'GET' }
+                }
+            }))
         } catch (err) {
             console.error('Error fetching supported localities:', err)
-            ErrorFactory.createError(res, 500, 'FETCH_FAILED', 'Failed to fetch supported localities')
+            return ErrorFactory.createError(res, 500, 'FETCH_FAILED', 'Failed to fetch supported localities', {
+                localities: { href: '/api/reports/localities', method: 'GET' },
+                reports: { href: '/api/reports', method: 'GET' }
+            })
         }
     }
 
@@ -470,16 +456,20 @@ export class ReportController {
         try {
             const locality = params.locality
             if (!locality) {
-                ErrorFactory.createError(res, 400, 'MISSING_PARAMETER', 'Locality parameter is required')
-                return
+                return ErrorFactory.createError(res, 400, 'MISSING_PARAMETER', 'Locality parameter is required', {
+                    'supported-localities': { href: '/api/localities/supported', method: 'GET' },
+                    localities: { href: '/api/reports/localities', method: 'GET' }
+                })
             }
 
             const { getGeoJsonPath } = await import('../config/geoMapping.js')
             const geoJsonPath = getGeoJsonPath(locality)
 
             if (!geoJsonPath) {
-                ErrorFactory.createError(res, 404, 'NOT_FOUND', 'GeoJSON not found for locality')
-                return
+                return ErrorFactory.createError(res, 404, 'NOT_FOUND', 'GeoJSON not found for locality', {
+                    'supported-localities': { href: '/api/localities/supported', method: 'GET' },
+                    localities: { href: '/api/reports/localities', method: 'GET' }
+                })
             }
 
             const fs = await import('fs')
@@ -487,16 +477,33 @@ export class ReportController {
             const fullPath = path.join(process.cwd(), 'public', geoJsonPath)
 
             try {
-                const geoJsonData = await fs.promises.readFile(fullPath, 'utf8')
+                const geoJsonData = JSON.parse(await fs.promises.readFile(fullPath, 'utf8'))
+
+                const responseData = {
+                    success: true,
+                    data: geoJsonData,
+                    links: {
+                        self: { href: `/api/geojson/${encodeURIComponent(locality)}`, method: 'GET' },
+                        'supported-localities': { href: '/api/localities/supported', method: 'GET' },
+                        localities: { href: '/api/reports/localities', method: 'GET' }
+                    }
+                }
+
                 res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600' })
-                res.end(geoJsonData)
+                res.end(JSON.stringify(responseData))
             } catch (fileError) {
                 console.error('Error reading GeoJSON file:', fileError)
-                ErrorFactory.createError(res, 404, 'FILE_NOT_FOUND', 'GeoJSON file not found')
+                return ErrorFactory.createError(res, 404, 'FILE_NOT_FOUND', 'GeoJSON file not found', {
+                    'supported-localities': { href: '/api/localities/supported', method: 'GET' },
+                    localities: { href: '/api/reports/localities', method: 'GET' }
+                })
             }
         } catch (err) {
             console.error('Error serving GeoJSON:', err)
-            ErrorFactory.createError(res, 500, 'SERVER_ERROR', 'Failed to serve GeoJSON')
+            return ErrorFactory.createError(res, 500, 'SERVER_ERROR', 'Failed to serve GeoJSON', {
+                'supported-localities': { href: '/api/localities/supported', method: 'GET' },
+                localities: { href: '/api/reports/localities', method: 'GET' }
+            })
         }
     }
 
@@ -511,32 +518,39 @@ export class ReportController {
             console.log('Fetching reports for chart:', { locality, startDate, endDate })
 
             if (!locality) {
-                ErrorFactory.createError(res, 400, 'MISSING_PARAMETER', 'Locality parameter is required')
-                return
+                return ErrorFactory.createError(res, 400, 'MISSING_PARAMETER', 'Locality parameter is required', {
+                    localities: { href: '/api/reports/localities', method: 'GET' },
+                    reports: { href: '/api/reports', method: 'GET' }
+                })
             }
 
             if (!startDate || !endDate) {
-                ErrorFactory.createError(res, 400, 'MISSING_PARAMETER', 'Start date and end date are required')
-                return
+                return ErrorFactory.createError(res, 400, 'MISSING_PARAMETER', 'Start date and end date are required', {
+                    self: { href: `/api/reports/chart/${encodeURIComponent(locality)}?startDate=YYYY-MM-DD&endDate=YYYY-MM-DD`, method: 'GET' },
+                    localities: { href: '/api/reports/localities', method: 'GET' }
+                })
             }
 
             const reports = await Report.findByLocalityAndDateRange(locality, startDate, endDate)
-            const sanitized = reports.map(r => ({
-                ...r,
-                county: escapeHtml(r.county || ''),
-                locality: escapeHtml(r.locality || ''),
-                suburb: escapeHtml(r.suburb || ''),
-                category: escapeHtml(r.category || ''),
-                description: escapeHtml(r.description || ''),
-                severity: escapeHtml(r.severity || ''),
-                timestamp: r.timestamp
-            }))
 
             res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' })
-            res.end(JSON.stringify(sanitized))
+            res.end(JSON.stringify({
+                success: true,
+                data: { reports },
+                filters: { locality, startDate, endDate },
+                links: {
+                    self: { href: `/api/reports/chart/${encodeURIComponent(locality)}?startDate=${startDate}&endDate=${endDate}`, method: 'GET' },
+                    locality: { href: `/api/reports/locality/${encodeURIComponent(locality)}`, method: 'GET' },
+                    localities: { href: '/api/reports/localities', method: 'GET' },
+                    reports: { href: '/api/reports', method: 'GET' }
+                }
+            }))
         } catch (err) {
             console.error('Error fetching reports for chart:', err)
-            ErrorFactory.createError(res, 500, 'FETCH_FAILED', 'Failed to fetch reports for chart')
+            return ErrorFactory.createError(res, 500, 'FETCH_FAILED', 'Failed to fetch reports for chart', {
+                localities: { href: '/api/reports/localities', method: 'GET' },
+                reports: { href: '/api/reports', method: 'GET' }
+            })
         }
     }
 

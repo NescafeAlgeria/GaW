@@ -12,7 +12,10 @@ export const servePage = (pageName) => {
                 return;
             }
 
-            res.writeHead(200, { 'Content-Type': 'text/html' });
+            res.writeHead(200, {
+                'Content-Type': 'text/html',
+                'Cache-Control': 'public, max-age=3600'
+            });
             res.end(content);
         });
     };
