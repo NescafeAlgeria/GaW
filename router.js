@@ -123,6 +123,10 @@ function matchProtectedRoute(pathname) {
     let match = true;
     for (let i = 0; i < routeParts.length; i++) {
       if (routeParts[i].startsWith(':')) {
+        if (pathParts[i] === 'count') {
+          match = false;
+          break;
+        }
         continue;
       } else if (routeParts[i] !== pathParts[i]) {
         match = false;
