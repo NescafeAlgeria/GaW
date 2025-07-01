@@ -12,12 +12,25 @@ export class Report {
             createdAt: new Date(),
             locality: data.locality || 'Unknown',
             county: data.county || 'Unknown',
+            username: data.username || 'Unknown',
         };
         return await db.insert('reports', report);
     }
 
     static async findAll(filter = {}) {
         return await db.find('reports', filter);
+    }
+
+    static async findById(reportId) {
+        if (!ObjectId.isValid(reportId)) {
+            throw new Error('Invalid ObjectId format');
+        }
+        const objectId = ObjectId.createFromHexString(reportId);
+        const report = await db.findOne('reports', { _id: objectId });
+        if (!report) {
+            throw new Error('Report not found');
+        }
+        return report;
     }
 
     static async findByCounty(county, startDate = null, endDate = null) {

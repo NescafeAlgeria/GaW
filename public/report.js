@@ -162,11 +162,18 @@ submitButton.addEventListener('click', async (event) => {
         submitButton.disabled = false;
         return;
     }
-
-    const response = await fetch('/api/addReport', {
+    if(localStorage.getItem('token') === null) {
+        resultText.innerText = 'Error: You must be logged in to submit a report.';
+        resultText.style.color = 'red';
+        submitButton.innerText = 'Submit';
+        submitButton.disabled = false;
+        return;
+    }
+    const response = await fetch('/api/reports', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
         body: JSON.stringify({
             severity: severity,

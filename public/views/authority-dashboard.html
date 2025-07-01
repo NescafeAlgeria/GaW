@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="/dashboard-inline.css">
     <script src="xssProtection.js" defer></script>
     <script src="dashboard.js" defer></script>
+    <script src="/home.js" defer></script>
+    <script src="/user-dashboard.js" defer></script>
 </head>
 
 <body>
@@ -19,7 +21,7 @@
         </div>
         <div class="auth-buttons">
             <a href="/" class="btn-auth btn-login">Home</a>
-            <a href="/api/logout" class="btn-auth btn-signup">Logout</a>
+            <a href="#" id="logout" class="btn-auth btn-logout">Logout</a>
         </div>
     </header>
 
@@ -60,6 +62,29 @@
                 <button id="exportReportBtn" class="btn-primary export-btn" disabled>
                     Export Report
                 </button>
+            </div>
+        </section>
+        <section class="dashboard-section">
+            <h3>Your Reports</h3>
+            <div class="table-container">
+                <table id="reports-table" class="dashboard-table">
+                    <thead>
+                        <tr>
+                            <th>County</th>
+                            <th>Locality</th>
+                            <th>Category</th>
+                            <th>Severity</th>
+                            <th>Description</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reports-tbody">
+                        <tr>
+                            <td colspan="7" class="loading-cell">Loading reports...</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </section>
     </main>

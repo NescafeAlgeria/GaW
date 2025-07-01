@@ -1,43 +1,39 @@
-import { Session } from './models/Session.js';
 import { User } from './models/User.js';
+import jwt from 'jsonwebtoken';
+
+const JWT_SECRET = process.env.JWT_SECRET;
 
 export async function checkSession(req) {
-  const cookies = parseCookies(req.headers.cookie || '');
-  const sessionId = cookies.sessionId;
-  if (!sessionId) return null;
-  return await Session.getUsername(sessionId);
-}
+  const authHeader = req.headers.authorization || '';
+  const token = authHeader.split(' ')[1]; // Bearer <token>
+  if (!token) return null;
 
-function parseCookies(cookieString) {
-  return Object.fromEntries(
-    (cookieString || '').split('; ').map(c => c.split('='))
-  );
+  try {
+    const payload = jwt.verify(token, JWT_SECRET);
+    return payload;
+  } catch (err) {
+    return null;
+  }
 }
 
 export async function authMiddleware(req, res, next) {
-  const cookies = parseCookies(req.headers.cookie || '');
-  const sessionId = cookies.sessionId;
-
-  if (!sessionId) {
+  const authHeader = req.headers.authorization || '';
+  const token = authHeader.split(' ')[1];
+  if (!token) {
     res.writeHead(302, { Location: '/login' });
     res.end();
     return;
   }
 
-  const username = await Session.getUsername(sessionId);
-  if (!username) {
+  try {
+    const payload = jwt.verify(token, JWT_SECRET);
+    const user = await User.findByUsername(payload.username);
+    if (!user) throw new Error('User not found');
+
+    req.user = user;
+    next();
+  } catch (err) {
     res.writeHead(302, { Location: '/login' });
     res.end();
-    return;
   }
-
-  const user = await User.findByUsername(username);
-  if (!user) {
-    res.writeHead(302, { Location: '/login' });
-    res.end();
-    return;
-  }
-  req.user = user;
-  next();
-
 }

@@ -15,10 +15,32 @@ export class User {
     const data = await db.findOne('users', { email });
     return data ? new User(data) : null;
   }
+  static async findById(userId) {
+    try {
+      if (!ObjectId.isValid(userId)) {
+        throw new Error('Invalid ObjectId format');
+      }
+      const objectId = ObjectId.createFromHexString(userId);
+      const data = await db.findOne('users', { _id: objectId });
+      return data ? new User(data) : null;
+    } catch (error) {
+      console.error('Error finding user by ID:', error);
+      throw error;
+    }
+  }
 
-  static async findByUsername(username) {
-    const data = await findOne('users', { username });
-    return data ? new User(data) : null;
+  static async update(userId, updates) {
+    try {
+      if (!ObjectId.isValid(userId)) {
+        throw new Error('Invalid ObjectId format');
+      }
+      const objectId = ObjectId.createFromHexString(userId);
+      const updatedData = await db.update('users', { _id: objectId }, updates);
+      return new User(updatedData);
+    } catch (error) {
+      console.error('Error updating user:', error);
+      throw error;
+    }
   }
 
   static async findByEmailOrUsername(email, username) {
@@ -36,7 +58,6 @@ export class User {
   static async findAll() {
     return await db.find('users', {});
   }
-
   static async delete(userId) {
     try {
       if (!ObjectId.isValid(userId)) {

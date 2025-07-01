@@ -1,143 +1,107 @@
-import { parse } from 'querystring';
 import bcrypt from 'bcrypt';
 import { User } from '../models/User.js';
 import { Session } from '../models/Session.js';
 import { escapeHtml } from '../utils/xssProtection.js';
 
+function getRequestBody(req) {
+    return new Promise((resolve, reject) => {
+        let body = '';
+        req.on('data', chunk => body += chunk);
+        req.on('end', () => resolve(JSON.parse(body)));
+        req.on('error', err => reject(err));
+    });
+}
+
+function getSessionId(req) {
+    const authHeader = req.headers['authorization'];
+    if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
+    return authHeader.split(' ')[1];
+}
+
 export class AuthController {
-    static signup = (req, res) => {
-        if (req.method === 'POST') {
-            let body = '';
-            req.on('data', chunk => body += chunk);
-            req.on('end', async () => {
-                const data = parse(body);
-                const { username, email, password, role } = data;
+    static signup = async (req, res) => {
+        try {
+            const data = await getRequestBody(req);
+            const { username, email, password, role } = data;
 
-                try {
-                    const existingUser = await User.findByEmailOrUsername(email, username);
-
-                    if (existingUser) {
-                        res.writeHead(400, { 'Content-Type': 'text/plain' });
-                        res.end('User already exists');
-                        return;
-                    }
-
-                    const validRoles = ['user', 'authority'];
-                    const userRole = validRoles.includes(role) ? role : 'user';
-
-                    const hashedPassword = await bcrypt.hash(password, 10);
-
-                    const user = {
-                        username,
-                        email,
-                        hashedPassword,
-                        role: userRole
-                    };
-
-                    await User.create(user);
-                    const sessionId = await Session.create(username);
-                    res.writeHead(302, {
-                        'Set-Cookie': `sessionId=${sessionId}; Path=/; Max-Age=3600`,
-                        'Location': '/'
-                    });
-                    res.end();
-
-                } catch (err) {
-                    res.writeHead(500, { 'Content-Type': 'text/plain' });
-                    res.end('Internal server error');
-                    console.error(err);
-                }
-            });
-        }
-        else {
-            res.writeHead(405, { 'Content-Type': 'text/plain' });
-            res.end('Method Not Allowed');
-        }
-    };
-
-    static login = (req, res) => {
-        if (req.method === 'POST') {
-            let body = '';
-            req.on('data', chunk => body += chunk);
-            req.on('end', async () => {
-                const data = parse(body);
-                const { email, password } = data;
-
-                try {
-                    const user = await User.findByEmail(email);
-
-                    if (!user) {
-                        res.writeHead(401, { 'Content-Type': 'text/plain' });
-                        res.end('Invalid email or password');
-                        return;
-                    }
-
-                    const isPasswordValid = await bcrypt.compare(password, user.hashedPassword);
-
-                    if (!isPasswordValid) {
-                        res.writeHead(401, { 'Content-Type': 'text/plain' });
-                        res.end('Invalid email or password');
-                        return;
-                    }
-
-                    const sessionId = await Session.create(user.username);
-
-                    res.writeHead(302, {
-                        'Set-Cookie': `sessionId=${sessionId};  Path=/; Max-Age=3600`,
-                        'Location': '/'
-                    });
-                    res.end();
-
-                } catch (err) {
-                    res.writeHead(500, { 'Content-Type': 'text/plain' });
-                    res.end('Internal server error');
-                    console.error(err);
-                }
-            });
-        } else {
-            res.writeHead(405, { 'Content-Type': 'text/plain' });
-            res.end('Method Not Allowed');
-        }
-    };
-
-    static logout = (req, res) => {
-        if (req.method === 'GET') {
-            const cookies = req.headers.cookie.split('; ');
-            for (const cookie of cookies) {
-                const [key, value] = cookie.split('=');
-                if (key === 'sessionId') {
-                    Session.destroy(value)
-                        .then(() => {
-                            res.writeHead(302, {
-                                'Set-Cookie': 'sessionId=; Path=/; Max-Age=0',
-                                'Location': '/'
-                            });
-                            res.end();
-                        })
-                        .catch(err => {
-                            console.error('Logout error:', err);
-                            res.writeHead(500, { 'Content-Type': 'text/plain' });
-                            res.end('Internal server error');
-                        });
-                }
+            const existingUser = await User.findByEmailOrUsername(email, username);
+            if (existingUser) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'User already exists' }));
+                return;
             }
 
-        } else {
-            res.writeHead(405, { 'Content-Type': 'text/plain' });
-            res.end('Method Not Allowed');
+            const validRoles = ['user', 'authority'];
+            const userRole = validRoles.includes(role) ? role : 'user';
+            const hashedPassword = await bcrypt.hash(password, 10);
+
+            const user = await User.create({
+                username,
+                email,
+                hashedPassword,
+                role: userRole
+            });
+
+            const sessionId = await Session.create(user);
+
+            res.writeHead(201, {
+                'Content-Type': 'application/json',
+                // 'Authorization': `Bearer ${sessionId}`
+            });
+            res.end(JSON.stringify({ message: 'Signup successful', token: sessionId }));
+        } catch (err) {
+            console.error('Signup error:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Internal server error' }));
+        }
+    };
+
+    static login = async (req, res) => {
+        try {
+            const data = await getRequestBody(req);
+            const { email, password } = data;
+            const user = await User.findByEmail(email);
+            if (!user || !await bcrypt.compare(password, user.hashedPassword)) {
+                res.writeHead(401, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Invalid email or password' }));
+                return;
+            }
+
+            const sessionId = await Session.create(user);
+            res.writeHead(200, {
+                'Content-Type': 'application/json',
+                // 'Authorization': `Bearer ${sessionId}`
+            });
+            res.end(JSON.stringify({ message: 'Login successful', token: sessionId }));
+        } catch (err) {
+            console.error('Login error:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Internal server error' }));
+        }
+    };
+
+    static logout = async (req, res) => {
+        try {
+            const sessionId = getSessionId(req);
+            if (!sessionId) {
+                res.writeHead(401, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'No session found' }));
+                return;
+            }
+
+            await Session.destroy(sessionId);
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ message: 'Logout successful' }));
+        } catch (err) {
+            console.error('Logout error:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Internal server error' }));
         }
     };
 
     static getCurrentUser = async (req, res) => {
         try {
-            const cookies = req.headers.cookie;
-            if (!cookies) {
-                res.writeHead(401, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ error: 'Not authenticated' }));
-                return;
-            }
-
-            const sessionId = cookies.split(';').find(c => c.trim().startsWith('sessionId='))?.split('=')[1];
+            const sessionId = getSessionId(req);
             if (!sessionId) {
                 res.writeHead(401, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify({ error: 'Not authenticated' }));
@@ -156,15 +120,101 @@ export class AuthController {
                 res.writeHead(404, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify({ error: 'User not found' }));
                 return;
-            } res.writeHead(200, { 'Content-Type': 'application/json' });
-            if (!user.role) {
-                user.role = 'user';
             }
-            res.end(JSON.stringify({ username: escapeHtml(user.username), role: escapeHtml(user.role) }));
-        } catch (error) {
-            console.error('getCurrentUser error:', error);
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({
+                username: escapeHtml(user.username),
+                role: escapeHtml(user.role || 'user'),
+                validated: user.validated || false,
+            }));
+        } catch (err) {
+            console.error('getCurrentUser error:', err);
             res.writeHead(500, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ error: 'Internal server error' }));
         }
     };
+    static validateUser = async (req, res, params = {}) => {
+        try {
+            const sessionId = getSessionId(req);
+            if (!sessionId) {
+                res.writeHead(401, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Not authenticated' }));
+                return;
+            }
+
+            const session = await Session.findBySessionId(sessionId);
+            if (!session || session.role !== 'admin') {
+                res.writeHead(403, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Forbidden' }));
+                return;
+            }
+
+            const userId = params.id;
+            if (!userId) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'User ID is required' }));
+                return;
+            }
+            
+
+            await User.update(userId, { validated: true });
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ message: 'User validated successfully' }));
+        } catch (err) {
+            console.error('validateUser error:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Internal server error' }));
+        }
+    };
+    static changeUserRole = async (req, res, params = {}) => {
+        try {
+            const sessionId = getSessionId(req);
+            if (!sessionId) {
+                res.writeHead(401, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Not authenticated' }));
+                return;
+            }
+
+            const session = await Session.findBySessionId(sessionId);
+            if (!session || session.role !== 'admin') {
+                res.writeHead(403, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Forbidden' }));
+                return;
+            }
+
+            const userId = params.id;
+            if (!userId) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'User ID is required' }));
+                return;
+            }
+
+            const data = await getRequestBody(req);
+            console.log('Request data:', data);
+            const newRole = data.role;
+            if (!newRole) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'New role is required' }));
+                return;
+            }
+
+            const validRoles = ['user', 'authority', 'admin'];
+            if (!validRoles.includes(newRole)) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Invalid role' }));
+                return;
+            }
+
+            await User.update(userId, { role: newRole });
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ message: 'User role updated successfully' }));
+        } catch (err) {
+            console.error('changeUserRole error:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Internal server error' }));
+        }
+    }
 }

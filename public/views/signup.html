@@ -6,6 +6,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up - Garbage Reporting Platform</title>
     <link rel="stylesheet" href="/signup.css">
+    <script src="/signup.js" defer></script>
+    <style>
+    .popup {
+      position: fixed;
+      top: 1rem;
+      right: 50%;
+      transform: translate(50%, 0);
+      background: #f44336;
+      color: white;
+      padding: 1rem;
+      border-radius: 4px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      display: none;
+      z-index: 1000;
+    }
+
+    .popup.success {
+      background: #4CAF50;
+    }
+  </style>
 </head>
 
 <body>
@@ -27,7 +47,7 @@
                 <p>Join thousands of users and get started today</p>
             </div>
 
-            <form method="post" action="/api/signup">
+            <form id="signupForm">
                 <div class="form-group">
                     <label for="username">Username</label>
                     <input type="text" id="username" name="username" required>
@@ -68,6 +88,7 @@
         <p>&copy; 2025 Garbage Reporting Platform. All rights reserved.</p>
         <p>Secure registration with industry-standard encryption</p>
     </footer>
+    <div class="popup" id="popup"></div>
 </body>
 
 </html>
