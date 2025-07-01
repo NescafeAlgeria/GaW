@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         });
         if (response.ok) {
             const user = await response.json();
-            document.getElementById('welcome-message').textContent = `Hi, ${user.username}!`;
+            document.getElementById('welcome-message').textContent = `Hi, ${user.data.username}!`;
         }
     } catch (error) {
         console.error('Error fetching user info:', error);
@@ -34,10 +34,10 @@ async function loadReports() {
 
         const reports = await response.json();
 
-        if (Array.isArray(reports)) {
-            displayReports(reports);
+        if (Array.isArray(reports.data)) {
+            displayReports(reports.data);
         } else {
-            console.error('Reports is not an array:', reports);
+            console.error('Reports is not an array:', reports.data);
             document.getElementById('reports-tbody').innerHTML = '<tr><td colspan="7" style="padding: 1rem; text-align: center;">Invalid data format</td></tr>';
         }
     } catch (error) {

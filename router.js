@@ -50,6 +50,7 @@ const apiRoutes = [
 
   { method: 'GET', path: '/api/reports/count', handler: ReportController.getReportCount },
   { method: 'GET', path: '/api/users/count', handler: ReportController.getUserCount },
+  { method: 'GET', path: '/api/reports/count/solved', handler: ReportController.getSolvedReportCount },
 
   { method: 'GET', path: '/api/reports/export', handler: ExportController.exportReport },
   { method: 'GET', path: '/api/reports/export/csv', handler: ExportController.exportCSV },
@@ -65,8 +66,9 @@ const apiRoutes = [
   { method: 'GET', path: '/api/reports/me', handler: ReportController.getMyReports },
 
 
-  { method: 'PATCH', path: '/api/users/:id/validate', handler: AuthController.validateUser },
+  { method: 'POST', path: '/api/users/:id/validate', handler: AuthController.validateUser },
   { method: 'PATCH', path: '/api/users/:id/role', handler: AuthController.changeUserRole },
+  { method: 'POST', path: '/api/reports/:id/solve', handler: ReportController.solveReport },
 
   { method: 'DELETE', path: '/api/reports/:id', handler: ReportController.deleteReport },
   { method: 'DELETE', path: '/api/users/:id', handler: ReportController.deleteUser },
@@ -152,6 +154,10 @@ const protectedPaths = [
   '/api/users',
   '/api/users/:id/validate',
   '/api/users/:id/role',
+  '/api/recycle-points/garbage',
+  '/api/recycle-points/:id',
+  '/manage-recycle-points',
+  '/api/reports/:id/solve',
 ];
 
 // === Route Entry Point ===

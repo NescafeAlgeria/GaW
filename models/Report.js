@@ -15,6 +15,7 @@ export class Report {
             county: data.county || 'Unknown',
             suburb: data.suburb || 'Unknown',
             username: data.username || 'Unknown',
+            solved: 'false',
         };
         return await db.insert('reports', report);
     }
@@ -146,6 +147,24 @@ export class Report {
 
             return true;
         });
+    }
+
+    static async solve(reportId) {
+        try {
+            if (!ObjectId.isValid(reportId)) {
+                throw new Error('Invalid ObjectId format');
+            }
+            const objectId = ObjectId.createFromHexString(reportId);
+            const report = await db.findOne('reports', { _id: objectId });
+            if (!report) {
+                throw new Error('Report not found');
+            }
+            report.solved = 'true';
+            return await db.update('reports', { _id: objectId }, report);
+        } catch (error) {
+            console.error('Error solving report:', error);
+            throw error;
+        }
     }
 
     static async findByLocalityAndDateRange(locality, startDate, endDate) {

@@ -1,17 +1,20 @@
 document.addEventListener("DOMContentLoaded", async () => {
   try {
-    const [usersRes, reportsRes] = await Promise.all([
+    const [usersRes, reportsRes, solvedRes] = await Promise.all([
       fetch('/api/users/count'),
-      fetch('/api/reports/count')
+      fetch('/api/reports/count'),
+      fetch('/api/reports/count/solved')
     ]);
-    if (!usersRes.ok || !reportsRes.ok) {
-      throw new Error(`Failed to fetch data: ${usersRes.status} ${reportsRes.status}`);
+    if (!usersRes.ok || !reportsRes.ok || !solvedRes.ok) {
+      throw new Error(`Failed to fetch data: ${usersRes.status} ${reportsRes.status} ${solvedRes.status}`);
     }
     const users = await usersRes.json();
     const reports = await reportsRes.json();
-
-    animateCounter("userCount", users.count);
-    animateCounter("reportCount", reports.count);
+    const solved = await solvedRes.json();
+    console.log("solved", solved.data);
+    animateCounter("userCount", users.data.count);
+    animateCounter("reportCount", reports.data.count);
+    animateCounter("solvedCount", solved.data.count);
   } catch (err) {
     console.error("Failed to load stats:", err);
   }

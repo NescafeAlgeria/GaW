@@ -1,6 +1,7 @@
 import { Report } from '../models/Report.js';
 import generatePdfBuffer from '../utils/generatePdfBuffer.js';
 import generateCsvBuffer from '../utils/generateCsvBuffer.js';
+import { ErrorFactory } from '../utils/ErrorFactory.js';
 
 export class ExportController {
     static async exportReport(req, res) {
@@ -14,21 +15,25 @@ export class ExportController {
             const endDate = searchParams.get('endDate');
 
             if (!county && !locality) {
-                res.writeHead(400, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ error: 'Either county or locality parameter is required' }));
-                return;
+                return ErrorFactory.createError(res, 400, 'MISSING_PARAMETER', 'Either county or locality parameter is required', {
+                    reports: { href: '/api/reports', method: 'GET' },
+                    counties: { href: '/api/reports/cities', method: 'GET' },
+                    localities: { href: '/api/reports/localities', method: 'GET' }
+                });
             }
 
             if (county && locality) {
-                res.writeHead(400, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ error: 'Cannot specify both county and locality parameters' }));
-                return;
+                return ErrorFactory.createError(res, 400, 'CONFLICTING_PARAMETERS', 'Cannot specify both county and locality parameters', {
+                    reports: { href: '/api/reports', method: 'GET' },
+                    counties: { href: '/api/reports/cities', method: 'GET' },
+                    localities: { href: '/api/reports/localities', method: 'GET' }
+                });
             }
 
             if (!['pdf', 'csv'].includes(format)) {
-                res.writeHead(400, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ error: 'Format must be either "pdf" or "csv"' }));
-                return;
+                return ErrorFactory.createError(res, 400, 'INVALID_FORMAT', 'Format must be either "pdf" or "csv"', {
+                    reports: { href: '/api/reports', method: 'GET' }
+                });
             }
 
             let reports;
@@ -63,8 +68,9 @@ export class ExportController {
 
         } catch (err) {
             console.error('Export error:', err);
-            res.writeHead(500, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ error: 'Failed to generate report: ' + err.message }));
+            return ErrorFactory.createError(res, 500, 'EXPORT_FAILED', 'Failed to generate report: ' + err.message, {
+                reports: { href: '/api/reports', method: 'GET' }
+            });
         }
     }
 }
