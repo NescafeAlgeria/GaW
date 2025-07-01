@@ -8,7 +8,13 @@ export class User {
 
   static async create(data) {
     const inserted = await db.insert('users', data);
-    return new User(inserted);
+    const newUser = {
+      _id: inserted.insertedId,
+      username: data.username,
+      email: data.email,
+      role: data.role || 'user',
+    }
+    return new User(data);
   }
 
   static async findByEmail(email) {
